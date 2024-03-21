@@ -7,11 +7,9 @@ function App() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
 
-// console.log(query)
-
   const naturalHistoryUrl =
-    `https://data.nhm.ac.uk/api/3/action/package_search?q=${query}`;
-
+    // `https://data.nhm.ac.uk/api/3/action/package_search?q=${query}`;
+    `https://data.nhm.ac.uk/api/3/action/resource_search?query=name:${query}`;
 
     const fetchNaturalHist = async () => {
       const result = await fetch(naturalHistoryUrl)
@@ -51,6 +49,12 @@ function App() {
               {" "}
               <em>{results.count} results found!</em>
             </p>
+              {results.results.map((item) => (
+              <>
+              <p> {item.name}</p>
+              <p>{item.description}</p>
+              </>
+            ))}
           </>
         ) : (
           <>
@@ -59,7 +63,6 @@ function App() {
             </p>
           </>
         )}
-       
       </div>
     </>
   );
