@@ -66,9 +66,9 @@
 		{
 			"id": "pointer:pointer",
 			"typeName": "pointer",
-			"x": 431.3060607910156,
-			"y": 325.25860595703125,
-			"lastActivityTimestamp": 1711033404155,
+			"x": 430.0130310058594,
+			"y": 478.036376953125,
+			"lastActivityTimestamp": 1711042448051,
 			"meta": {}
 		},
 		{
@@ -89,7 +89,9 @@
 		{
 			"editingShapeId": null,
 			"croppingShapeId": null,
-			"selectedShapeIds": [],
+			"selectedShapeIds": [
+				"shape:8XESnCEGGwzVUitBVth1t"
+			],
 			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
@@ -104,7 +106,7 @@
 			"opacityForNextShape": 1,
 			"stylesForNextShape": {
 				"tldraw:size": "m",
-				"tldraw:color": "light-blue"
+				"tldraw:color": "red"
 			},
 			"brush": null,
 			"scribbles": [],
@@ -119,7 +121,7 @@
 			"screenBounds": {
 				"x": 0,
 				"y": 0,
-				"w": 1262.7314453125,
+				"w": 868.0555419921875,
 				"h": 696.1805419921875
 			},
 			"insets": [
@@ -238,6 +240,121 @@
 			},
 			"parentId": "page:page",
 			"index": "a4",
+			"typeName": "shape"
+		},
+		{
+			"x": 627.5743255615234,
+			"y": 189.73798179626465,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:AO5aZ7VO3BeskFbzoysSO",
+			"type": "text",
+			"props": {
+				"color": "green",
+				"size": "m",
+				"w": 265.8111877441406,
+				"text": "Art Institute Chicago",
+				"font": "draw",
+				"align": "middle",
+				"autoSize": true,
+				"scale": 1
+			},
+			"parentId": "page:page",
+			"index": "a5",
+			"typeName": "shape"
+		},
+		{
+			"x": 593.9055633544922,
+			"y": 230.8801784515381,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:fI3DHQDZxu1GVy3pehoUU",
+			"type": "text",
+			"props": {
+				"color": "green",
+				"size": "m",
+				"w": 441.4748840332031,
+				"text": "https://api.artic.edu/api/v1/artworks",
+				"font": "draw",
+				"align": "middle",
+				"autoSize": true,
+				"scale": 0.6954954943745265
+			},
+			"parentId": "page:page",
+			"index": "a6",
+			"typeName": "shape"
+		},
+		{
+			"x": 583.8324737548828,
+			"y": 258.685094833374,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:GFHZPMVGmbV8KqtKExOpt",
+			"type": "text",
+			"props": {
+				"color": "green",
+				"size": "m",
+				"w": 678.0562133789062,
+				"text": "https://api.artic.edu/api/v1/artworks?page=2&limit=100",
+				"font": "draw",
+				"align": "middle",
+				"autoSize": true,
+				"scale": 0.5060916452408722
+			},
+			"parentId": "page:page",
+			"index": "a7",
+			"typeName": "shape"
+		},
+		{
+			"x": 582.3405456542969,
+			"y": 281.80609703063965,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:kn5EwzUZjOwBTCV22Kq6a",
+			"type": "text",
+			"props": {
+				"color": "green",
+				"size": "m",
+				"w": 626.2984008789062,
+				"text": "https://api.artic.edu/api/v1/artworks/search?q=cats",
+				"font": "draw",
+				"align": "middle",
+				"autoSize": true,
+				"scale": 0.711060265134745
+			},
+			"parentId": "page:page",
+			"index": "a8",
+			"typeName": "shape"
+		},
+		{
+			"x": 280.80876541137695,
+			"y": 399.8254642486572,
+			"rotation": 0,
+			"isLocked": false,
+			"opacity": 1,
+			"meta": {},
+			"id": "shape:8XESnCEGGwzVUitBVth1t",
+			"type": "text",
+			"props": {
+				"color": "red",
+				"size": "m",
+				"w": 871.1804809570312,
+				"text": "`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`",
+				"font": "draw",
+				"align": "middle",
+				"autoSize": true,
+				"scale": 0.6620156017217398
+			},
+			"parentId": "page:page",
+			"index": "a9",
 			"typeName": "shape"
 		}
 	]
