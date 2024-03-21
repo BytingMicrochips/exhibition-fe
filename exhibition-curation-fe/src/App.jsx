@@ -2,31 +2,31 @@ import { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
-  const [apiSelector, setApiSelector] = useState(
-    "https://data.nhm.ac.uk/api/3/action/resource_search?query=name:"
-  );
+  const [apiSelector, setApiSelector] = useState("https://data.nhm.ac.uk/api/3/action/resource_search?query=name:");
+  console.log("🚀 ~ App ~ results:", results);
 
-
-  const naturalHistoryUrl =
-    // `https://data.nhm.ac.uk/api/3/action/package_search?q=${query}`;
-    `https://data.nhm.ac.uk/api/3/action/resource_search?query=name:`;
-  
+  const naturalHistoryUrl = `https://data.nhm.ac.uk/api/3/action/resource_search?query=name:`;
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
 
   const fetchResults = async () => {
-    const result = await fetch(apiSelector+query);
-    result.json().then((jsonResponse) => {
-      if (jsonResponse.result) {
-        setResults(jsonResponse.result);
-      } else {
-        setResults(jsonResponse);
-      }
-    });
+      const fullRequest = `${apiSelector}${query}`;
+    if (apiSelector === chicagoArtUrl){
+      const result = await fetch(`${fullRequest}&fields=id,title,thumbnail,image_id`);
+        result.json().then((jsonResponse) => {
+          setResults(jsonResponse);
+        });
+    }
+    if (apiSelector === naturalHistoryUrl) {
+      const result = await fetch(fullRequest)
+        result.json().then((jsonResponse) => {
+          setResults(jsonResponse.result);
+        }
+      );
+
+    }
   };
 
   const handleInput = (e) => {
@@ -34,20 +34,20 @@ function App() {
   };
 
   const handleSearch = (e) => {
-    setQuery(input);
+    setQuery(input)
     fetchResults();
+  
   };
 
-  const handleCollection = (e) => {
-    switch (e.currentTarget.value) {
-      case "London Natural History Museum":
-        setApiSelector(naturalHistoryUrl);
-        break;
-      case "Art Institute of Chicago":
-        setApiSelector(chicagoArtUrl);
-        break;
+    const handleCollection = (e) => {
+      switch (e.currentTarget.value) {
+        case "Art Institute of Chicago":
+          setApiSelector(chicagoArtUrl);
+          break;
+        default:
+          setApiSelector(naturalHistoryUrl);
+      }
     }
-  }
 
   return (
     <>
@@ -68,7 +68,7 @@ function App() {
         </select>
         <button onClick={handleSearch}>Search collections</button>
 
-        {apiSelector === naturalHistoryUrl ? (
+        {results.results ? (
           query === "" ? (
             <></>
           ) : results.count && results.count != 0 ? (
@@ -79,45 +79,47 @@ function App() {
               {results.results.map((item) => (
                 <>
                   <p> {item.name}</p>
-                  <p>{item.description}</p>
                 </>
               ))}
             </>
           ) : (
             <>
               <p>
-                <em>No results currently archived about: {query}</em>
+                <em>No results currently archived about LINE 86: {query}</em>
               </p>
             </>
           )
         ) : results.data ? (
           <>
-            <p> {results.data.length} results from chicago art institute</p>
+            <p>
+              {" "}
+              {results.pagination.total} results from chicago art institute
+            </p>
 
             {results.data.map((artwork) => {
               return (
                 <>
                   <p>{artwork.title}</p>
                   <img
-                      alt={artwork.thumbnail.alt_text}
-                      l
-                    src={artwork.thumbnail.lqip} 
-                      width="200"
+                    alt={artwork.thumbnail.alt_text}
+                    l
+                    src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                    width="200"
                   />
-                  
                 </>
               );
             })}
           </>
-        ) : (
-          <>
-            <p>
-              <em>
-                No results currently archived about: {query} from{" "}
-                {chicagoArtUrl + query}
-              </em>
-            </p>
-          </>
+        ) : query === "" ? 
+          <></>
+         : (
+          (
+            <>
+              <p>
+                <em>No results currently archived about: {query}</em>
+              </p>
+            </>
+          )
         )}
       </div>
     </>
