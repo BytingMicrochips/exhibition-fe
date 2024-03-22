@@ -3,51 +3,79 @@ import "./App.css";
 
 function App() {
   const [input, setInput] = useState("");
-  const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [apiSelector, setApiSelector] = useState("https://data.nhm.ac.uk/api/3/action/resource_search?query=name:");
-  console.log("🚀 ~ App ~ results:", results);
-
-  const naturalHistoryUrl = `https://data.nhm.ac.uk/api/3/action/resource_search?query=name:`;
+  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
+  const [metIdList, setMetIdList] = useState([]);
+  const [metTotal, setMetTotal] = useState(0);
+  
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
-
+  const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
+  
+  const allArtworks = [];
+  let counter = 0;
+  let loadTwenty = 0;
+  
   const fetchResults = async () => {
-      const fullRequest = `${apiSelector}${query}`;
+    const fullRequest = `${apiSelector}${input}`;
     if (apiSelector === chicagoArtUrl){
       const result = await fetch(`${fullRequest}&fields=id,title,thumbnail,image_id`);
-        result.json().then((jsonResponse) => {
-          setResults(jsonResponse);
-        });
+      result.json().then((jsonResponse) => {
+        setResults(jsonResponse);
+      });
     }
-    if (apiSelector === naturalHistoryUrl) {
-      const result = await fetch(fullRequest)
-        result.json().then((jsonResponse) => {
-          setResults(jsonResponse.result);
-        }
-      );
-
+    if (apiSelector === metMuseumUrl) {
+      const result = await fetch(`${fullRequest}`);
+      result.json().then((jsonResponse) => {
+        setMetIdList(jsonResponse.objectIDs);
+        setMetTotal(metIdList.length);
+        fetchMet(counter);
+      })
     }
   };
+
+  const fetchMet = async (counter) => {
+    let currentArtworkId = metIdList[counter];
+
+    if (typeof currentArtworkId === "number") {
+      const result = await fetch(
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
+      );
+      result.json().then((jsonResponse) => {
+        allArtworks.push(jsonResponse);
+        counter++;
+        loadTwenty++;
+      }).then(() => {
+          if (counter < metIdList.length - 1 && loadTwenty < 19) {
+            fetchMet(counter);
+          } else {
+            setResults(allArtworks);
+            loadTwenty = 0;
+          }
+      })
+    }
+    console.log("🚀 ~ allArtworks:", allArtworks)
+  };
+
+
 
   const handleInput = (e) => {
     setInput(e.target.value);
   };
 
   const handleSearch = (e) => {
-    setQuery(input)
     fetchResults();
   
   };
 
-    const handleCollection = (e) => {
-      switch (e.currentTarget.value) {
-        case "Art Institute of Chicago":
-          setApiSelector(chicagoArtUrl);
-          break;
-        default:
-          setApiSelector(naturalHistoryUrl);
-      }
+  const handleCollection = (e) => {
+    switch (e.currentTarget.value) {
+      case "Art Institute of Chicago":
+        setApiSelector(chicagoArtUrl);
+        break;
+      default:
+        setApiSelector(metMuseumUrl);
     }
+  };
 
   return (
     <>
@@ -55,16 +83,16 @@ function App() {
       <div className="card">
         <h2>Explore museum and gallery collections</h2>
         <p>
-          Results are sourced from the Art Institute of Chicago and London
-          Natural History Museum collections
+          Results are sourced from the Art Institute of Chicago and Metropolitan
+          Museum NYC collections
         </p>
       </div>
       <div>
         <h3>Input search criteria</h3>
         <input onChange={handleInput}></input>
         <select onChange={handleCollection}>
-          <option>London Natural History Museum</option>
           <option>Art Institute of Chicago</option>
+          <option>Metropolitan Museum NYC</option>
         </select>
         <button onClick={handleSearch}>Search collections</button>
 
@@ -85,14 +113,13 @@ function App() {
           ) : (
             <>
               <p>
-                <em>No results currently archived about LINE 86: {query}</em>
+                <em>No results currently archived about LINE 86: {input}</em>
               </p>
             </>
           )
         ) : results.data ? (
           <>
             <p>
-              {" "}
               {results.pagination.total} results from chicago art institute
             </p>
 
@@ -110,16 +137,14 @@ function App() {
               );
             })}
           </>
-        ) : query === "" ? 
+        ) : input === "" ? (
           <></>
-         : (
-          (
-            <>
-              <p>
-                <em>No results currently archived about: {query}</em>
-              </p>
-            </>
-          )
+        ) : (
+          <>
+            <p>
+              <em>No results currently archived about LINE 116: {input}</em>
+            </p>
+          </>
         )}
       </div>
     </>
