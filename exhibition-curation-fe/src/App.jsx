@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
+  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
@@ -13,7 +14,8 @@ function App() {
   
   const allArtworks = [];
   let counter = 0;
-  let loadTwenty = 0;
+  let counterImg = 0;
+  let loadTen = 0;
   
   const fetchResults = async () => {
     const fullRequest = `${apiSelector}${input}`;
@@ -41,22 +43,26 @@ function App() {
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
       );
       result.json().then((jsonResponse) => {
-        allArtworks.push(jsonResponse);
-        counter++;
-        loadTwenty++;
+        if (
+          jsonResponse.hasOwnProperty("message") ||
+          jsonResponse.primaryImageSmall === ''
+        ) {
+          counter++;
+        } else {
+          allArtworks.push(jsonResponse);
+          counter++;
+          loadTen++;
+        }
       }).then(() => {
-          if (counter < metIdList.length - 1 && loadTwenty < 19) {
+          if (counter < metIdList.length - 1 && loadTen < 10) {
             fetchMet(counter);
           } else {
             setResults(allArtworks);
-            loadTwenty = 0;
+            loadTen = 0;
           }
       })
     }
-    console.log("🚀 ~ allArtworks:", allArtworks)
   };
-
-
 
   const handleInput = (e) => {
     setInput(e.target.value);
@@ -97,7 +103,7 @@ function App() {
         <button onClick={handleSearch}>Search collections</button>
 
         {results.results ? (
-          query === "" ? (
+          input === "" ? (
             <></>
           ) : results.count && results.count != 0 ? (
             <>
@@ -129,7 +135,6 @@ function App() {
                   <p>{artwork.title}</p>
                   <img
                     alt={artwork.thumbnail.alt_text}
-                    l
                     src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
                     width="200"
                   />
@@ -139,7 +144,41 @@ function App() {
           </>
         ) : input === "" ? (
           <></>
-        ) : (
+            ) :
+              results.length > 0 ? (
+                
+                
+                results.map((artwork) => {
+                  return (
+                <>
+                      {artwork.artistDisplayName ? (
+                        <>
+                        <p>{artwork.title}</p>
+                          <p>
+                            <em>{artwork.artistDisplayName}</em>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                      <p>{artwork.title}</p>
+                          <p>
+                              <em>Artist unknown, {artwork.culture}</em>
+                          </p>
+                        </>
+                      )}
+
+                      <img
+                        alt={artwork.medium}
+                        src={artwork.primaryImageSmall}
+                        width="200"
+                      />
+                    </>
+                  );
+              })
+                  
+              ):
+              
+              (
           <>
             <p>
               <em>No results currently archived about LINE 116: {input}</em>
