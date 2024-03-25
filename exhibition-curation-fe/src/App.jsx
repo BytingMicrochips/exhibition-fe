@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import  loadingGif  from "./assets/loadingGif.gif";
 
 function App() {
   const [input, setInput] = useState("");
@@ -7,7 +8,8 @@ function App() {
   const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
-  
+  const [isLoading, setIsLoading] = useState(false);
+
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
   
@@ -20,12 +22,15 @@ function App() {
     const fullRequest = `${apiSelector}${input}`;
     if (apiSelector === chicagoArtUrl){
       const result = await fetch(`${fullRequest}&fields=id,title,thumbnail,image_id`);
+          setIsLoading(true);
       result.json().then((jsonResponse) => {
         setResults(jsonResponse);
+          setIsLoading(false);
       });
     }
     if (apiSelector === metMuseumUrl) {
       const result = await fetch(`${fullRequest}`);
+        setIsLoading(true);
       result.json().then((jsonResponse) => {
         setMetIdList(jsonResponse.objectIDs);
         setMetTotal(metIdList.length);
@@ -57,6 +62,7 @@ function App() {
             fetchMet(counter);
           } else {
             setResults(allArtworks);
+            setIsLoading(false);
             loadTen = 0;
           }
       })
@@ -68,7 +74,6 @@ function App() {
   };
 
   const handleSearch = (e) => {
-    setSearchMade(true)
     fetchResults();
   
   };
@@ -102,6 +107,24 @@ function App() {
         </select>
         <button onClick={handleSearch}>Search collections</button>
 
+        {isLoading ? (
+          <>
+            <img alt="loading results" src={loadingGif} width="250" />
+          </>
+        ) : (
+          <></>
+        )}
+
+        {metIdList.length > 0 ? (
+          <>
+            <p>
+              <em>{metIdList.length} results found!</em>
+            </p>
+          </>
+        ) : (
+          <></>
+        )}
+
         {results.results ? (
           input === "" ? (
             <></>
@@ -125,9 +148,7 @@ function App() {
           )
         ) : results.data ? (
           <>
-            <p>
-              {results.pagination.total} results from chicago art institute
-            </p>
+            <p>{results.pagination.total} results from chicago art institute</p>
 
             {results.data.map((artwork) => {
               return (
@@ -144,51 +165,45 @@ function App() {
           </>
         ) : input === "" ? (
           <></>
-            ) :
-              results.length > 0 ? (
-                
-                
-                results.map((artwork) => {
-                  return (
-                    <>
-                      {artwork.artistDisplayName ? (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              {artwork.artistDisplayName},{" "}
-                              { artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`
-                              }
-                            </em>
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              Artist unknown,{" "}
-                              { artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`}
-                            </em>
-                          </p>
-                        </>
-                      )}
+        ) : results.length > 0 ? (
+          results.map((artwork) => {
+            return (
+              <>
+                {artwork.artistDisplayName ? (
+                  <>
+                    <p>{artwork.title}</p>
+                    <p>
+                      <em>
+                        {artwork.artistDisplayName},{" "}
+                        {artwork.culture ||
+                          artwork.country ||
+                          ` department of ${artwork.department}`}
+                      </em>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p>{artwork.title}</p>
+                    <p>
+                      <em>
+                        Artist unknown,{" "}
+                        {artwork.culture ||
+                          artwork.country ||
+                          ` department of ${artwork.department}`}
+                      </em>
+                    </p>
+                  </>
+                )}
 
-                      <img
-                        alt={artwork.medium}
-                        src={artwork.primaryImageSmall}
-                        width="200"
-                      />
-                    </>
-                  );
-              })
-                  
-              ) :   
-              (
+                <img
+                  alt={artwork.medium}
+                  src={artwork.primaryImageSmall}
+                  width="200"
+                />
+              </>
+            );
+          })
+        ) : (
           <>
             <p>
               <em>No results currently archived about LINE 116: {input}</em>
