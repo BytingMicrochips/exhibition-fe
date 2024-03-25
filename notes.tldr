@@ -66,9 +66,9 @@
 		{
 			"id": "pointer:pointer",
 			"typeName": "pointer",
-			"x": 382.8723745371332,
-			"y": 262.96477956785037,
-			"lastActivityTimestamp": 1711368789870,
+			"x": 855.6984668240785,
+			"y": 503.37442121895526,
+			"lastActivityTimestamp": 1711377119176,
 			"meta": {}
 		},
 		{
@@ -89,10 +89,8 @@
 		{
 			"editingShapeId": null,
 			"croppingShapeId": null,
-			"selectedShapeIds": [
-				"shape:B5eLzyvsCZ3zQnGjCAANX"
-			],
-			"hoveredShapeId": "shape:ahUWja5k8pQxl37Qfy2qh",
+			"selectedShapeIds": [],
+			"hoveredShapeId": null,
 			"erasingShapeIds": [],
 			"hintingShapeIds": [],
 			"focusedGroupId": null,
@@ -122,7 +120,7 @@
 				"x": 0,
 				"y": 0,
 				"w": 1204.861083984375,
-				"h": 619.2129516601562
+				"h": 505.2083435058594
 			},
 			"insets": [
 				false,
@@ -140,7 +138,7 @@
 			"isFocused": true,
 			"devicePixelRatio": 1.7280000448226929,
 			"isCoarsePointer": false,
-			"isHoveringCanvas": false,
+			"isHoveringCanvas": true,
 			"openMenus": [],
 			"isChangingStyle": false,
 			"isReadonly": false,

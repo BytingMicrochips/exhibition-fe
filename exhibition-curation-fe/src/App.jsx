@@ -9,6 +9,7 @@ function App() {
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [chicagoPage, setChicagoPage] = useState(1);
 
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
@@ -21,7 +22,7 @@ function App() {
   const fetchResults = async () => {
     const fullRequest = `${apiSelector}${input}`;
     if (apiSelector === chicagoArtUrl){
-      const result = await fetch(`${fullRequest}&fields=id,title,thumbnail,image_id`);
+      const result = await fetch(`${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`);
           setIsLoading(true);
       result.json().then((jsonResponse) => {
         setResults(jsonResponse);
@@ -42,7 +43,13 @@ function App() {
     if (metIdList.length > 0) {
     fetchMet(counter)
   }
-},[metIdList])
+  }, [metIdList])
+  
+  useEffect(() => {
+    if (input !== '') {
+      fetchResults();
+    }
+  }, [chicagoPage])
 
   const fetchMet = async (counter) => {
         let currentArtworkId = metIdList[counter];
@@ -83,7 +90,6 @@ function App() {
 
   const handleSearch = (e) => {
     fetchResults();
-  
   };
 
   const handleCollection = (e) => {
@@ -95,6 +101,18 @@ function App() {
         setApiSelector(metMuseumUrl);
     }
   };
+
+  const handleNextPageC = () => {
+    let currentPage = chicagoPage;
+    setChicagoPage(currentPage + 1);
+  }
+
+  const handlePrevPageC = () => {
+    let currentPage = chicagoPage;
+    if (currentPage - 1 > 0) {
+      setChicagoPage(currentPage - 1);    
+    }
+  }
 
   return (
     <>
@@ -156,19 +174,26 @@ function App() {
           )
         ) : results.data ? (
           <>
-            <p>{results.pagination.total} results from chicago art institute</p>
+              <p>{results.pagination.total} results from chicago art institute</p>
 
-            {results.data.map((artwork) => {
-              return (
-                <>
-                  <p>{artwork.title}</p>
-                  <img
-                    alt={artwork.thumbnail.alt_text}
-                    src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                    width="200"
-                  />
-                </>
-              );
+              {chicagoPage === 1 ? (<></>) : (<>
+                <button onClick={handlePrevPageC}>Show previous</button>
+              </>)}
+              
+              <button onClick={handleNextPageC}>Show more</button>
+              {results.data.map((artwork) => {
+                if (artwork.thumbnail) {
+                  return (
+                    <>
+                      <p>{artwork.title}</p>
+                      <img
+                        alt={artwork.thumbnail.alt_text}
+                        src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                        width="200"
+                      />
+                    </>
+                  );
+              }
             })}
           </>
         ) : input === "" ? (
@@ -221,6 +246,8 @@ function App() {
       </div>
     </>
   );
+        console.log("🚀 ~ App ~ results.results:", results.results)
+        console.log("🚀 ~ App ~ results.results:", results.results)
 }
 
 export default App;
