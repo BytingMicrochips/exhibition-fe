@@ -4,7 +4,6 @@ import "./App.css";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
@@ -69,6 +68,7 @@ function App() {
   };
 
   const handleSearch = (e) => {
+    setSearchMade(true)
     fetchResults();
   
   };
@@ -150,19 +150,30 @@ function App() {
                 
                 results.map((artwork) => {
                   return (
-                <>
+                    <>
                       {artwork.artistDisplayName ? (
                         <>
-                        <p>{artwork.title}</p>
+                          <p>{artwork.title}</p>
                           <p>
-                            <em>{artwork.artistDisplayName}</em>
+                            <em>
+                              {artwork.artistDisplayName},{" "}
+                              { artwork.culture ||
+                                artwork.country ||
+                                ` department of ${artwork.department}`
+                              }
+                            </em>
                           </p>
                         </>
                       ) : (
                         <>
-                      <p>{artwork.title}</p>
+                          <p>{artwork.title}</p>
                           <p>
-                              <em>Artist unknown, {artwork.culture}</em>
+                            <em>
+                              Artist unknown,{" "}
+                              { artwork.culture ||
+                                artwork.country ||
+                                ` department of ${artwork.department}`}
+                            </em>
                           </p>
                         </>
                       )}
@@ -176,8 +187,7 @@ function App() {
                   );
               })
                   
-              ):
-              
+              ) :   
               (
           <>
             <p>
