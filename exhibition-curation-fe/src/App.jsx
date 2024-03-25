@@ -32,41 +32,49 @@ function App() {
       const result = await fetch(`${fullRequest}`);
         setIsLoading(true);
       result.json().then((jsonResponse) => {
-        setMetIdList(jsonResponse.objectIDs);
-        setMetTotal(metIdList.length);
-        fetchMet(counter);
+          setMetIdList(jsonResponse.objectIDs);
+          setMetTotal(jsonResponse.total); 
       })
     }
   };
 
-  const fetchMet = async (counter) => {
-    let currentArtworkId = metIdList[counter];
+  useEffect(() => {
+    if (metIdList.length > 0) {
+    fetchMet(counter)
+  }
+},[metIdList])
 
-    if (typeof currentArtworkId === "number") {
-      const result = await fetch(
-        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
-      );
-      result.json().then((jsonResponse) => {
-        if (
-          jsonResponse.hasOwnProperty("message") ||
-          jsonResponse.primaryImageSmall === ''
-        ) {
-          counter++;
-        } else {
-          allArtworks.push(jsonResponse);
-          counter++;
-          loadTen++;
+  const fetchMet = async (counter) => {
+        let currentArtworkId = metIdList[counter];
+
+        if (typeof currentArtworkId === "number") {
+          const result = await fetch(
+            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
+          );
+          result
+            .json()
+            .then((jsonResponse) => {
+              if (
+                jsonResponse.hasOwnProperty("message") ||
+                jsonResponse.primaryImageSmall === ""
+              ) {
+                counter++;
+              } else {
+                allArtworks.push(jsonResponse);
+                counter++;
+                loadTen++;
+              }
+            })
+            .then(() => {
+              if (counter < metIdList.length - 1 && loadTen < 10) {
+                fetchMet(counter);
+              } else {
+                setResults(allArtworks);
+                setIsLoading(false);
+                loadTen = 0;
+              }
+            });
         }
-      }).then(() => {
-          if (counter < metIdList.length - 1 && loadTen < 10) {
-            fetchMet(counter);
-          } else {
-            setResults(allArtworks);
-            setIsLoading(false);
-            loadTen = 0;
-          }
-      })
-    }
   };
 
   const handleInput = (e) => {
