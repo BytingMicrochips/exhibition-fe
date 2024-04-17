@@ -1,42 +1,97 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.titleCard {
+  background-color: rgb(191, 105, 19);
+  margin-bottom: 0%;
+  padding-bottom: 0%;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.titleCard h1 {
+  margin-bottom: 10px;
+  font-size: 35px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.subheadingCard {
+  padding: 0.5em;
+  background-color: #555555;
+  margin: 0em;
 }
 
-.card {
-  padding: 2em;
+.subheadingCard p {
+  font-size: 16px;
+  margin: 0%;
 }
 
-.read-the-docs {
-  color: #888;
+.searchCard {
+background-color: rgb(43, 165, 165);
+}
+
+.searchCard h3 {
+  font-size: 18px;
+  margin: 0%;
+}
+
+.inputSelect {
+  margin-bottom: 8px;
+}
+.inputSelect input, .inputSelect select {
+  padding: 0.6em;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.searchButton {
+  background-color: rgb(177, 84, 84);
+  padding: 4px;
+}
+
+.resultsFound {
+  background-color: rgb(237, 206, 51);
+}
+
+.artworkCard {
+  background-color: rgb(126, 125, 125);
+  display:flex;
+  width: 98%;
+  margin: auto;
+  margin-top: 1em;
+  padding: 2px;
+}
+
+.artworkCardHeader {
+  background-color: rgb(164, 86, 176);
+  margin: auto;
+  max-width: 45%;
+}
+
+.artworkCardImg {
+  background-color: rgb(183, 43, 238);
+  height: 200px;
+  width: 200px;
+}
+
+.artworkCardImg img{
+  height: 196px;
+  width: 196px;
+  object-fit: contain;
+  overflow: hidden;
+  font-size: smaller;
+  display: flex;
+  justify-content: center;
+  margin: 2px;
+}
+
+.prevNextButtons {
+  background-color: rgb(13, 225, 24);
+  display: flex;
+  justify-content: space-between;
+  padding: 2px;
+}
+
+.prevNextButtons button {
+  margin: auto;
 }

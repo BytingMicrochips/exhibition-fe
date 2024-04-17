@@ -222,23 +222,29 @@ function App() {
 
   return (
     <>
-      <h1>Artwork & artifacts online</h1>
-      <div className="card">
-        <h2>Explore museum and gallery collections</h2>
+      <div className="titleCard">
+        <h1>Artwork & artifacts explorer</h1>
+      </div>
+      <div className="subheadingCard">
         <p>
           Results are sourced from the Art Institute of Chicago and Metropolitan
           Museum NYC collections
         </p>
       </div>
       <div>
-        <h3>Input search criteria</h3>
-        <input onChange={handleInput}></input>
-        <select onChange={handleCollection}>
-          <option>Art Institute of Chicago</option>
-          <option>Metropolitan Museum NYC</option>
-        </select>
-        <button onClick={handleSearch}>Search collections</button>
-
+        <div className="searchCard">
+          <h3>Input search criteria:</h3>
+          <div className="inputSelect">
+            <input onChange={handleInput}></input>
+            <select onChange={handleCollection}>
+              <option>Art Institute of Chicago</option>
+              <option>Metropolitan Museum NYC</option>
+            </select>
+          </div>
+          <div className="searchButton">
+            <button onClick={handleSearch}>Search collections!</button>
+          </div>
+        </div>
         {isLoading ? (
           <>
             <img alt="loading results" src={loadingGif} width="250" />
@@ -249,9 +255,11 @@ function App() {
 
         {metIdList.length > 0 && isLoading === false ? (
           <>
-            <p>
-              <em>{metIdList.length} results found!</em>
-            </p>
+            <div className="resultsFound">
+              <p>
+                <em>{metIdList.length} results found!</em>
+              </p>
+            </div>
           </>
         ) : (
           <></>
@@ -261,10 +269,12 @@ function App() {
           input === "" ? (
             <></>
           ) : results.count && results.count != 0 && isLoading === false ? (
-            <>
+              <>
+            <div className="resultsFound">
               <p>
                 <em>{results.count} results found!</em>
-              </p>
+                  </p>
+            </div>
               {results.results.map((item) => (
                 <>
                   <p> {item.name}</p>
@@ -274,7 +284,7 @@ function App() {
           ) : (
             <>
               <p>
-                <em>No results currently archived about: {input}</em>
+                <em>No results currently archived about: {lastSearch}</em>
               </p>
             </>
           )
@@ -288,30 +298,41 @@ function App() {
               </p>
             </>
           ) : (
-            <>
+                  <>
+            <div className="resultsFound">    
               <p>
                 <em>{results.pagination.total} results found!</em>
-              </p>
+                      </p>
+            </div>
+              <div className="prevNextButtons">
+                {chicagoPage === 1 ? (
+                  <></>
+                ) : (
+                  <>
+                    <button onClick={handlePrevPageC}>Previous results</button>
+                  </>
+                )}
 
-              {chicagoPage === 1 ? (
-                <></>
-              ) : (
-                <>
-                  <button onClick={handlePrevPageC}>Previous results</button>
-                </>
-              )}
-
-              <button onClick={handleNextPageC}>Next results</button>
+                <button onClick={handleNextPageC}>Next results</button>
+              </div>
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
                   return (
                     <>
-                      <p>{artwork.title}</p>
-                      <img
-                        alt={artwork.thumbnail.alt_text}
-                        src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                        width="200"
-                      />
+                      <div className="artworkCard">
+                        <div className="artworkCardHeader">
+                          <p>{artwork.title}</p>
+                        </div>
+                        <div className="artworkCardImg">
+                          <div className="centeredImg">
+                            <img
+                              alt={artwork.thumbnail.alt_text}
+                              src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                              width="200"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </>
                   );
                 }
@@ -322,50 +343,57 @@ function App() {
           <></>
         ) : results.length > 0 ? (
           <>
-            {metPrevious.length <= 10 ||
-            metPrevious[0] === results[0].objectID ? (
-              <></>
-            ) : (
-              <>
-                <button onClick={handlePrevPageM}>Previous results</button>
-              </>
-            )}
-            <button onClick={handleNextPageM}>Next results</button>
+            <div className="prevNextButtons">
+              {metPrevious.length <= 10 ||
+              metPrevious[0] === results[0].objectID ? (
+                <></>
+              ) : (
+                <>
+                  <button onClick={handlePrevPageM}>Previous results</button>
+                </>
+              )}
+              <button onClick={handleNextPageM}>Next results</button>
+            </div>
 
             {results.map((artwork) => {
               return (
                 <>
-                  {artwork.artistDisplayName ? (
-                    <>
-                      <p>{artwork.title}</p>
-                      <p>
-                        <em>
-                          {artwork.artistDisplayName},{" "}
-                          {artwork.culture ||
-                            artwork.country ||
-                            ` department of ${artwork.department}`}
-                        </em>
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p>{artwork.title}</p>
-                      <p>
-                        <em>
-                          Artist unknown,{" "}
-                          {artwork.culture ||
-                            artwork.country ||
-                            ` department of ${artwork.department}`}
-                        </em>
-                      </p>
-                    </>
-                  )}
-
-                  <img
-                    alt={artwork.medium}
-                    src={artwork.primaryImageSmall}
-                    width="200"
-                  />
+                  <div className="artworkCard">
+                    <div className="artworkCardHeader">
+                      {artwork.artistDisplayName ? (
+                        <>
+                          <p>{artwork.title}</p>
+                          <p>
+                            <em>
+                              {artwork.artistDisplayName},{" "}
+                              {artwork.culture ||
+                                artwork.country ||
+                                ` department of ${artwork.department}`}
+                            </em>
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p>{artwork.title}</p>
+                          <p>
+                            <em>
+                              Artist unknown,{" "}
+                              {artwork.culture ||
+                                artwork.country ||
+                                ` department of ${artwork.department}`}
+                            </em>
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    <div className="artworkCardImg">
+                      <img
+                        alt={artwork.medium}
+                        src={artwork.primaryImageSmall}
+                        width="200"
+                      />
+                    </div>
+                  </div>
                 </>
               );
             })}
