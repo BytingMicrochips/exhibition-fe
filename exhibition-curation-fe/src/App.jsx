@@ -12,8 +12,9 @@ function App() {
   const [chicagoPage, setChicagoPage] = useState(1);
   const [metIndex, setMetIndex] = useState(0);
   const [metPrevious, setMetPrevious] = useState([]);
-  console.log("🚀 ~ App ~ metPrevious[0]:", metPrevious[0])
   const [loadMetPrev, setLoadMetPrev] = useState(false);
+  const [searchMade, setSearchMade] = useState(false);
+  const [lastSearch, setLastSearch] = useState('');
 
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
@@ -23,22 +24,35 @@ function App() {
   let loadTen = 0;
 
   const fetchResults = async () => {
+    const emptyMet = [];
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
+    
     if (apiSelector === chicagoArtUrl) {
+      setMetIdList(emptyMet);
+      setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-      );
-      result.json().then((jsonResponse) => {
-        setResults(jsonResponse);
-        setIsLoading(false);
-      });
-    }
-    if (apiSelector === metMuseumUrl) {
-      const result = await fetch(`${fullRequest}`);
-      result.json().then((jsonResponse) => {
-        setMetIdList(jsonResponse.objectIDs);
-        setMetTotal(jsonResponse.total);
+        );
+        result.json().then((jsonResponse) => {
+          setResults(jsonResponse);
+          setIsLoading(false);
+          setSearchMade(true);
+        });
+      }
+      
+      if (apiSelector === metMuseumUrl) {
+        const result = await fetch(`${fullRequest}`);
+        result.json().then((jsonResponse) => {
+          if (jsonResponse.total > 0) {
+            setMetIdList(jsonResponse.objectIDs);
+            setMetTotal(jsonResponse.total);
+          } else {
+          setMetIdList(emptyMet);
+          setMetTotal(jsonResponse.total);
+          setIsLoading(false);
+          setSearchMade(true);
+        }
       });
     }
   };
@@ -46,6 +60,9 @@ function App() {
   useEffect(() => {
     if (metIdList.length > 0) {
       fetchMet(counter);
+    } else {
+      const emptyResults = [];
+      setResults(emptyResults);
     }
   }, [metIdList]);
 
@@ -98,6 +115,7 @@ function App() {
   };
 
   const handleSearch = (e) => {
+    setLastSearch(input)
     fetchResults();
   };
 
@@ -229,7 +247,7 @@ function App() {
           <></>
         )}
 
-        {metIdList.length > 0 ? (
+        {metIdList.length > 0 && isLoading === false ? (
           <>
             <p>
               <em>{metIdList.length} results found!</em>
@@ -242,7 +260,7 @@ function App() {
         {results.results ? (
           input === "" ? (
             <></>
-          ) : results.count && results.count != 0 ? (
+          ) : results.count && results.count != 0 && isLoading === false ? (
             <>
               <p>
                 <em>{results.count} results found!</em>
@@ -256,38 +274,50 @@ function App() {
           ) : (
             <>
               <p>
-                <em>No results currently archived about LINE 86: {input}</em>
+                <em>No results currently archived about: {input}</em>
               </p>
             </>
           )
         ) : results.data ? (
-          <>
-            <p>{results.pagination.total} results from chicago art institute</p>
+          isLoading === true ? (
+            <></>
+          ) : results.pagination.total === 0 ? (
+            <>
+              <p>
+                <em>No results currently archived about: {lastSearch}</em>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                <em>{results.pagination.total} results found!</em>
+              </p>
 
-            {chicagoPage === 1 ? (
-              <></>
-            ) : (
-              <>
-                <button onClick={handlePrevPageC}>Previous results</button>
-              </>
-            )}
+              {chicagoPage === 1 ? (
+                <></>
+              ) : (
+                <>
+                  <button onClick={handlePrevPageC}>Previous results</button>
+                </>
+              )}
 
-            <button onClick={handleNextPageC}>Next results</button>
-            {results.data.map((artwork) => {
-              if (artwork.thumbnail) {
-                return (
-                  <>
-                    <p>{artwork.title}</p>
-                    <img
-                      alt={artwork.thumbnail.alt_text}
-                      src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                      width="200"
-                    />
-                  </>
-                );
-              }
-            })}
-          </>
+              <button onClick={handleNextPageC}>Next results</button>
+              {results.data.map((artwork) => {
+                if (artwork.thumbnail) {
+                  return (
+                    <>
+                      <p>{artwork.title}</p>
+                      <img
+                        alt={artwork.thumbnail.alt_text}
+                        src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                        width="200"
+                      />
+                    </>
+                  );
+                }
+              })}
+            </>
+          )
         ) : input === "" ? (
           <></>
         ) : results.length > 0 ? (
@@ -340,12 +370,14 @@ function App() {
               );
             })}
           </>
-        ) : (
+        ) : searchMade === true ? (
           <>
             <p>
-              <em>No results currently archived about LINE 116: {input}</em>
+              <em>No results currently archived about: {lastSearch}</em>
             </p>
           </>
+        ) : (
+          <></>
         )}
       </div>
     </>
