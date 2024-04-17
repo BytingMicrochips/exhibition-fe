@@ -14,6 +14,7 @@ function App() {
   const [metPrevious, setMetPrevious] = useState([]);
   const [loadMetPrev, setLoadMetPrev] = useState(false);
   const [searchMade, setSearchMade] = useState(false);
+  const [lastSearch, setLastSearch] = useState('');
 
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
@@ -114,6 +115,7 @@ function App() {
   };
 
   const handleSearch = (e) => {
+    setLastSearch(input)
     fetchResults();
   };
 
@@ -282,7 +284,7 @@ function App() {
           ) : results.pagination.total === 0 ? (
             <>
               <p>
-                <em>No results currently archived about: {input}</em>
+                <em>No results currently archived about: {lastSearch}</em>
               </p>
             </>
           ) : (
@@ -368,13 +370,14 @@ function App() {
               );
             })}
           </>
-              ) : (
-                  searchMade === true? (<>
+        ) : searchMade === true ? (
+          <>
             <p>
-              <em>No results currently archived about: {input}</em>
+              <em>No results currently archived about: {lastSearch}</em>
             </p>
-          </>):(<></>)
-
+          </>
+        ) : (
+          <></>
         )}
       </div>
     </>
