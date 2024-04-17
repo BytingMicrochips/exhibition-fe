@@ -36,13 +36,11 @@ background-color: rgb(43, 165, 165);
   margin: 0%;
 }
 
-.inputSelect {
-  margin-bottom: 8px;
-}
 .inputSelect input, .inputSelect select {
   padding: 0.6em;
   margin-right: 5px;
   margin-left: 5px;
+  margin-bottom: 7px;
 }
 .searchButton {
   background-color: rgb(177, 84, 84);
