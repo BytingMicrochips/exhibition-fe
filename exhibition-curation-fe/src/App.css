@@ -120,3 +120,16 @@ top: -5px;
   height: 50px;
   width: 50px;
 }
+
+.detailHeadings {
+background-color: aquamarine;
+margin-bottom: 5px;
+}
+.detailDescr {
+  background-color: blueviolet;
+}
+
+.detailDescr p {
+  margin: 0%;
+width: fit-content;
+}

@@ -383,38 +383,43 @@ function App() {
                         <>
                           {fullDetails.length != 0 ? (
                             <div className="fullDetails">
-                              <button>
+                              <button
+                                onClick={() => handleChicInfo(artwork.id)}
+                              >
                                 {isSelected === artwork.id ? (
                                   <>
-                                    <p>
-                                      {`Artist: ${fullDetails.data.artist_title}` ||
-                                        "Artist unknown"}
-                                    </p>
-                                    <p>
-                                      {fullDetails.data.date_display ||
-                                        fullDetails.data.date_end ||
-                                        fullDetails.data.date_start}
-                                      ,{" "}
-                                      {fullDetails.data.medium_display ||
-                                        fullDetails.data.classification_title}
-                                    </p>
-
-                                    {fullDetails.data.place_of_origin !=
-                                    null ? (
-                                      <>
-                                        <p>
-                                          {fullDetails.data.place_of_origin}
-                                        </p>
-                                      </>
-                                    ) : (
-                                      <></>
-                                    )}
+                                    <div className="detailHeadings">
+                                      <p>
+                                        {`Artist: ${fullDetails.data.artist_title}` ||
+                                          "Artist unknown"}
+                                      </p>
+                                      <p>
+                                        {fullDetails.data.date_display ||
+                                          fullDetails.data.date_end ||
+                                          fullDetails.data.date_start}
+                                      </p>
+                                      <p>
+                                        {fullDetails.data.medium_display ||
+                                          fullDetails.data.classification_title}
+                                      </p>
+                                      {fullDetails.data.place_of_origin !=
+                                      null ? (
+                                        <>
+                                          <p>
+                                            {fullDetails.data.place_of_origin}
+                                          </p>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </div>
 
                                     {description === "" ? (
                                       <></>
                                     ) : (
                                       <>
                                         <div
+                                          className="detailDescr"
                                           dangerouslySetInnerHTML={{
                                             __html: description,
                                           }}
