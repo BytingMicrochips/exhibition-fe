@@ -26,6 +26,9 @@ function App() {
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
     if (apiSelector === chicagoArtUrl) {
+      const emptyMet = [];
+      setMetIdList(emptyMet);
+      setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
       );
@@ -37,8 +40,12 @@ function App() {
     if (apiSelector === metMuseumUrl) {
       const result = await fetch(`${fullRequest}`);
       result.json().then((jsonResponse) => {
-        setMetIdList(jsonResponse.objectIDs);
-        setMetTotal(jsonResponse.total);
+        if (jsonResponse.total > 0) {
+          setMetIdList(jsonResponse.objectIDs);
+          setMetTotal(jsonResponse.total);
+        } else {
+          setIsLoading(false);
+        }
       });
     }
   };
@@ -229,7 +236,7 @@ function App() {
           <></>
         )}
 
-        {metIdList.length > 0 ? (
+        {metIdList.length > 0 && isLoading === false ? (
           <>
             <p>
               <em>{metIdList.length} results found!</em>
@@ -242,7 +249,7 @@ function App() {
         {results.results ? (
           input === "" ? (
             <></>
-          ) : results.count && results.count != 0 ? (
+          ) : results.count && results.count != 0 && isLoading === false ? (
             <>
               <p>
                 <em>{results.count} results found!</em>
@@ -256,38 +263,50 @@ function App() {
           ) : (
             <>
               <p>
-                <em>No results currently archived about LINE 86: {input}</em>
+                <em>No results currently archived about LINE 256: {input}</em>
               </p>
             </>
           )
         ) : results.data ? (
-          <>
-            <p>{results.pagination.total} results from chicago art institute</p>
+          isLoading === true ? (
+            <></>
+          ) : results.pagination.total === 0 ? (
+            <>
+              <p>
+                <em>No results currently archived about LINE 270: {input}</em>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                {results.pagination.total} results from chicago art institute
+              </p>
 
-            {chicagoPage === 1 ? (
-              <></>
-            ) : (
-              <>
-                <button onClick={handlePrevPageC}>Previous results</button>
-              </>
-            )}
+              {chicagoPage === 1 ? (
+                <></>
+              ) : (
+                <>
+                  <button onClick={handlePrevPageC}>Previous results</button>
+                </>
+              )}
 
-            <button onClick={handleNextPageC}>Next results</button>
-            {results.data.map((artwork) => {
-              if (artwork.thumbnail) {
-                return (
-                  <>
-                    <p>{artwork.title}</p>
-                    <img
-                      alt={artwork.thumbnail.alt_text}
-                      src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                      width="200"
-                    />
-                  </>
-                );
-              }
-            })}
-          </>
+              <button onClick={handleNextPageC}>Next results</button>
+              {results.data.map((artwork) => {
+                if (artwork.thumbnail) {
+                  return (
+                    <>
+                      <p>{artwork.title}</p>
+                      <img
+                        alt={artwork.thumbnail.alt_text}
+                        src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                        width="200"
+                      />
+                    </>
+                  );
+                }
+              })}
+            </>
+          )
         ) : input === "" ? (
           <></>
         ) : results.length > 0 ? (
@@ -343,7 +362,7 @@ function App() {
         ) : (
           <>
             <p>
-              <em>No results currently archived about LINE 116: {input}</em>
+              <em>No results currently archived about LINE 346: {input}</em>
             </p>
           </>
         )}
