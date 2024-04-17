@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
+import DOMPurify from "dompurify";
 
 function App() {
   const [input, setInput] = useState("");
@@ -421,7 +422,7 @@ function App() {
                                         <div
                                           className="detailDescr"
                                           dangerouslySetInnerHTML={{
-                                            __html: description,
+                                            __html: DOMPurify.sanitize(description)
                                           }}
                                         />
                                       </>
