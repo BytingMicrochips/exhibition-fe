@@ -15,7 +15,10 @@ function App() {
   const [loadMetPrev, setLoadMetPrev] = useState(false);
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState('');
-
+  const [fullDetails, setFullDetails] = useState([]);
+  const [isSelected, setIsSelected] = useState("");
+  const [description, setDescription] = useState("");
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
 
@@ -33,21 +36,21 @@ function App() {
       setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-        );
-        result.json().then((jsonResponse) => {
-          setResults(jsonResponse);
-          setIsLoading(false);
-          setSearchMade(true);
-        });
-      }
+      );
+      result.json().then((jsonResponse) => {
+        setResults(jsonResponse);
+        setIsLoading(false);
+        setSearchMade(true);
+      });
+    }
       
-      if (apiSelector === metMuseumUrl) {
-        const result = await fetch(`${fullRequest}`);
-        result.json().then((jsonResponse) => {
-          if (jsonResponse.total > 0) {
-            setMetIdList(jsonResponse.objectIDs);
-            setMetTotal(jsonResponse.total);
-          } else {
+    if (apiSelector === metMuseumUrl) {
+      const result = await fetch(`${fullRequest}`);
+      result.json().then((jsonResponse) => {
+        if (jsonResponse.total > 0) {
+          setMetIdList(jsonResponse.objectIDs);
+          setMetTotal(jsonResponse.total);
+        } else {
           setMetIdList(emptyMet);
           setMetTotal(jsonResponse.total);
           setIsLoading(false);
@@ -161,7 +164,7 @@ function App() {
 
   useEffect(() => {
     if (loadMetPrev === true) {
-    allArtworks.length = 0;
+      allArtworks.length = 0;
       fetchPrevMet();
     }
   }, [loadMetPrev]);
@@ -169,7 +172,7 @@ function App() {
   let recallIndex = 0;
   const fetchPrevMet = async () => {
     const displayIndex = metPrevious.indexOf(results[0].objectID)
-  let validId = metPrevious[(displayIndex -10) + recallIndex];
+    let validId = metPrevious[(displayIndex - 10) + recallIndex];
     
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
@@ -211,14 +214,39 @@ function App() {
           setLoadMetPrev(false);
         }
       });
-}
-
+  }
 
   useEffect(() => {
     if (apiSelector === metMuseumUrl) {
       setMetPrevious([]);
     }
-  },[input])
+  }, [input])
+
+  const handleMetInfo = async (e) => {
+    console.log("handleMetInfo 223", e);
+  }
+
+  const handleChicInfo = async (id) => {
+    isSelected === id ? setIsSelected("") : setIsSelected(id);
+    console.log("handleChicInfo 227", id);
+    const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+    const fullDetails = await fetch(chicSingleArt + id);
+    fullDetails
+      .json()
+      .then((jsonResponse) => {
+        setFullDetails(jsonResponse)
+      })
+  }
+
+  useEffect(() => {
+    console.log('setting description useEffect 241')
+    if (fullDetails.data && fullDetails.data.description != null) {
+      const extractDisc = fullDetails.data.description;
+      setDescription(extractDisc);
+    } else {
+      setDescription('');
+    }
+  },[fullDetails])
 
   return (
     <>
@@ -320,19 +348,70 @@ function App() {
                   return (
                     <>
                       <div className="artworkCard">
-                        <div className="artworkCardHeader">
-                          <p>{artwork.title}</p>
-                        </div>
-                        <div className="artworkCardImg">
-                          <div className="centeredImg">
-                            <img
-                              alt={artwork.thumbnail.alt_text}
-                              src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                              width="200"
-                            />
+                        <button
+                          className="artworkButton"
+                          onClick={() => handleChicInfo(artwork.id)}
+                        >
+                          <div className="artworkCardHeader">
+                            <p>{artwork.title}</p>
                           </div>
-                        </div>
+                          <div className="artworkCardImg">
+                            <div className="centeredImg">
+                              <img
+                                alt={artwork.thumbnail.alt_text}
+                                src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                                width="200"
+                              />
+                            </div>
+                          </div>
+                        </button>
                       </div>
+                      {fullDetails.length != 0 ? (
+                        <div className="fullDetails">
+                          <button>
+                            {isSelected === artwork.id ? (
+                              <>
+                                <p>
+                                  {`Artist: ${fullDetails.data.artist_title}` ||
+                                    "Artist unknown"}
+                                </p>
+                                <p>
+                                  {fullDetails.data.date_display ||
+                                    fullDetails.data.date_end ||
+                                    fullDetails.data.date_start}
+                                  ,{" "}
+                                  {fullDetails.data.medium_display ||
+                                    fullDetails.data.classification_title}
+                                </p>
+
+                                {fullDetails.data.place_of_origin != null ? (
+                                  <>
+                                    <p>{fullDetails.data.place_of_origin}</p>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+
+                                {description === "" ? (
+                                  <></>
+                                ) : (
+                                  <>
+                                    <div
+                                      dangerouslySetInnerHTML={{
+                                        __html: description,
+                                      }}
+                                    />
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              <></>
+                            )}
+                          </button>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </>
                   );
                 }
@@ -359,40 +438,42 @@ function App() {
               return (
                 <>
                   <div className="artworkCard">
-                    <div className="artworkCardHeader">
-                      {artwork.artistDisplayName ? (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              {artwork.artistDisplayName},{" "}
-                              {artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`}
-                            </em>
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              Artist unknown,{" "}
-                              {artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`}
-                            </em>
-                          </p>
-                        </>
-                      )}
-                    </div>
-                    <div className="artworkCardImg">
-                      <img
-                        alt={artwork.medium}
-                        src={artwork.primaryImageSmall}
-                        width="200"
-                      />
-                    </div>
+                    <button className="artworkButton" onClick={handleMetInfo}>
+                      <div className="artworkCardHeader">
+                        {artwork.artistDisplayName ? (
+                          <>
+                            <p>{artwork.title}</p>
+                            <p>
+                              <em>
+                                {artwork.artistDisplayName},{" "}
+                                {artwork.culture ||
+                                  artwork.country ||
+                                  ` department of ${artwork.department}`}
+                              </em>
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p>{artwork.title}</p>
+                            <p>
+                              <em>
+                                Artist unknown,{" "}
+                                {artwork.culture ||
+                                  artwork.country ||
+                                  ` department of ${artwork.department}`}
+                              </em>
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <div className="artworkCardImg">
+                        <img
+                          alt={artwork.medium}
+                          src={artwork.primaryImageSmall}
+                          width="200"
+                        />
+                      </div>
+                    </button>
                   </div>
                 </>
               );
