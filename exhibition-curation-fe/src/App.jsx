@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
+import smallLoadingGif from "./assets/smallLoadingGif.gif";
 
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
+  const [apiSelector, setApiSelector] = useState(
+    "https://api.artic.edu/api/v1/artworks/search?q="
+  );
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -14,11 +17,11 @@ function App() {
   const [metPrevious, setMetPrevious] = useState([]);
   const [loadMetPrev, setLoadMetPrev] = useState(false);
   const [searchMade, setSearchMade] = useState(false);
-  const [lastSearch, setLastSearch] = useState('');
+  const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
 
@@ -30,7 +33,7 @@ function App() {
     const emptyMet = [];
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
-    
+
     if (apiSelector === chicagoArtUrl) {
       setMetIdList(emptyMet);
       setMetTotal(0);
@@ -43,7 +46,7 @@ function App() {
         setSearchMade(true);
       });
     }
-      
+
     if (apiSelector === metMuseumUrl) {
       const result = await fetch(`${fullRequest}`);
       result.json().then((jsonResponse) => {
@@ -118,7 +121,7 @@ function App() {
   };
 
   const handleSearch = (e) => {
-    setLastSearch(input)
+    setLastSearch(input);
     fetchResults();
   };
 
@@ -143,12 +146,12 @@ function App() {
       setChicagoPage(currentPage - 1);
     }
   };
-  
+
   const handleNextPageM = () => {
     const displayIndex = metPrevious.indexOf(results[0].objectID);
     allArtworks.length = 0;
     counter = metIndex;
-    if (displayIndex > (metPrevious.length - 11)) {
+    if (displayIndex > metPrevious.length - 11) {
       fetchMet(counter);
     } else {
       recallIndex = 0;
@@ -171,30 +174,33 @@ function App() {
 
   let recallIndex = 0;
   const fetchPrevMet = async () => {
-    const displayIndex = metPrevious.indexOf(results[0].objectID)
-    let validId = metPrevious[(displayIndex - 10) + recallIndex];
-    
+    const displayIndex = metPrevious.indexOf(results[0].objectID);
+    let validId = metPrevious[displayIndex - 10 + recallIndex];
+
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
-    )
-    result.json().then((jsonResponse) => {
-      allArtworks.push(jsonResponse);
-      recallIndex++;
-    }).then(() => {
-      if (recallIndex < 10) {
-        fetchPrevMet();
-      } else {
-        setResults(allArtworks);
-        setIsLoading(false)
-        recallIndex = 0;
-        setLoadMetPrev(false);
-      }
-    })
+    );
+    result
+      .json()
+      .then((jsonResponse) => {
+        allArtworks.push(jsonResponse);
+        recallIndex++;
+      })
+      .then(() => {
+        if (recallIndex < 10) {
+          fetchPrevMet();
+        } else {
+          setResults(allArtworks);
+          setIsLoading(false);
+          recallIndex = 0;
+          setLoadMetPrev(false);
+        }
+      });
   };
 
   const fetchNextKnown = async (displayIndex) => {
     setIsLoading(true);
-    let validId = metPrevious[(displayIndex + 10 + recallIndex)];
+    let validId = metPrevious[displayIndex + 10 + recallIndex];
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
     );
@@ -214,39 +220,39 @@ function App() {
           setLoadMetPrev(false);
         }
       });
-  }
+  };
 
   useEffect(() => {
     if (apiSelector === metMuseumUrl) {
       setMetPrevious([]);
     }
-  }, [input])
+  }, [input]);
 
   const handleMetInfo = async (e) => {
     console.log("handleMetInfo 223", e);
-  }
+  };
 
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
-    console.log("handleChicInfo 227", id);
+
+    setDetailsLoading(true);
     const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
     const fullDetails = await fetch(chicSingleArt + id);
-    fullDetails
-      .json()
-      .then((jsonResponse) => {
-        setFullDetails(jsonResponse)
-      })
-  }
+    fullDetails.json().then((jsonResponse) => {
+      setFullDetails(jsonResponse);
+    });
+  };
 
   useEffect(() => {
-    console.log('setting description useEffect 241')
     if (fullDetails.data && fullDetails.data.description != null) {
       const extractDisc = fullDetails.data.description;
       setDescription(extractDisc);
+      setDetailsLoading(false);
     } else {
-      setDescription('');
+      setDescription("");
+      setDetailsLoading(false);
     }
-  },[fullDetails])
+  }, [fullDetails]);
 
   return (
     <>
@@ -297,12 +303,12 @@ function App() {
           input === "" ? (
             <></>
           ) : results.count && results.count != 0 && isLoading === false ? (
-              <>
-            <div className="resultsFound">
-              <p>
-                <em>{results.count} results found!</em>
-                  </p>
-            </div>
+            <>
+              <div className="resultsFound">
+                <p>
+                  <em>{results.count} results found!</em>
+                </p>
+              </div>
               {results.results.map((item) => (
                 <>
                   <p> {item.name}</p>
@@ -326,12 +332,12 @@ function App() {
               </p>
             </>
           ) : (
-                  <>
-            <div className="resultsFound">    
-              <p>
-                <em>{results.pagination.total} results found!</em>
-                      </p>
-            </div>
+            <>
+              <div className="resultsFound">
+                <p>
+                  <em>{results.pagination.total} results found!</em>
+                </p>
+              </div>
               <div className="prevNextButtons">
                 {chicagoPage === 1 ? (
                   <></>
@@ -366,51 +372,65 @@ function App() {
                           </div>
                         </button>
                       </div>
-                      {fullDetails.length != 0 ? (
-                        <div className="fullDetails">
-                          <button>
-                            {isSelected === artwork.id ? (
-                              <>
-                                <p>
-                                  {`Artist: ${fullDetails.data.artist_title}` ||
-                                    "Artist unknown"}
-                                </p>
-                                <p>
-                                  {fullDetails.data.date_display ||
-                                    fullDetails.data.date_end ||
-                                    fullDetails.data.date_start}
-                                  ,{" "}
-                                  {fullDetails.data.medium_display ||
-                                    fullDetails.data.classification_title}
-                                </p>
 
-                                {fullDetails.data.place_of_origin != null ? (
-                                  <>
-                                    <p>{fullDetails.data.place_of_origin}</p>
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-
-                                {description === "" ? (
-                                  <></>
-                                ) : (
-                                  <>
-                                    <div
-                                      dangerouslySetInnerHTML={{
-                                        __html: description,
-                                      }}
-                                    />
-                                  </>
-                                )}
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </button>
-                        </div>
+                      {detailsLoading === true && isSelected === artwork.id ? (
+                        <img
+                          id="smallLoadingGif"
+                          src={smallLoadingGif}
+                          alt="details loading"
+                        />
                       ) : (
-                        <></>
+                        <>
+                          {fullDetails.length != 0 ? (
+                            <div className="fullDetails">
+                              <button>
+                                {isSelected === artwork.id ? (
+                                  <>
+                                    <p>
+                                      {`Artist: ${fullDetails.data.artist_title}` ||
+                                        "Artist unknown"}
+                                    </p>
+                                    <p>
+                                      {fullDetails.data.date_display ||
+                                        fullDetails.data.date_end ||
+                                        fullDetails.data.date_start}
+                                      ,{" "}
+                                      {fullDetails.data.medium_display ||
+                                        fullDetails.data.classification_title}
+                                    </p>
+
+                                    {fullDetails.data.place_of_origin !=
+                                    null ? (
+                                      <>
+                                        <p>
+                                          {fullDetails.data.place_of_origin}
+                                        </p>
+                                      </>
+                                    ) : (
+                                      <></>
+                                    )}
+
+                                    {description === "" ? (
+                                      <></>
+                                    ) : (
+                                      <>
+                                        <div
+                                          dangerouslySetInnerHTML={{
+                                            __html: description,
+                                          }}
+                                        />
+                                      </>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </button>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </>
                       )}
                     </>
                   );
@@ -492,6 +512,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;
