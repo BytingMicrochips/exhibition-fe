@@ -5,9 +5,7 @@ import loadingGif from "./assets/loadingGif.gif";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  const [apiSelector, setApiSelector] = useState(
-    "https://api.artic.edu/api/v1/artworks/search?q="
-  );
+  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +55,7 @@ function App() {
   }, [chicagoPage]);
 
   const fetchMet = async (counter) => {
+    setIsLoading(true);
     let currentArtworkId = metIdList[counter];
 
     if (typeof currentArtworkId === "number") {
@@ -75,10 +74,7 @@ function App() {
             allArtworks.push(jsonResponse);
             counter++;
             loadTen++;
-            if (metPrevious.length < 20) {
-              metPrevious.push(jsonResponse.objectID);
-            } else {
-              metPrevious.shift();
+            if (!metPrevious.includes(jsonResponse.objectID)) {
               metPrevious.push(jsonResponse.objectID);
             }
           }
@@ -125,11 +121,18 @@ function App() {
       setChicagoPage(currentPage - 1);
     }
   };
-
+  
   const handleNextPageM = () => {
+    const displayIndex = metPrevious.indexOf(results[0].objectID);
     allArtworks.length = 0;
     counter = metIndex;
-    fetchMet(counter);
+    if (displayIndex > (metPrevious.length - 11)) {
+      fetchMet(counter);
+    } else {
+      recallIndex = 0;
+      allArtworks.length = 0;
+      fetchNextKnown(displayIndex);
+    }
   };
 
   const handlePrevPageM = () => {
@@ -140,15 +143,15 @@ function App() {
   useEffect(() => {
     if (loadMetPrev === true) {
     allArtworks.length = 0;
-
       fetchPrevMet();
     }
   }, [loadMetPrev]);
 
   let recallIndex = 0;
-
   const fetchPrevMet = async () => {
-    let validId = metPrevious[recallIndex];
+    const displayIndex = metPrevious.indexOf(results[0].objectID)
+  let validId = metPrevious[(displayIndex -10) + recallIndex];
+    
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
     )
@@ -156,7 +159,7 @@ function App() {
       allArtworks.push(jsonResponse);
       recallIndex++;
     }).then(() => {
-      if (recallIndex < 9) {
+      if (recallIndex < 10) {
         fetchPrevMet();
       } else {
         setResults(allArtworks);
@@ -166,6 +169,31 @@ function App() {
       }
     })
   };
+
+  const fetchNextKnown = async (displayIndex) => {
+    setIsLoading(true);
+    let validId = metPrevious[(displayIndex + 10 + recallIndex)];
+    const result = await fetch(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
+    );
+    result
+      .json()
+      .then((jsonResponse) => {
+        allArtworks.push(jsonResponse);
+        recallIndex++;
+      })
+      .then(() => {
+        if (recallIndex < 10) {
+          fetchNextKnown(displayIndex);
+        } else {
+          setResults(allArtworks);
+          setIsLoading(false);
+          recallIndex = 0;
+          setLoadMetPrev(false);
+        }
+      });
+}
+
 
   useEffect(() => {
     if (apiSelector === metMuseumUrl) {
@@ -263,7 +291,7 @@ function App() {
           <></>
         ) : results.length > 0 ? (
           <>
-            {metPrevious.length === 10 ? (
+            {metPrevious.length <= 10 ? (
               <></>
             ) : (
               <>
@@ -321,5 +349,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;
