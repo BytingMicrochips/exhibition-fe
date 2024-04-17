@@ -12,6 +12,7 @@ function App() {
   const [chicagoPage, setChicagoPage] = useState(1);
   const [metIndex, setMetIndex] = useState(0);
   const [metPrevious, setMetPrevious] = useState([]);
+  console.log("🚀 ~ App ~ metPrevious[0]:", metPrevious[0])
   const [loadMetPrev, setLoadMetPrev] = useState(false);
 
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
@@ -291,7 +292,7 @@ function App() {
           <></>
         ) : results.length > 0 ? (
           <>
-            {metPrevious.length <= 10 ? (
+            {metPrevious.length <= 10 || metPrevious[0] === results[0].objectID? (
               <></>
             ) : (
               <>
