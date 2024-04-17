@@ -12,8 +12,8 @@ function App() {
   const [chicagoPage, setChicagoPage] = useState(1);
   const [metIndex, setMetIndex] = useState(0);
   const [metPrevious, setMetPrevious] = useState([]);
-  console.log("🚀 ~ App ~ metPrevious[0]:", metPrevious[0])
   const [loadMetPrev, setLoadMetPrev] = useState(false);
+  const [searchMade, setSearchMade] = useState(false);
 
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
@@ -23,28 +23,34 @@ function App() {
   let loadTen = 0;
 
   const fetchResults = async () => {
+    const emptyMet = [];
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
+    
     if (apiSelector === chicagoArtUrl) {
-      const emptyMet = [];
       setMetIdList(emptyMet);
       setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-      );
-      result.json().then((jsonResponse) => {
-        setResults(jsonResponse);
-        setIsLoading(false);
-      });
-    }
-    if (apiSelector === metMuseumUrl) {
-      const result = await fetch(`${fullRequest}`);
-      result.json().then((jsonResponse) => {
-        if (jsonResponse.total > 0) {
-          setMetIdList(jsonResponse.objectIDs);
-          setMetTotal(jsonResponse.total);
-        } else {
+        );
+        result.json().then((jsonResponse) => {
+          setResults(jsonResponse);
           setIsLoading(false);
+          setSearchMade(true);
+        });
+      }
+      
+      if (apiSelector === metMuseumUrl) {
+        const result = await fetch(`${fullRequest}`);
+        result.json().then((jsonResponse) => {
+          if (jsonResponse.total > 0) {
+            setMetIdList(jsonResponse.objectIDs);
+            setMetTotal(jsonResponse.total);
+          } else {
+          setMetIdList(emptyMet);
+          setMetTotal(jsonResponse.total);
+          setIsLoading(false);
+          setSearchMade(true);
         }
       });
     }
@@ -53,6 +59,9 @@ function App() {
   useEffect(() => {
     if (metIdList.length > 0) {
       fetchMet(counter);
+    } else {
+      const emptyResults = [];
+      setResults(emptyResults);
     }
   }, [metIdList]);
 
@@ -263,7 +272,7 @@ function App() {
           ) : (
             <>
               <p>
-                <em>No results currently archived about LINE 256: {input}</em>
+                <em>No results currently archived about: {input}</em>
               </p>
             </>
           )
@@ -273,13 +282,13 @@ function App() {
           ) : results.pagination.total === 0 ? (
             <>
               <p>
-                <em>No results currently archived about LINE 270: {input}</em>
+                <em>No results currently archived about: {input}</em>
               </p>
             </>
           ) : (
             <>
               <p>
-                {results.pagination.total} results from chicago art institute
+                <em>{results.pagination.total} results found!</em>
               </p>
 
               {chicagoPage === 1 ? (
@@ -359,12 +368,13 @@ function App() {
               );
             })}
           </>
-        ) : (
-          <>
+              ) : (
+                  searchMade === true? (<>
             <p>
-              <em>No results currently archived about LINE 346: {input}</em>
+              <em>No results currently archived about: {input}</em>
             </p>
-          </>
+          </>):(<></>)
+
         )}
       </div>
     </>
