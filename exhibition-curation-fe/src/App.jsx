@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
+import smallLoadingGif from "./assets/smallLoadingGif.gif";
 
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
+  const [apiSelector, setApiSelector] = useState(
+    "https://api.artic.edu/api/v1/artworks/search?q="
+  );
   const [metIdList, setMetIdList] = useState([]);
   const [metTotal, setMetTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -14,8 +17,11 @@ function App() {
   const [metPrevious, setMetPrevious] = useState([]);
   const [loadMetPrev, setLoadMetPrev] = useState(false);
   const [searchMade, setSearchMade] = useState(false);
-  const [lastSearch, setLastSearch] = useState('');
-
+  const [lastSearch, setLastSearch] = useState("");
+  const [fullDetails, setFullDetails] = useState([]);
+  const [isSelected, setIsSelected] = useState("");
+  const [description, setDescription] = useState("");
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
 
@@ -27,27 +33,27 @@ function App() {
     const emptyMet = [];
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
-    
+
     if (apiSelector === chicagoArtUrl) {
       setMetIdList(emptyMet);
       setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-        );
-        result.json().then((jsonResponse) => {
-          setResults(jsonResponse);
-          setIsLoading(false);
-          setSearchMade(true);
-        });
-      }
-      
-      if (apiSelector === metMuseumUrl) {
-        const result = await fetch(`${fullRequest}`);
-        result.json().then((jsonResponse) => {
-          if (jsonResponse.total > 0) {
-            setMetIdList(jsonResponse.objectIDs);
-            setMetTotal(jsonResponse.total);
-          } else {
+      );
+      result.json().then((jsonResponse) => {
+        setResults(jsonResponse);
+        setIsLoading(false);
+        setSearchMade(true);
+      });
+    }
+
+    if (apiSelector === metMuseumUrl) {
+      const result = await fetch(`${fullRequest}`);
+      result.json().then((jsonResponse) => {
+        if (jsonResponse.total > 0) {
+          setMetIdList(jsonResponse.objectIDs);
+          setMetTotal(jsonResponse.total);
+        } else {
           setMetIdList(emptyMet);
           setMetTotal(jsonResponse.total);
           setIsLoading(false);
@@ -115,7 +121,7 @@ function App() {
   };
 
   const handleSearch = (e) => {
-    setLastSearch(input)
+    setLastSearch(input);
     fetchResults();
   };
 
@@ -140,12 +146,12 @@ function App() {
       setChicagoPage(currentPage - 1);
     }
   };
-  
+
   const handleNextPageM = () => {
     const displayIndex = metPrevious.indexOf(results[0].objectID);
     allArtworks.length = 0;
     counter = metIndex;
-    if (displayIndex > (metPrevious.length - 11)) {
+    if (displayIndex > metPrevious.length - 11) {
       fetchMet(counter);
     } else {
       recallIndex = 0;
@@ -161,37 +167,40 @@ function App() {
 
   useEffect(() => {
     if (loadMetPrev === true) {
-    allArtworks.length = 0;
+      allArtworks.length = 0;
       fetchPrevMet();
     }
   }, [loadMetPrev]);
 
   let recallIndex = 0;
   const fetchPrevMet = async () => {
-    const displayIndex = metPrevious.indexOf(results[0].objectID)
-  let validId = metPrevious[(displayIndex -10) + recallIndex];
-    
+    const displayIndex = metPrevious.indexOf(results[0].objectID);
+    let validId = metPrevious[displayIndex - 10 + recallIndex];
+
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
-    )
-    result.json().then((jsonResponse) => {
-      allArtworks.push(jsonResponse);
-      recallIndex++;
-    }).then(() => {
-      if (recallIndex < 10) {
-        fetchPrevMet();
-      } else {
-        setResults(allArtworks);
-        setIsLoading(false)
-        recallIndex = 0;
-        setLoadMetPrev(false);
-      }
-    })
+    );
+    result
+      .json()
+      .then((jsonResponse) => {
+        allArtworks.push(jsonResponse);
+        recallIndex++;
+      })
+      .then(() => {
+        if (recallIndex < 10) {
+          fetchPrevMet();
+        } else {
+          setResults(allArtworks);
+          setIsLoading(false);
+          recallIndex = 0;
+          setLoadMetPrev(false);
+        }
+      });
   };
 
   const fetchNextKnown = async (displayIndex) => {
     setIsLoading(true);
-    let validId = metPrevious[(displayIndex + 10 + recallIndex)];
+    let validId = metPrevious[displayIndex + 10 + recallIndex];
     const result = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
     );
@@ -211,14 +220,39 @@ function App() {
           setLoadMetPrev(false);
         }
       });
-}
-
+  };
 
   useEffect(() => {
     if (apiSelector === metMuseumUrl) {
       setMetPrevious([]);
     }
-  },[input])
+  }, [input]);
+
+  const handleMetInfo = async (e) => {
+    console.log("handleMetInfo 223", e);
+  };
+
+  const handleChicInfo = async (id) => {
+    isSelected === id ? setIsSelected("") : setIsSelected(id);
+
+    setDetailsLoading(true);
+    const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+    const fullDetails = await fetch(chicSingleArt + id);
+    fullDetails.json().then((jsonResponse) => {
+      setFullDetails(jsonResponse);
+    });
+  };
+
+  useEffect(() => {
+    if (fullDetails.data && fullDetails.data.description != null) {
+      const extractDisc = fullDetails.data.description;
+      setDescription(extractDisc);
+      setDetailsLoading(false);
+    } else {
+      setDescription("");
+      setDetailsLoading(false);
+    }
+  }, [fullDetails]);
 
   return (
     <>
@@ -269,12 +303,12 @@ function App() {
           input === "" ? (
             <></>
           ) : results.count && results.count != 0 && isLoading === false ? (
-              <>
-            <div className="resultsFound">
-              <p>
-                <em>{results.count} results found!</em>
-                  </p>
-            </div>
+            <>
+              <div className="resultsFound">
+                <p>
+                  <em>{results.count} results found!</em>
+                </p>
+              </div>
               {results.results.map((item) => (
                 <>
                   <p> {item.name}</p>
@@ -298,12 +332,12 @@ function App() {
               </p>
             </>
           ) : (
-                  <>
-            <div className="resultsFound">    
-              <p>
-                <em>{results.pagination.total} results found!</em>
-                      </p>
-            </div>
+            <>
+              <div className="resultsFound">
+                <p>
+                  <em>{results.pagination.total} results found!</em>
+                </p>
+              </div>
               <div className="prevNextButtons">
                 {chicagoPage === 1 ? (
                   <></>
@@ -320,19 +354,89 @@ function App() {
                   return (
                     <>
                       <div className="artworkCard">
-                        <div className="artworkCardHeader">
-                          <p>{artwork.title}</p>
-                        </div>
-                        <div className="artworkCardImg">
-                          <div className="centeredImg">
-                            <img
-                              alt={artwork.thumbnail.alt_text}
-                              src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
-                              width="200"
-                            />
+                        <button
+                          className="artworkButton"
+                          onClick={() => handleChicInfo(artwork.id)}
+                        >
+                          <div className="artworkCardHeader">
+                            <p>{artwork.title}</p>
                           </div>
-                        </div>
+                          <div className="artworkCardImg">
+                            <div className="centeredImg">
+                              <img
+                                alt={artwork.thumbnail.alt_text}
+                                src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                                width="200"
+                              />
+                            </div>
+                          </div>
+                        </button>
                       </div>
+
+                      {detailsLoading === true && isSelected === artwork.id ? (
+                        <img
+                          id="smallLoadingGif"
+                          src={smallLoadingGif}
+                          alt="details loading"
+                        />
+                      ) : (
+                        <>
+                          {fullDetails.length != 0 ? (
+                            <div className="fullDetails">
+                              <button
+                                onClick={() => handleChicInfo(artwork.id)}
+                              >
+                                {isSelected === artwork.id ? (
+                                  <>
+                                    <div className="detailHeadings">
+                                      <p>
+                                        {`Artist: ${fullDetails.data.artist_title}` ||
+                                          "Artist unknown"}
+                                      </p>
+                                      <p>
+                                        {fullDetails.data.date_display ||
+                                          fullDetails.data.date_end ||
+                                          fullDetails.data.date_start}
+                                      </p>
+                                      <p>
+                                        {fullDetails.data.medium_display ||
+                                          fullDetails.data.classification_title}
+                                      </p>
+                                      {fullDetails.data.place_of_origin !=
+                                      null ? (
+                                        <>
+                                          <p>
+                                            {fullDetails.data.place_of_origin}
+                                          </p>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                    </div>
+
+                                    {description === "" ? (
+                                      <></>
+                                    ) : (
+                                      <>
+                                        <div
+                                          className="detailDescr"
+                                          dangerouslySetInnerHTML={{
+                                            __html: description,
+                                          }}
+                                        />
+                                      </>
+                                    )}
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </button>
+                            </div>
+                          ) : (
+                            <></>
+                          )}
+                        </>
+                      )}
                     </>
                   );
                 }
@@ -359,40 +463,42 @@ function App() {
               return (
                 <>
                   <div className="artworkCard">
-                    <div className="artworkCardHeader">
-                      {artwork.artistDisplayName ? (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              {artwork.artistDisplayName},{" "}
-                              {artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`}
-                            </em>
-                          </p>
-                        </>
-                      ) : (
-                        <>
-                          <p>{artwork.title}</p>
-                          <p>
-                            <em>
-                              Artist unknown,{" "}
-                              {artwork.culture ||
-                                artwork.country ||
-                                ` department of ${artwork.department}`}
-                            </em>
-                          </p>
-                        </>
-                      )}
-                    </div>
-                    <div className="artworkCardImg">
-                      <img
-                        alt={artwork.medium}
-                        src={artwork.primaryImageSmall}
-                        width="200"
-                      />
-                    </div>
+                    <button className="artworkButton" onClick={handleMetInfo}>
+                      <div className="artworkCardHeader">
+                        {artwork.artistDisplayName ? (
+                          <>
+                            <p>{artwork.title}</p>
+                            <p>
+                              <em>
+                                {artwork.artistDisplayName},{" "}
+                                {artwork.culture ||
+                                  artwork.country ||
+                                  ` department of ${artwork.department}`}
+                              </em>
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p>{artwork.title}</p>
+                            <p>
+                              <em>
+                                Artist unknown,{" "}
+                                {artwork.culture ||
+                                  artwork.country ||
+                                  ` department of ${artwork.department}`}
+                              </em>
+                            </p>
+                          </>
+                        )}
+                      </div>
+                      <div className="artworkCardImg">
+                        <img
+                          alt={artwork.medium}
+                          src={artwork.primaryImageSmall}
+                          width="200"
+                        />
+                      </div>
+                    </button>
                   </div>
                 </>
               );
@@ -411,6 +517,5 @@ function App() {
     </>
   );
 }
-
 
 export default App;

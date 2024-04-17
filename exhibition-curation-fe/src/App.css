@@ -83,6 +83,14 @@ background-color: rgb(43, 165, 165);
   margin: 2px;
 }
 
+.artworkButton {
+display: flex;
+width: 100%;
+margin: 0%;
+padding: 0%;
+background-color: rgb(255, 0, 0);
+}
+
 .prevNextButtons {
   background-color: rgb(13, 225, 24);
   display: flex;
@@ -92,4 +100,36 @@ background-color: rgb(43, 165, 165);
 
 .prevNextButtons button {
   margin: auto;
+}
+
+.fullDetails button {
+background-color: rgb(106, 233, 237);
+width: 98%;
+margin-top: -10px;
+position: relative;
+top: -5px;
+}
+
+.fullDetails p {
+  width: 60%;
+  text-align: center;
+  margin: auto;
+}
+
+#smallLoadingGif {
+  height: 50px;
+  width: 50px;
+}
+
+.detailHeadings {
+background-color: aquamarine;
+margin-bottom: 5px;
+}
+.detailDescr {
+  background-color: blueviolet;
+}
+
+.detailDescr p {
+  margin: 0%;
+width: fit-content;
 }
