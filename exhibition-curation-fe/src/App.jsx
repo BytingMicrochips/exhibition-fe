@@ -268,11 +268,11 @@ function App() {
               <></>
             ) : (
               <>
-                <button onClick={handlePrevPageC}>Show previous</button>
+                <button onClick={handlePrevPageC}>Previous results</button>
               </>
             )}
 
-            <button onClick={handleNextPageC}>Show more</button>
+            <button onClick={handleNextPageC}>Next results</button>
             {results.data.map((artwork) => {
               if (artwork.thumbnail) {
                 return (
@@ -292,7 +292,8 @@ function App() {
           <></>
         ) : results.length > 0 ? (
           <>
-            {metPrevious.length <= 10 || metPrevious[0] === results[0].objectID? (
+            {metPrevious.length <= 10 ||
+            metPrevious[0] === results[0].objectID ? (
               <></>
             ) : (
               <>
