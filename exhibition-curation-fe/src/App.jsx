@@ -20,7 +20,6 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -124,7 +123,11 @@ function App() {
 
   const handleSearch = (e) => {
     setLastSearch(input);
-    fetchResults();
+    if (chicagoPage != 1) {
+      setChicagoPage(1);
+    } else {
+      fetchResults();
+    }
   };
 
   const handleCollection = (e) => {
