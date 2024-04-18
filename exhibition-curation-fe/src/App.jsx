@@ -8,7 +8,6 @@ import DOMPurify from "dompurify";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results);
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
