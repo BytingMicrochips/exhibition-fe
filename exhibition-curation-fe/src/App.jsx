@@ -20,6 +20,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -476,7 +477,8 @@ function App() {
                                   </>
                                 ) : (
                                   <></>
-                                )}
+                                    )}
+                                    <p className="viewAt">Located at Art Institute of Chicago</p>
                               </button>
                             </div>
                           ) : (
@@ -587,6 +589,13 @@ function App() {
                           <p className="creditLine">
                             {fullDetails.creditLine ? (
                               fullDetails.creditLine
+                            ) : (
+                              <></>
+                            )}
+                            {fullDetails.repository ? (
+                              <>
+                                  <p className="viewAt">Located at {' '}{fullDetails.repository}</p>
+                              </>
                             ) : (
                               <></>
                             )}
