@@ -394,7 +394,7 @@ function App() {
                             <div className="centeredImg">
                               <img
                                 alt={artwork.thumbnail.alt_text}
-                                src={`${results.config.iiif_url}/${artwork.image_id}/full/843,/0/default.jpg`}
+                                src={`${results.config.iiif_url}/${artwork.image_id}/full/400,/0/default.jpg`}
                                 width="200"
                               />
                             </div>
