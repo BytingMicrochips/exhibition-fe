@@ -230,8 +230,6 @@ function App() {
   }, [input]);
 
   const handleMetInfo = async (id) => {
-    console.log("🚀 ~ handleMetInfo ~ id:", id)
-    console.log("🚀 ~ handleMetInfo ~ fullDetails:", fullDetails)
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     if (fullDetails.length === 0 || fullDetails.objectID != id) {
       setDetailsLoading(true);
@@ -242,15 +240,20 @@ function App() {
       });
     }    
   };
-
+  
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     setDetailsLoading(true);
-    const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
-    const fullDetails = await fetch(chicSingleArt + id);
-    fullDetails.json().then((jsonResponse) => {
-      setFullDetails(jsonResponse);
-    });
+    if (fullDetails.length === 0 || fullDetails.objectID || fullDetails.data.id != id) {
+      const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+      const fullDetails = await fetch(chicSingleArt + id);
+      fullDetails.json().then((jsonResponse) => {
+        setFullDetails(jsonResponse);
+      });
+    }
+    if (fullDetails.data.id === id) {
+      setDetailsLoading(false);
+    }
   };
 
   useEffect(() => {
