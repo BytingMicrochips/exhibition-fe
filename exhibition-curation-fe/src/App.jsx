@@ -406,7 +406,8 @@ function App() {
                         </>
                       ) : (
                         <>
-                          {fullDetails.length != 0 ? (
+                          {fullDetails.length != 0 &&
+                          isSelected === artwork.id ? (
                             <div className="fullDetails">
                               <button
                                 onClick={() => handleChicInfo(artwork.id)}
