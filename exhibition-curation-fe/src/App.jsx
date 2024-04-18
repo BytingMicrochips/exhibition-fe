@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
+import cube from "./assets/cube.png";
 import DOMPurify from "dompurify";
 
 function App() {
@@ -534,11 +535,16 @@ function App() {
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
               metPrevious[0] === results[0].objectID ? (
-                <></>
+                <button id="hidden" onClick={handlePrevPageM}>
+                  Previous results
+                </button>
               ) : (
-                <>
-                  <button onClick={handlePrevPageM}>Previous results</button>
-                </>
+                <button onClick={handlePrevPageM}>Previous results</button>
+              )}
+              {isLoading ? (
+                <img id="paginationLoading" src={smallLoadingGif} alt="results loading" />
+              ) : (
+                <img id="paginationLoading" src={cube} alt="results loaded" />
               )}
               {results.length > 9 ? (
                 <>
@@ -657,7 +663,9 @@ function App() {
                 <div className="prevNextButtons">
                   {metPrevious.length <= 10 ||
                   metPrevious[0] === results[0].objectID ? (
-                    <></>
+                    <>
+                      <button id="hidden">Previous results</button>
+                    </>
                   ) : (
                     <>
                       <button onClick={handlePrevPageM}>
@@ -667,6 +675,19 @@ function App() {
                   )}
                   {results.length > 9 ? (
                     <>
+                      {isLoading ? (
+                        <img
+                          src={smallLoadingGif}
+                          alt="results loading"
+                          id="paginationLoading"
+                        />
+                      ) : (
+                        <img
+                          src={cube}
+                          alt="results loaded"
+                          id="paginationLoading"
+                        />
+                      )}
                       <button onClick={handleNextPageM}>Next results</button>
                     </>
                   ) : (
