@@ -414,9 +414,11 @@ function App() {
                                 {isSelected === artwork.id ? (
                                   <>
                                     <div className="detailHeadings">
-                                      <p className="artistDetails">
-                                        {`Artist: ${fullDetails.data.artist_title}` ||
+                                        <p className="artistDetails">
+                                          <em>
+                                        {fullDetails.data.artist_title ||
                                           "Unidentified artist"}
+                                          </em>
                                       </p>
                                       <div className="mediumDate">
                                         <p>
@@ -428,7 +430,7 @@ function App() {
                                           {fullDetails.data.medium_display ||
                                             fullDetails.data
                                               .classification_title}
-                                        </p>
+                                          </p>
                                       </div>
                                       {fullDetails.data.place_of_origin !=
                                       null ? (
@@ -439,7 +441,7 @@ function App() {
                                         </>
                                       ) : (
                                         <></>
-                                      )}
+                                        )}
                                     </div>
 
                                     {description === "" ? (
