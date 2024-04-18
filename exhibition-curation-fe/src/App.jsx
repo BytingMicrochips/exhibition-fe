@@ -414,11 +414,11 @@ function App() {
                                 {isSelected === artwork.id ? (
                                   <>
                                     <div className="detailHeadings">
-                                        <p className="artistDetails">
-                                          <em>
-                                        {fullDetails.data.artist_title ||
-                                          "Unidentified artist"}
-                                          </em>
+                                      <p className="artistDetails">
+                                        <em>
+                                          {fullDetails.data.artist_title ||
+                                            "Unidentified artist"}
+                                        </em>
                                       </p>
                                       <div className="mediumDate">
                                         <p>
@@ -429,19 +429,44 @@ function App() {
                                         <p>
                                           {fullDetails.data.medium_display ||
                                             fullDetails.data
+                                              .artwork_type_title ||
+                                            fullDetails.data
                                               .classification_title}
-                                          </p>
+                                        </p>
                                       </div>
                                       {fullDetails.data.place_of_origin !=
                                       null ? (
                                         <>
                                           <p>
+                                            Produced in{" "}
                                             {fullDetails.data.place_of_origin}
                                           </p>
                                         </>
                                       ) : (
                                         <></>
-                                        )}
+                                      )}
+                                      {fullDetails.data.description ? (
+                                        <>
+                                          <div className="detailDescr">
+                                            <p>
+                                              {fullDetails.data.description}
+                                            </p>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
+                                      {fullDetails.data.credit_line ? (
+                                        <>
+                                          <div className="creditLine">
+                                            <p>
+                                              {fullDetails.data.credit_line}
+                                            </p>
+                                          </div>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
                                     </div>
 
                                     {description === "" ? (
