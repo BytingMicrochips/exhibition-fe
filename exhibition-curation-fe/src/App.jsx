@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
+import cube from "./assets/cube.png";
 import DOMPurify from "dompurify";
 
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
+  console.log("🚀 ~ App ~ results.length:", results.length);
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -364,10 +365,32 @@ function App() {
               </div>
               <div className="prevNextButtons">
                 {chicagoPage === 1 ? (
-                  <></>
+                  <>
+                    <button id="hidden" onClick={handlePrevPageC}>
+                      Previous results
+                    </button>
+                    <img
+                      id="paginationLoading"
+                      src={cube}
+                      alt="results loaded"
+                    />
+                  </>
                 ) : (
                   <>
                     <button onClick={handlePrevPageC}>Previous results</button>
+                    {isLoading ? (
+                      <img
+                        id="paginationLoading"
+                        src={smallLoadingGif}
+                        alt="results loading"
+                      />
+                    ) : (
+                      <img
+                        id="paginationLoading"
+                        src={cube}
+                        alt="results loaded"
+                      />
+                    )}
                   </>
                 )}
                 {results.data.length > 9 ? (
@@ -375,7 +398,11 @@ function App() {
                     <button onClick={handleNextPageC}>Next results</button>
                   </>
                 ) : (
-                  <></>
+                  <>
+                    <button id="hidden" onClick={handleNextPageC}>
+                      Next results
+                    </button>
+                  </>
                 )}
               </div>
               {results.data.map((artwork) => {
@@ -501,16 +528,39 @@ function App() {
                   );
                 }
               })}
+
               {results.data.length > 3 ? (
                 <>
                   <div className="prevNextButtons">
                     {chicagoPage === 1 ? (
-                      <></>
+                      <>
+                        <button id="hidden" onClick={handlePrevPageC}>
+                          Previous results
+                        </button>
+                        <img
+                          id="paginationLoading"
+                          src={cube}
+                          alt="results loaded"
+                        />
+                      </>
                     ) : (
                       <>
                         <button onClick={handlePrevPageC}>
                           Previous results
                         </button>
+                        {isLoading ? (
+                          <img
+                            id="paginationLoading"
+                            src={smallLoadingGif}
+                            alt="results loading"
+                          />
+                        ) : (
+                          <img
+                            id="paginationLoading"
+                            src={cube}
+                            alt="results loaded"
+                          />
+                        )}
                       </>
                     )}
                     {results.data.length > 9 ? (
@@ -518,7 +568,9 @@ function App() {
                         <button onClick={handleNextPageC}>Next results</button>
                       </>
                     ) : (
-                      <></>
+                      <button id="hidden" onClick={handleNextPageC}>
+                        Next results
+                      </button>
                     )}
                   </div>
                 </>
@@ -534,18 +586,27 @@ function App() {
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
               metPrevious[0] === results[0].objectID ? (
-                <></>
+                <button id="hidden" onClick={handlePrevPageM}>
+                  Previous results
+                </button>
               ) : (
-                <>
-                  <button onClick={handlePrevPageM}>Previous results</button>
-                </>
+                <button onClick={handlePrevPageM}>Previous results</button>
+              )}
+              {isLoading ? (
+                <img
+                  id="paginationLoading"
+                  src={smallLoadingGif}
+                  alt="results loading"
+                />
+              ) : (
+                <img id="paginationLoading" src={cube} alt="results loaded" />
               )}
               {results.length > 9 ? (
-                <>
-                  <button onClick={handleNextPageM}>Next results</button>
-                </>
+                <button onClick={handleNextPageM}>Next results</button>
               ) : (
-                <></>
+                <button id="hidden" onClick={handleNextPageM}>
+                  Next results
+                </button>
               )}
             </div>
 
@@ -657,7 +718,9 @@ function App() {
                 <div className="prevNextButtons">
                   {metPrevious.length <= 10 ||
                   metPrevious[0] === results[0].objectID ? (
-                    <></>
+                    <>
+                      <button id="hidden">Previous results</button>
+                    </>
                   ) : (
                     <>
                       <button onClick={handlePrevPageM}>
@@ -665,12 +728,32 @@ function App() {
                       </button>
                     </>
                   )}
-                  {results.length > 9 ? (
+                  {results.length >= 10 ? (
                     <>
+                      {isLoading ? (
+                        <img
+                          src={smallLoadingGif}
+                          alt="results loading"
+                          id="paginationLoading"
+                        />
+                      ) : (
+                        <img
+                          src={cube}
+                          alt="results loaded"
+                          id="paginationLoading"
+                        />
+                      )}
                       <button onClick={handleNextPageM}>Next results</button>
                     </>
                   ) : (
-                    <></>
+                    <>
+                      <img
+                        src={cube}
+                        alt="results loaded"
+                        id="paginationLoading"
+                      />
+                      <button id="hidden" onClick={handleNextPageM}>Next results</button>
+                    </>
                   )}
                 </div>
               </>
