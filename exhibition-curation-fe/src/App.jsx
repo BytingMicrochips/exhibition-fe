@@ -7,6 +7,7 @@ import DOMPurify from "dompurify";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
+  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -369,8 +370,13 @@ function App() {
                     <button onClick={handlePrevPageC}>Previous results</button>
                   </>
                 )}
-
-                <button onClick={handleNextPageC}>Next results</button>
+                {results.data.length > 9 ? (
+                  <>
+                    <button onClick={handleNextPageC}>Next results</button>
+                  </>
+                ) : (
+                  <></>
+                )}
               </div>
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
@@ -450,7 +456,7 @@ function App() {
                                       ) : (
                                         <></>
                                       )}
-                                      
+
                                       {fullDetails.data.credit_line ? (
                                         <>
                                           <div className="creditLine">
@@ -480,8 +486,10 @@ function App() {
                                   </>
                                 ) : (
                                   <></>
-                                    )}
-                                    <p className="viewAt">Located at Art Institute of Chicago</p>
+                                )}
+                                <p className="viewAt">
+                                  Located at Art Institute of Chicago
+                                </p>
                               </button>
                             </div>
                           ) : (
@@ -493,6 +501,30 @@ function App() {
                   );
                 }
               })}
+              {results.data.length > 3 ? (
+                <>
+                  <div className="prevNextButtons">
+                    {chicagoPage === 1 ? (
+                      <></>
+                    ) : (
+                      <>
+                        <button onClick={handlePrevPageC}>
+                          Previous results
+                        </button>
+                      </>
+                    )}
+                    {results.data.length > 9 ? (
+                      <>
+                        <button onClick={handleNextPageC}>Next results</button>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </>
           )
         ) : input === "" ? (
@@ -508,7 +540,13 @@ function App() {
                   <button onClick={handlePrevPageM}>Previous results</button>
                 </>
               )}
-              <button onClick={handleNextPageM}>Next results</button>
+              {results.length > 9 ? (
+                <>
+                  <button onClick={handleNextPageM}>Next results</button>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
 
             {results.map((artwork) => {
@@ -597,7 +635,9 @@ function App() {
                             )}
                             {fullDetails.repository ? (
                               <>
-                                  <p className="viewAt">Located at {' '}{fullDetails.repository}</p>
+                                <p className="viewAt">
+                                  Located at {fullDetails.repository}
+                                </p>
                               </>
                             ) : (
                               <></>
@@ -612,6 +652,31 @@ function App() {
                 </>
               );
             })}
+            {results.length > 3 ? (
+              <>
+                <div className="prevNextButtons">
+                  {metPrevious.length <= 10 ||
+                  metPrevious[0] === results[0].objectID ? (
+                    <></>
+                  ) : (
+                    <>
+                      <button onClick={handlePrevPageM}>
+                        Previous results
+                      </button>
+                    </>
+                  )}
+                  {results.length > 9 ? (
+                    <>
+                      <button onClick={handleNextPageM}>Next results</button>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
           </>
         ) : searchMade === true ? (
           <>
