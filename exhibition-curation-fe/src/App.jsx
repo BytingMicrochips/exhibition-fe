@@ -20,7 +20,6 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -231,14 +230,17 @@ function App() {
   }, [input]);
 
   const handleMetInfo = async (id) => {
+    console.log("🚀 ~ handleMetInfo ~ id:", id)
+    console.log("🚀 ~ handleMetInfo ~ fullDetails:", fullDetails)
     isSelected === id ? setIsSelected("") : setIsSelected(id);
-    setDetailsLoading(true);
-    const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
-    const fullDetails = await fetch(metSingleArt + id);
-    fullDetails.json().then((jsonResponse) => {
-      setFullDetails(jsonResponse);
-      setDetailsLoading(false);
-    });
+    if (fullDetails.length === 0 || fullDetails.objectID != id) {
+      setDetailsLoading(true);
+      const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+      const fullDetails = await fetch(metSingleArt + id);
+      fullDetails.json().then((jsonResponse) => {
+        setFullDetails(jsonResponse);
+      });
+    }    
   };
 
   const handleChicInfo = async (id) => {
@@ -261,6 +263,10 @@ function App() {
         setDescription("");
         setDetailsLoading(false);
       }
+    }
+    if (apiSelector === metMuseumUrl) {
+      setDescription("");
+      setDetailsLoading(false);
     }
   }, [fullDetails]);
 
