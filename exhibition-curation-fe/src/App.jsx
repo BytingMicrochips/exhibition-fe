@@ -343,50 +343,55 @@ function App() {
                 </p>
               </div>
               <div className="prevNextButtons">
-                {chicagoPage === 1 ? (
-                  <>
-                    <button id="hidden" onClick={handlePrevPageC}>
-                      Previous results
-                    </button>
-                    <img
-                      id="paginationLoading"
-                      src={cube}
-                      alt="results loaded"
-                    />
-                  </>
-                    ) :
-                      (
-                  <>
-                    <button onClick={handlePrevPageC}>Previous results</button>
-                    {isLoading ? (
-                      <img
-                        id="paginationLoading"
-                        src={smallLoadingGif}
-                        alt="results loading"
-                      />
-                          ) :
+                      {chicagoPage === 1 ?
                             (
-                      <img
-                        id="paginationLoading"
-                        src={cube}
-                        alt="results loaded"
-                      />
-                    )}
-                  </>
-                      )
+                          <>
+                            <button id="hidden" onClick={handlePrevPageC}>
+                              Previous results
+                            </button>
+                            <img
+                              id="paginationLoading"
+                              src={cube}
+                              alt="results loaded"
+                            />
+                          </>
+                            ) :
+                              (
+                          <>
+                            <button onClick={handlePrevPageC}>Previous results</button>
+                                  {isLoading ?
+                                    (
+                                        <img
+                                          id="paginationLoading"
+                                          src={smallLoadingGif}
+                                          alt="results loading"
+                                        />
+                                      ) :
+                                      (
+                                        <img
+                                          id="paginationLoading"
+                                          src={cube}
+                                          alt="results loaded"
+                                        />
+                                    )
+                                  }
+                          </>
+                              )
                     }
-                {results.data.length > 9 ? (
-                  <>
-                    <button onClick={handleNextPageC}>Next results</button>
-                  </>
-                    ) :
-                      (
-                  <>
-                    <button id="hidden" onClick={handleNextPageC}>
-                      Next results
-                    </button>
-                  </>
-                )}
+                  {results.data.length > 9 ?
+                        (
+                      <>
+                        <button onClick={handleNextPageC}>Next results</button>
+                      </>
+                        ) :
+                          (
+                      <>
+                        <button id="hidden" onClick={handleNextPageC}>
+                          Next results
+                        </button>
+                      </>
+                        )
+                  }
               </div>
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
@@ -515,37 +520,42 @@ function App() {
               {results.data.length > 3 ? (
                 <>
                   <div className="prevNextButtons">
-                    {chicagoPage === 1 ? (
-                      <>
-                        <button id="hidden" onClick={handlePrevPageC}>
-                          Previous results
-                        </button>
-                        <img
-                          id="paginationLoading"
-                          src={cube}
-                          alt="results loaded"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={handlePrevPageC}>
-                          Previous results
-                        </button>
-                        {isLoading ? (
-                          <img
-                            id="paginationLoading"
-                            src={smallLoadingGif}
-                            alt="results loading"
-                          />
-                        ) : (
-                          <img
-                            id="paginationLoading"
-                            src={cube}
-                            alt="results loaded"
-                          />
-                        )}
-                      </>
-                    )}
+                      {chicagoPage === 1 ?
+                              (
+                            <>
+                              <button id="hidden" onClick={handlePrevPageC}>
+                                Previous results
+                              </button>
+                              <img
+                                id="paginationLoading"
+                                src={cube}
+                                alt="results loaded"
+                              />
+                            </>
+                              ) :
+                              (
+                            <>
+                              <button onClick={handlePrevPageC}>
+                                Previous results
+                              </button>
+                                {isLoading ?
+                                    (
+                                      <img
+                                        id="paginationLoading"
+                                        src={smallLoadingGif}
+                                        alt="results loading"
+                                      />
+                                    ) : (
+                                      <img
+                                        id="paginationLoading"
+                                        src={cube}
+                                        alt="results loaded"
+                                      />
+                                    )
+                                }
+                            </>
+                              )
+                      }
                     {results.data.length > 9 ? (
                       <>
                         <button onClick={handleNextPageC}>Next results</button>
