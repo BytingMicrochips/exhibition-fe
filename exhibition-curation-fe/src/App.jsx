@@ -370,7 +370,7 @@ function App() {
                     <button onClick={handlePrevPageC}>Previous results</button>
                   </>
                 )}
-                {results.data.length > 0 ? (
+                {results.data.length > 9 ? (
                   <>
                     <button onClick={handleNextPageC}>Next results</button>
                   </>
@@ -513,7 +513,7 @@ function App() {
                         </button>
                       </>
                     )}
-                    {results.data.length > 0 ? (
+                    {results.data.length > 9 ? (
                       <>
                         <button onClick={handleNextPageC}>Next results</button>
                       </>
