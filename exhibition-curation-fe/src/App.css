@@ -137,6 +137,7 @@ width: fit-content;
 #paginationLoading {
   width: 30px;
   object-fit:contain;
+  display: flex;
 }
 
 #hidden {
