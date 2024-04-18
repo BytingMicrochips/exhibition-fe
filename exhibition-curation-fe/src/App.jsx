@@ -20,6 +20,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -229,13 +230,19 @@ function App() {
     }
   }, [input]);
 
-  const handleMetInfo = async (e) => {
-    console.log("handleMetInfo 223", e);
+  const handleMetInfo = async (id) => {
+    isSelected === id ? setIsSelected("") : setIsSelected(id);
+    setDetailsLoading(true);
+    const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+    const fullDetails = await fetch(metSingleArt + id);
+    fullDetails.json().then((jsonResponse) => {
+      setFullDetails(jsonResponse);
+      setDetailsLoading(false);
+    });
   };
 
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
-
     setDetailsLoading(true);
     const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
     const fullDetails = await fetch(chicSingleArt + id);
@@ -245,13 +252,15 @@ function App() {
   };
 
   useEffect(() => {
-    if (fullDetails.data && fullDetails.data.description != null) {
-      const extractDisc = fullDetails.data.description;
-      setDescription(extractDisc);
-      setDetailsLoading(false);
-    } else {
-      setDescription("");
-      setDetailsLoading(false);
+    if (apiSelector === chicagoArtUrl) {
+      if (fullDetails.data && fullDetails.data.description != null) {
+        const extractDisc = fullDetails.data.description;
+        setDescription(extractDisc);
+        setDetailsLoading(false);
+      } else {
+        setDescription("");
+        setDetailsLoading(false);
+      }
     }
   }, [fullDetails]);
 
@@ -375,11 +384,17 @@ function App() {
                       </div>
 
                       {detailsLoading === true && isSelected === artwork.id ? (
-                        <img
-                          id="smallLoadingGif"
-                          src={smallLoadingGif}
-                          alt="details loading"
-                        />
+                        <>
+                          <div className="fullDetails">
+                            <button onClick={() => handleChicInfo(artwork.id)}>
+                              <img
+                                id="smallLoadingGif"
+                                src={smallLoadingGif}
+                                alt="details loading"
+                              />
+                            </button>
+                          </div>
+                        </>
                       ) : (
                         <>
                           {fullDetails.length != 0 ? (
@@ -390,19 +405,22 @@ function App() {
                                 {isSelected === artwork.id ? (
                                   <>
                                     <div className="detailHeadings">
-                                      <p>
+                                      <p className="artistDetails">
                                         {`Artist: ${fullDetails.data.artist_title}` ||
-                                          "Artist unknown"}
+                                          "Unidentified artist"}
                                       </p>
-                                      <p>
-                                        {fullDetails.data.date_display ||
-                                          fullDetails.data.date_end ||
-                                          fullDetails.data.date_start}
-                                      </p>
-                                      <p>
-                                        {fullDetails.data.medium_display ||
-                                          fullDetails.data.classification_title}
-                                      </p>
+                                      <div className="mediumDate">
+                                        <p>
+                                          {fullDetails.data.date_display ||
+                                            fullDetails.data.date_end ||
+                                            fullDetails.data.date_start}
+                                        </p>
+                                        <p>
+                                          {fullDetails.data.medium_display ||
+                                            fullDetails.data
+                                              .classification_title}
+                                        </p>
+                                      </div>
                                       {fullDetails.data.place_of_origin !=
                                       null ? (
                                         <>
@@ -422,7 +440,8 @@ function App() {
                                         <div
                                           className="detailDescr"
                                           dangerouslySetInnerHTML={{
-                                            __html: DOMPurify.sanitize(description)
+                                            __html:
+                                              DOMPurify.sanitize(description),
                                           }}
                                         />
                                       </>
@@ -464,33 +483,12 @@ function App() {
               return (
                 <>
                   <div className="artworkCard">
-                    <button className="artworkButton" onClick={handleMetInfo}>
+                    <button
+                      className="artworkButton"
+                      onClick={() => handleMetInfo(artwork.objectID)}
+                    >
                       <div className="artworkCardHeader">
-                        {artwork.artistDisplayName ? (
-                          <>
-                            <p>{artwork.title}</p>
-                            <p>
-                              <em>
-                                {artwork.artistDisplayName},{" "}
-                                {artwork.culture ||
-                                  artwork.country ||
-                                  ` department of ${artwork.department}`}
-                              </em>
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <p>{artwork.title}</p>
-                            <p>
-                              <em>
-                                Artist unknown,{" "}
-                                {artwork.culture ||
-                                  artwork.country ||
-                                  ` department of ${artwork.department}`}
-                              </em>
-                            </p>
-                          </>
-                        )}
+                        <p>{artwork.title || "Untitled"}</p>
                       </div>
                       <div className="artworkCardImg">
                         <img
@@ -501,6 +499,77 @@ function App() {
                       </div>
                     </button>
                   </div>
+                  {detailsLoading === true &&
+                  isSelected === artwork.objectID ? (
+                    <>
+                      <div className="fullDetails">
+                        <button onClick={() => handleMetInfo(artwork.objectID)}>
+                          <img src={smallLoadingGif} alt="loading details" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  {detailsLoading === false &&
+                  isSelected === artwork.objectID ? (
+                    <>
+                      <div className="fullDetails">
+                        <button onClick={() => handleMetInfo(artwork.objectID)}>
+                          {artwork.artistDisplayName ? (
+                            <>
+                              <p className="artistDetails">
+                                <em>
+                                  {fullDetails.artistDisplayName},{" "}
+                                  {fullDetails.artistRole ? (
+                                    `${fullDetails.artistRole}, `
+                                  ) : (
+                                    <></>
+                                  )}
+                                  {fullDetails.culture ||
+                                    fullDetails.country ||
+                                    ` department of ${fullDetails.department}`}
+                                </em>
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p className="artistDetails">
+                                <em>
+                                  Unidentified artist,{" "}
+                                  {fullDetails.culture ||
+                                    fullDetails.country ||
+                                    ` department of ${fullDetails.department}`}
+                                </em>
+                              </p>
+                            </>
+                          )}
+                          <div className="mediumDate">
+                            <p>
+                              {fullDetails.medium ? fullDetails.medium : <></>}
+                            </p>
+                            <p>
+                              {fullDetails.objectDate
+                                ? fullDetails.objectDate
+                                : fullDetails.objectEndDate ||
+                                  fullDetails.objectBeginDate ||
+                                  fullDetails.excavation ||
+                                  fullDetails.period}
+                            </p>
+                          </div>
+                          <p className="creditLine">
+                            {fullDetails.creditLine ? (
+                              fullDetails.creditLine
+                            ) : (
+                              <></>
+                            )}
+                          </p>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </>
               );
             })}
