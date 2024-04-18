@@ -446,17 +446,7 @@ function App() {
                                       ) : (
                                         <></>
                                       )}
-                                      {fullDetails.data.description ? (
-                                        <>
-                                          <div className="detailDescr">
-                                            <p>
-                                              {fullDetails.data.description}
-                                            </p>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        <></>
-                                      )}
+                                      
                                       {fullDetails.data.credit_line ? (
                                         <>
                                           <div className="creditLine">
