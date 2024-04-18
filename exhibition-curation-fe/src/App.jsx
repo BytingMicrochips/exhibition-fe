@@ -8,7 +8,7 @@ import DOMPurify from "dompurify";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
+  console.log("🚀 ~ App ~ results.length:", results.length);
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -602,11 +602,11 @@ function App() {
                 <img id="paginationLoading" src={cube} alt="results loaded" />
               )}
               {results.length > 9 ? (
-                <>
-                  <button onClick={handleNextPageM}>Next results</button>
-                </>
+                <button onClick={handleNextPageM}>Next results</button>
               ) : (
-                <></>
+                <button id="hidden" onClick={handleNextPageM}>
+                  Next results
+                </button>
               )}
             </div>
 
@@ -728,7 +728,7 @@ function App() {
                       </button>
                     </>
                   )}
-                  {results.length > 9 ? (
+                  {results.length >= 10 ? (
                     <>
                       {isLoading ? (
                         <img
@@ -746,7 +746,14 @@ function App() {
                       <button onClick={handleNextPageM}>Next results</button>
                     </>
                   ) : (
-                    <></>
+                    <>
+                      <img
+                        src={cube}
+                        alt="results loaded"
+                        id="paginationLoading"
+                      />
+                      <button id="hidden" onClick={handleNextPageM}>Next results</button>
+                    </>
                   )}
                 </div>
               </>
