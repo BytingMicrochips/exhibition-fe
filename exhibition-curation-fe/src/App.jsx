@@ -21,6 +21,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -324,9 +325,6 @@ function App() {
         )}
 
         {results.data ? (
-          // isLoading === true ? (
-          //   <></>
-          // ) :
             results.pagination.total === 0 && isLoading === false? (
             <>
               <p>
@@ -679,22 +677,50 @@ function App() {
                                   fullDetails.period}
                             </p>
                           </div>
-                          <p className="creditLine">
-                            {fullDetails.creditLine ? (
-                              fullDetails.creditLine
-                            ) : (
-                              <></>
-                            )}
-                            {fullDetails.repository ? (
-                              <>
-                                <p className="viewAt">
-                                  Located at {fullDetails.repository}
-                                </p>
-                              </>
-                            ) : (
-                              <></>
-                            )}
-                          </p>
+                          {fullDetails.creditLine ? (
+                            <p className="creditLine">
+                              {fullDetails.creditLine}
+                            </p>
+                          ) : (
+                            <></>
+                          )}
+
+                          {fullDetails.repository ? (
+                            <>
+                              <p className="viewAt">
+                                Located at {fullDetails.repository}
+                              </p>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                          {fullDetails.objectURL != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.objectURL}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : fullDetails.objectWikidata_URL != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.objectWikidata_URL}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : fullDetails.linkResource != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.linkResource}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : (
+                            <></>
+                          )}
                         </button>
                       </div>
                     </>
