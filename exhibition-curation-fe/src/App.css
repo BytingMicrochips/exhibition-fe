@@ -206,7 +206,7 @@ width: fit-content;
 }
 
 .modalImg {
-  max-width: 90vw;
+  max-width: 99vw;
   max-height: 90vh;
   object-fit: scale-down;
 }
