@@ -9,7 +9,6 @@ import DOMPurify from "dompurify";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results);
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -32,11 +31,12 @@ function App() {
   const [modalId, setModalId] = useState("");
   const [modalImgId, setModalImgId] = useState("");
   const [modalAltText, setModalAltText] = useState("");
+  const [metModal, setMetModal] = useState({});
 
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
-
+  
   const fetchResults = async () => {
     const emptyMet = [];
     setModal(false);
@@ -290,11 +290,17 @@ function App() {
   }, [fullDetails]);
 
   const handleFullImg = (id, imgId, altText) => {
-    console.log("handleFullImg", id);
+    setModal(!modal);
+    if (apiSelector === metMuseumUrl) {
+      const match = results.filter((item) => {
+        return item.objectID === id
+      })
+      setMetModal(match[0]);
+    } else {
     setModalId(id);
     setModalImgId(imgId);
     setModalAltText(altText);
-    setModal(!modal);
+    }
   };
 
   return modal ? (
@@ -316,7 +322,22 @@ function App() {
         </div>
       </>
     ) : (
-      <></>
+      <>
+        <div className="modal" onClick={handleFullImg}>
+          <div className="overlay">
+            <div className="modalContent">
+              <img
+                className="modalImg"
+                alt={metModal.medium}
+                src={metModal.primaryImageSmall}
+              />
+              <p>
+                <em>Touch anywhere to close</em>
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
     )
   ) : (
     <>

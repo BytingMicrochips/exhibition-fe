@@ -166,12 +166,13 @@ width: fit-content;
   height: fit-content;
   float: right;
   position:relative;
-  bottom: 34px;
+  bottom: 44px;
   right: 8px;
   background-color: rgb(82, 214, 93);
   margin: 0%;
   padding: 3px;
   display: flex;
+  z-index: 1;
 }
 
 #expandIcon{
