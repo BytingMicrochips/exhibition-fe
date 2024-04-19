@@ -621,14 +621,17 @@ function App() {
                       <div className="artworkCardHeader">
                         <p>{artwork.title || "Untitled"}</p>
                       </div>
-                      <div className="artworkCardImg">
-                        <img
-                          alt={artwork.medium}
-                          src={artwork.primaryImageSmall}
-                          width="200"
-                        />
-                      </div>
                     </button>
+                    <div className="artworkCardImg">
+                      <img
+                        alt={artwork.medium}
+                        src={artwork.primaryImageSmall}
+                        width="200"
+                      />
+                      <button className="expandImg">
+                        <img id="expandIcon" src={expand} alt="expand image" />
+                      </button>
+                    </div>
                   </div>
                   {detailsLoading === true &&
                   isSelected === artwork.objectID ? (
