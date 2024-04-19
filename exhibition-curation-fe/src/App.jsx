@@ -21,7 +21,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails.objectURL:", fullDetails.objectURL);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -685,7 +685,6 @@ function App() {
                             <></>
                           )}
 
-
                           {fullDetails.repository ? (
                             <>
                               <p className="viewAt">
@@ -694,14 +693,34 @@ function App() {
                             </>
                           ) : (
                             <></>
-                            )}
-                            {fullDetails.objectURL != "" ? (
-                              <a className="moreInfo" href={fullDetails.objectURL} target="_blank">
-                                More info
-                              </a>
-                            ) : (
-                              <></>
-                            )}
+                          )}
+                          {fullDetails.objectURL != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.objectURL}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : fullDetails.objectWikidata_URL != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.objectWikidata_URL}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : fullDetails.linkResource != "" ? (
+                            <a
+                              className="moreInfo"
+                              href={fullDetails.linkResource}
+                              target="_blank"
+                            >
+                              More info
+                            </a>
+                          ) : (
+                            <></>
+                          )}
                         </button>
                       </div>
                     </>
