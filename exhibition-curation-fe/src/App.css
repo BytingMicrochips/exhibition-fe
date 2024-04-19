@@ -63,8 +63,10 @@ background-color: rgb(43, 165, 165);
 .artworkCardHeader {
   background-color: rgb(164, 86, 176);
   margin: auto;
-  max-width: 45%;
+  max-width: 90%;
+  border-radius: 8px;
 }
+
 
 .artworkCardImg {
   background-color: rgb(183, 43, 238);
@@ -85,7 +87,7 @@ background-color: rgb(43, 165, 165);
 
 .artworkButton {
 display: flex;
-width: 100%;
+width: 93%;
 margin: 0%;
 padding: 0%;
 background-color: rgb(255, 0, 0);
@@ -160,4 +162,50 @@ width: fit-content;
 
 .viewAt p {
   width: 100%;
+}
+
+.expandImg {
+  height: fit-content;
+  float: right;
+  position:relative;
+  bottom: 44px;
+  right: 8px;
+  background-color: rgb(82, 214, 93);
+  margin: 0%;
+  padding: 3px;
+  display: flex;
+  z-index: 1;
+}
+
+#expandIcon{
+  width: 18px;
+  height: 18px;
+  object-fit: scale-down;
+}
+
+.modal, .overlay {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+}
+
+.overlay {
+  background: #292828;
+}
+
+.modalContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modalImg {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: scale-down;
 }

@@ -3,6 +3,7 @@ import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
 import cube from "./assets/cube.png";
+import expand from "./assets/expand.png";
 import DOMPurify from "dompurify";
 
 function App() {
@@ -21,19 +22,24 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails);
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
+  const [modal, setModal] = useState(false);
+  const [modalId, setModalId] = useState("");
+  const [modalImgId, setModalImgId] = useState("");
+  const [modalAltText, setModalAltText] = useState("");
+  const [metModal, setMetModal] = useState({});
 
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
-
+  
   const fetchResults = async () => {
     const emptyMet = [];
+    setModal(false);
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
 
@@ -244,13 +250,17 @@ function App() {
       fullDetails.json().then((jsonResponse) => {
         setFullDetails(jsonResponse);
       });
-    }    
+    }
   };
-  
+
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     setDetailsLoading(true);
-    if (fullDetails.length === 0 || fullDetails.objectID || fullDetails.data.id != id) {
+    if (
+      fullDetails.length === 0 ||
+      fullDetails.objectID ||
+      fullDetails.data.id != id
+    ) {
       const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
       const fullDetails = await fetch(chicSingleArt + id);
       fullDetails.json().then((jsonResponse) => {
@@ -279,7 +289,57 @@ function App() {
     }
   }, [fullDetails]);
 
-  return (
+  const handleFullImg = (id, imgId, altText) => {
+    setModal(!modal);
+    if (apiSelector === metMuseumUrl) {
+      const match = results.filter((item) => {
+        return item.objectID === id
+      })
+      setMetModal(match[0]);
+    } else {
+    setModalId(id);
+    setModalImgId(imgId);
+    setModalAltText(altText);
+    }
+  };
+
+  return modal ? (
+    apiSelector === chicagoArtUrl ? (
+      <>
+        <div className="modal" onClick={handleFullImg}>
+          <div className="overlay">
+            <div className="modalContent">
+              <img
+                className="modalImg"
+                alt={modalAltText}
+                src={`https://www.artic.edu/iiif/2/${modalImgId}/full/400,/0/default.jpg`}
+              />
+              <p>
+                <em>Touch anywhere to close</em>
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    ) : (
+      <>
+        <div className="modal" onClick={handleFullImg}>
+          <div className="overlay">
+            <div className="modalContent">
+              <img
+                className="modalImg"
+                alt={metModal.medium}
+                src={metModal.primaryImageSmall}
+              />
+              <p>
+                <em>Touch anywhere to close</em>
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    )
+  ) : (
     <>
       <div className="titleCard">
         <h1>Artwork & artifacts explorer</h1>
@@ -325,14 +385,13 @@ function App() {
         )}
 
         {results.data ? (
-            results.pagination.total === 0 && isLoading === false? (
+          results.pagination.total === 0 && isLoading === false ? (
             <>
               <p>
                 <em>No results currently archived about: {lastSearch}</em>
               </p>
             </>
-            ) :
-              (
+          ) : (
             <>
               <div className="resultsFound">
                 <p>
@@ -340,55 +399,46 @@ function App() {
                 </p>
               </div>
               <div className="prevNextButtons">
-                      {chicagoPage === 1 ?
-                            (
-                          <>
-                            <button id="hidden" onClick={handlePrevPageC}>
-                              Previous results
-                            </button>
-                            <img
-                              id="paginationLoading"
-                              src={cube}
-                              alt="results loaded"
-                            />
-                          </>
-                            ) :
-                              (
-                          <>
-                            <button onClick={handlePrevPageC}>Previous results</button>
-                                  {isLoading ?
-                                    (
-                                        <img
-                                          id="paginationLoading"
-                                          src={smallLoadingGif}
-                                          alt="results loading"
-                                        />
-                                      ) :
-                                      (
-                                        <img
-                                          id="paginationLoading"
-                                          src={cube}
-                                          alt="results loaded"
-                                        />
-                                    )
-                                  }
-                          </>
-                              )
-                    }
-                  {results.data.length > 9 ?
-                        (
-                      <>
-                        <button onClick={handleNextPageC}>Next results</button>
-                      </>
-                        ) :
-                          (
-                      <>
-                        <button id="hidden" onClick={handleNextPageC}>
-                          Next results
-                        </button>
-                      </>
-                        )
-                  }
+                {chicagoPage === 1 ? (
+                  <>
+                    <button id="hidden" onClick={handlePrevPageC}>
+                      Previous results
+                    </button>
+                    <img
+                      id="paginationLoading"
+                      src={cube}
+                      alt="results loaded"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <button onClick={handlePrevPageC}>Previous results</button>
+                    {isLoading ? (
+                      <img
+                        id="paginationLoading"
+                        src={smallLoadingGif}
+                        alt="results loading"
+                      />
+                    ) : (
+                      <img
+                        id="paginationLoading"
+                        src={cube}
+                        alt="results loaded"
+                      />
+                    )}
+                  </>
+                )}
+                {results.data.length > 9 ? (
+                  <>
+                    <button onClick={handleNextPageC}>Next results</button>
+                  </>
+                ) : (
+                  <>
+                    <button id="hidden" onClick={handleNextPageC}>
+                      Next results
+                    </button>
+                  </>
+                )}
               </div>
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
@@ -402,17 +452,30 @@ function App() {
                           <div className="artworkCardHeader">
                             <p>{artwork.title}</p>
                           </div>
-                          <div className="artworkCardImg">
-                            <div className="centeredImg">
-                              <img
-                                alt={artwork.thumbnail.alt_text}
-                                src={`${results.config.iiif_url}/${artwork.image_id}/full/400,/0/default.jpg`}
-                                width="200"
-                              />
-                            </div>
-                          </div>
                         </button>
+                        <div className="artworkCardImg">
+                          <div className="centeredImg">
+                            <img
+                              alt={artwork.thumbnail.alt_text}
+                              src={`${results.config.iiif_url}/${artwork.image_id}/full/400,/0/default.jpg`}
+                              width="200"
+                            />
+                          </div>
+                        </div>
                       </div>
+
+                      <button
+                        className="expandImg"
+                        onClick={() => {
+                          handleFullImg(
+                            artwork.id,
+                            artwork.image_id,
+                            artwork.thumbnail.alt_text
+                          );
+                        }}
+                      >
+                        <img id="expandIcon" src={expand} alt="expand image" />
+                      </button>
 
                       {detailsLoading === true && isSelected === artwork.id ? (
                         <>
@@ -524,42 +587,37 @@ function App() {
               {results.data.length > 3 ? (
                 <>
                   <div className="prevNextButtons">
-                      {chicagoPage === 1 ?
-                              (
-                            <>
-                              <button id="hidden" onClick={handlePrevPageC}>
-                                Previous results
-                              </button>
-                              <img
-                                id="paginationLoading"
-                                src={cube}
-                                alt="results loaded"
-                              />
-                            </>
-                              ) :
-                              (
-                            <>
-                              <button onClick={handlePrevPageC}>
-                                Previous results
-                              </button>
-                                {isLoading ?
-                                    (
-                                      <img
-                                        id="paginationLoading"
-                                        src={smallLoadingGif}
-                                        alt="results loading"
-                                      />
-                                    ) : (
-                                      <img
-                                        id="paginationLoading"
-                                        src={cube}
-                                        alt="results loaded"
-                                      />
-                                    )
-                                }
-                            </>
-                              )
-                      }
+                    {chicagoPage === 1 ? (
+                      <>
+                        <button id="hidden" onClick={handlePrevPageC}>
+                          Previous results
+                        </button>
+                        <img
+                          id="paginationLoading"
+                          src={cube}
+                          alt="results loaded"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={handlePrevPageC}>
+                          Previous results
+                        </button>
+                        {isLoading ? (
+                          <img
+                            id="paginationLoading"
+                            src={smallLoadingGif}
+                            alt="results loading"
+                          />
+                        ) : (
+                          <img
+                            id="paginationLoading"
+                            src={cube}
+                            alt="results loaded"
+                          />
+                        )}
+                      </>
+                    )}
                     {results.data.length > 9 ? (
                       <>
                         <button onClick={handleNextPageC}>Next results</button>
@@ -576,8 +634,7 @@ function App() {
               )}
             </>
           )
-        ) :
-            results.length > 0 ? (
+        ) : results.length > 0 ? (
           <>
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
@@ -617,14 +674,22 @@ function App() {
                       <div className="artworkCardHeader">
                         <p>{artwork.title || "Untitled"}</p>
                       </div>
-                      <div className="artworkCardImg">
-                        <img
-                          alt={artwork.medium}
-                          src={artwork.primaryImageSmall}
-                          width="200"
-                        />
-                      </div>
                     </button>
+                    <div className="artworkCardImg">
+                      <img
+                        alt={artwork.medium}
+                        src={artwork.primaryImageSmall}
+                        width="200"
+                      />
+                      <button
+                        className="expandImg"
+                        onClick={() => {
+                          handleFullImg(artwork.objectID);
+                        }}
+                      >
+                        <img id="expandIcon" src={expand} alt="expand image" />
+                      </button>
+                    </div>
                   </div>
                   {detailsLoading === true &&
                   isSelected === artwork.objectID ? (
@@ -781,7 +846,9 @@ function App() {
                         alt="results loaded"
                         id="paginationLoading"
                       />
-                      <button id="hidden" onClick={handleNextPageM}>Next results</button>
+                      <button id="hidden" onClick={handleNextPageM}>
+                        Next results
+                      </button>
                     </>
                   )}
                 </div>
@@ -790,7 +857,7 @@ function App() {
               <></>
             )}
           </>
-        ) : searchMade === true && isLoading === false? (
+        ) : searchMade === true && isLoading === false ? (
           <>
             <p>
               <em>No results currently archived about: {lastSearch}</em>
