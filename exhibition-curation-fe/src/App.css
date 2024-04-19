@@ -93,6 +93,10 @@ padding: 0%;
 background-color: rgb(255, 0, 0);
 }
 
+.artworkButton p {
+  margin-bottom: 0;
+}
+
 .prevNextButtons {
   background-color: rgb(13, 225, 24);
   display: flex;
@@ -209,4 +213,15 @@ width: fit-content;
   max-width: 99vw;
   max-height: 90vh;
   object-fit: scale-down;
+}
+
+.expColButton {
+  width: 40px;
+  object-fit: scale-down;
+
+}
+
+#headingArrow {
+  margin: auto;
+  position: relative;
 }

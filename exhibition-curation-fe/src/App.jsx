@@ -5,6 +5,8 @@ import smallLoadingGif from "./assets/smallLoadingGif.gif";
 import cube from "./assets/cube.png";
 import expand from "./assets/expand.png";
 import DOMPurify from "dompurify";
+import expandArrow from "./assets/expandArrow.png";
+import collapseArrow from "./assets/collapseArrow.png";
 
 function App() {
   const [input, setInput] = useState("");
@@ -450,8 +452,23 @@ function App() {
                           className="artworkButton"
                           onClick={() => handleChicInfo(artwork.id)}
                         >
-                          <div className="artworkCardHeader">
-                            <p>{artwork.title}</p>
+                          <div id="headingArrow">
+                            <div className="artworkCardHeader">
+                              <p>{artwork.title}</p>
+                            </div>
+                            {isSelected === artwork.id ? (
+                              <img
+                                className="expColButton"
+                                alt="expand for details"
+                                src={collapseArrow}
+                              />
+                            ) : (
+                              <img
+                                className="expColButton"
+                                alt="expand for details"
+                                src={expandArrow}
+                              />
+                            )}
                           </div>
                         </button>
                         <div className="artworkCardImg">
@@ -573,7 +590,12 @@ function App() {
                                     </p>
                                   )}
                                 </div>
-                              </button>
+                              <img
+                                className="expColButton"
+                                alt="expand for details"
+                                src={collapseArrow}
+                                />
+                                </button>
                             </div>
                           ) : (
                             <></>
