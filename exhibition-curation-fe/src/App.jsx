@@ -499,17 +499,16 @@ function App() {
                                 ) : (
                                   <></>
                                 )}
-
-                                {fullDetails.data.is_on_view ? (
-                                  <p className="viewAt">
-                                    On view at Art Institute of Chicago
-                                  </p>
-                                ) : (
-                                  <p className="viewAt">
-                                    Stored at Art Institute of Chicago - not on
-                                    view
-                                  </p>
-                                )}
+                                <div className="viewAt">
+                                  {fullDetails.data.is_on_view ? (
+                                    <p>On view at Art Institute of Chicago</p>
+                                  ) : (
+                                    <p>
+                                      Stored at Art Institute of Chicago - not
+                                      on view
+                                    </p>
+                                  )}
+                                </div>
                               </button>
                             </div>
                           ) : (
@@ -695,9 +694,14 @@ function App() {
 
                           {fullDetails.repository ? (
                             <>
-                              <p className="viewAt">
-                                Located at {fullDetails.repository}
-                              </p>
+                              <div className="viewAt">
+                                <p>
+                                  {fullDetails.GalleryNumber != ""
+                                    ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
+                                    : `Stored at ${fullDetails.repository} - not on
+                                    view`}
+                                </p>
+                              </div>
                             </>
                           ) : (
                             <></>

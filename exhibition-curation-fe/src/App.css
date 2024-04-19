@@ -151,3 +151,13 @@ width: fit-content;
   display: flex;
   justify-content: center;
 }
+
+.viewAt {
+  background-color: rgb(78, 18, 73);
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.viewAt p {
+  width: 100%;
+}
