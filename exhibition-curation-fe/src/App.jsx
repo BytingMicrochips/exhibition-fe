@@ -499,9 +499,17 @@ function App() {
                                 ) : (
                                   <></>
                                 )}
-                                <p className="viewAt">
-                                  Located at Art Institute of Chicago
-                                </p>
+
+                                {fullDetails.data.is_on_view ? (
+                                  <p className="viewAt">
+                                    On view at Art Institute of Chicago
+                                  </p>
+                                ) : (
+                                  <p className="viewAt">
+                                    Stored at Art Institute of Chicago - not on
+                                    view
+                                  </p>
+                                )}
                               </button>
                             </div>
                           ) : (
