@@ -63,8 +63,10 @@ background-color: rgb(43, 165, 165);
 .artworkCardHeader {
   background-color: rgb(164, 86, 176);
   margin: auto;
-  max-width: 45%;
+  max-width: 90%;
+  border-radius: 8px;
 }
+
 
 .artworkCardImg {
   background-color: rgb(183, 43, 238);
