@@ -39,6 +39,7 @@ function App() {
 
   const fetchResults = async () => {
     const emptyMet = [];
+    setModal(false);
     setIsLoading(true);
     const fullRequest = `${apiSelector}${input}`;
 
