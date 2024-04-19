@@ -8,7 +8,6 @@ import DOMPurify from "dompurify";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results.length:", results.length);
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -324,39 +323,18 @@ function App() {
           <></>
         )}
 
-        {results.results ? (
-          input === "" ? (
-            <></>
-          ) : results.count && results.count != 0 && isLoading === false ? (
-            <>
-              <div className="resultsFound">
-                <p>
-                  <em>{results.count} results found!</em>
-                </p>
-              </div>
-              {results.results.map((item) => (
-                <>
-                  <p> {item.name}</p>
-                </>
-              ))}
-            </>
-          ) : (
+        {results.data ? (
+          // isLoading === true ? (
+          //   <></>
+          // ) :
+            results.pagination.total === 0 && isLoading === false? (
             <>
               <p>
                 <em>No results currently archived about: {lastSearch}</em>
               </p>
             </>
-          )
-        ) : results.data ? (
-          isLoading === true ? (
-            <></>
-          ) : results.pagination.total === 0 ? (
-            <>
-              <p>
-                <em>No results currently archived about: {lastSearch}</em>
-              </p>
-            </>
-          ) : (
+            ) :
+              (
             <>
               <div className="resultsFound">
                 <p>
@@ -364,46 +342,55 @@ function App() {
                 </p>
               </div>
               <div className="prevNextButtons">
-                {chicagoPage === 1 ? (
-                  <>
-                    <button id="hidden" onClick={handlePrevPageC}>
-                      Previous results
-                    </button>
-                    <img
-                      id="paginationLoading"
-                      src={cube}
-                      alt="results loaded"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <button onClick={handlePrevPageC}>Previous results</button>
-                    {isLoading ? (
-                      <img
-                        id="paginationLoading"
-                        src={smallLoadingGif}
-                        alt="results loading"
-                      />
-                    ) : (
-                      <img
-                        id="paginationLoading"
-                        src={cube}
-                        alt="results loaded"
-                      />
-                    )}
-                  </>
-                )}
-                {results.data.length > 9 ? (
-                  <>
-                    <button onClick={handleNextPageC}>Next results</button>
-                  </>
-                ) : (
-                  <>
-                    <button id="hidden" onClick={handleNextPageC}>
-                      Next results
-                    </button>
-                  </>
-                )}
+                      {chicagoPage === 1 ?
+                            (
+                          <>
+                            <button id="hidden" onClick={handlePrevPageC}>
+                              Previous results
+                            </button>
+                            <img
+                              id="paginationLoading"
+                              src={cube}
+                              alt="results loaded"
+                            />
+                          </>
+                            ) :
+                              (
+                          <>
+                            <button onClick={handlePrevPageC}>Previous results</button>
+                                  {isLoading ?
+                                    (
+                                        <img
+                                          id="paginationLoading"
+                                          src={smallLoadingGif}
+                                          alt="results loading"
+                                        />
+                                      ) :
+                                      (
+                                        <img
+                                          id="paginationLoading"
+                                          src={cube}
+                                          alt="results loaded"
+                                        />
+                                    )
+                                  }
+                          </>
+                              )
+                    }
+                  {results.data.length > 9 ?
+                        (
+                      <>
+                        <button onClick={handleNextPageC}>Next results</button>
+                      </>
+                        ) :
+                          (
+                      <>
+                        <button id="hidden" onClick={handleNextPageC}>
+                          Next results
+                        </button>
+                      </>
+                        )
+                  }
               </div>
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
@@ -532,37 +519,42 @@ function App() {
               {results.data.length > 3 ? (
                 <>
                   <div className="prevNextButtons">
-                    {chicagoPage === 1 ? (
-                      <>
-                        <button id="hidden" onClick={handlePrevPageC}>
-                          Previous results
-                        </button>
-                        <img
-                          id="paginationLoading"
-                          src={cube}
-                          alt="results loaded"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <button onClick={handlePrevPageC}>
-                          Previous results
-                        </button>
-                        {isLoading ? (
-                          <img
-                            id="paginationLoading"
-                            src={smallLoadingGif}
-                            alt="results loading"
-                          />
-                        ) : (
-                          <img
-                            id="paginationLoading"
-                            src={cube}
-                            alt="results loaded"
-                          />
-                        )}
-                      </>
-                    )}
+                      {chicagoPage === 1 ?
+                              (
+                            <>
+                              <button id="hidden" onClick={handlePrevPageC}>
+                                Previous results
+                              </button>
+                              <img
+                                id="paginationLoading"
+                                src={cube}
+                                alt="results loaded"
+                              />
+                            </>
+                              ) :
+                              (
+                            <>
+                              <button onClick={handlePrevPageC}>
+                                Previous results
+                              </button>
+                                {isLoading ?
+                                    (
+                                      <img
+                                        id="paginationLoading"
+                                        src={smallLoadingGif}
+                                        alt="results loading"
+                                      />
+                                    ) : (
+                                      <img
+                                        id="paginationLoading"
+                                        src={cube}
+                                        alt="results loaded"
+                                      />
+                                    )
+                                }
+                            </>
+                              )
+                      }
                     {results.data.length > 9 ? (
                       <>
                         <button onClick={handleNextPageC}>Next results</button>
@@ -579,9 +571,8 @@ function App() {
               )}
             </>
           )
-        ) : input === "" ? (
-          <></>
-        ) : results.length > 0 ? (
+        ) :
+            results.length > 0 ? (
           <>
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
@@ -761,7 +752,7 @@ function App() {
               <></>
             )}
           </>
-        ) : searchMade === true ? (
+        ) : searchMade === true && isLoading === false? (
           <>
             <p>
               <em>No results currently archived about: {lastSearch}</em>
