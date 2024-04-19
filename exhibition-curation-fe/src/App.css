@@ -179,3 +179,24 @@ width: fit-content;
   height: 18px;
   object-fit: scale-down;
 }
+
+.modal, .overlay {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+}
+
+.overlay {
+  background: #292828;
+}
+
+.modalContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
