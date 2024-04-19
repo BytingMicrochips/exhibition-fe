@@ -398,11 +398,12 @@ function App() {
                   <em>{results.pagination.total} results found!</em>
                 </p>
               </div>
+
               <div className="prevNextButtons">
                 {chicagoPage === 1 ? (
                   <>
                     <button id="hidden" onClick={handlePrevPageC}>
-                      Previous results
+                      Last results
                     </button>
                     <img
                       id="paginationLoading"
@@ -412,7 +413,7 @@ function App() {
                   </>
                 ) : (
                   <>
-                    <button onClick={handlePrevPageC}>Previous results</button>
+                    <button onClick={handlePrevPageC}>Last results</button>
                     {isLoading ? (
                       <img
                         id="paginationLoading"
@@ -590,7 +591,7 @@ function App() {
                     {chicagoPage === 1 ? (
                       <>
                         <button id="hidden" onClick={handlePrevPageC}>
-                          Previous results
+                          Last results
                         </button>
                         <img
                           id="paginationLoading"
@@ -600,9 +601,7 @@ function App() {
                       </>
                     ) : (
                       <>
-                        <button onClick={handlePrevPageC}>
-                          Previous results
-                        </button>
+                        <button onClick={handlePrevPageC}>Last results</button>
                         {isLoading ? (
                           <img
                             id="paginationLoading"
@@ -640,10 +639,10 @@ function App() {
               {metPrevious.length <= 10 ||
               metPrevious[0] === results[0].objectID ? (
                 <button id="hidden" onClick={handlePrevPageM}>
-                  Previous results
+                  Last results
                 </button>
               ) : (
-                <button onClick={handlePrevPageM}>Previous results</button>
+                <button onClick={handlePrevPageM}>Last results</button>
               )}
               {isLoading ? (
                 <img
@@ -813,13 +812,11 @@ function App() {
                   {metPrevious.length <= 10 ||
                   metPrevious[0] === results[0].objectID ? (
                     <>
-                      <button id="hidden">Previous results</button>
+                      <button id="hidden">Last results</button>
                     </>
                   ) : (
                     <>
-                      <button onClick={handlePrevPageM}>
-                        Previous results
-                      </button>
+                      <button onClick={handlePrevPageM}>Last results</button>
                     </>
                   )}
                   {results.length >= 10 ? (

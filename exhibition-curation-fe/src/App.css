@@ -98,6 +98,7 @@ background-color: rgb(255, 0, 0);
   display: flex;
   justify-content: space-between;
   padding: 2px;
+  width: 100%;
 }
 
 .prevNextButtons button {
