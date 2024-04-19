@@ -692,8 +692,23 @@ function App() {
                       className="artworkButton"
                       onClick={() => handleMetInfo(artwork.objectID)}
                     >
-                      <div className="artworkCardHeader">
-                        <p>{artwork.title || "Untitled"}</p>
+                      <div id="headingArrow">
+                        <div className="artworkCardHeader">
+                          <p>{artwork.title || "Untitled"}</p>
+                        </div>
+                        {isSelected === artwork.objectID ? (
+                          <img
+                            className="expColButton"
+                            alt="expand for details"
+                            src={collapseArrow}
+                          />
+                        ) : (
+                          <img
+                            className="expColButton"
+                            alt="expand for details"
+                            src={expandArrow}
+                          />
+                        )}
                       </div>
                     </button>
                     <div className="artworkCardImg">
@@ -819,6 +834,11 @@ function App() {
                           ) : (
                             <></>
                           )}
+                          <img
+                            className="expColButton"
+                            alt="expand for details"
+                            src={collapseArrow}
+                          />
                         </button>
                       </div>
                     </>
