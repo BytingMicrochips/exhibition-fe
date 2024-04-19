@@ -85,7 +85,7 @@ background-color: rgb(43, 165, 165);
 
 .artworkButton {
 display: flex;
-width: 100%;
+width: 93%;
 margin: 0%;
 padding: 0%;
 background-color: rgb(255, 0, 0);
@@ -160,4 +160,22 @@ width: fit-content;
 
 .viewAt p {
   width: 100%;
+}
+
+.expandImg {
+  height: fit-content;
+  float: right;
+  position:relative;
+  bottom: 34px;
+  right: 8px;
+  background-color: rgb(82, 214, 93);
+  margin: 0%;
+  padding: 3px;
+  display: flex;
+}
+
+#expandIcon{
+  width: 18px;
+  height: 18px;
+  object-fit: scale-down;
 }

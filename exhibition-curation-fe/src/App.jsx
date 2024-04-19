@@ -3,6 +3,7 @@ import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
 import cube from "./assets/cube.png";
+import expand from "./assets/expand.png";
 import DOMPurify from "dompurify";
 
 function App() {
@@ -402,6 +403,7 @@ function App() {
                           <div className="artworkCardHeader">
                             <p>{artwork.title}</p>
                           </div>
+                        </button>
                           <div className="artworkCardImg">
                             <div className="centeredImg">
                               <img
@@ -411,8 +413,10 @@ function App() {
                               />
                             </div>
                           </div>
-                        </button>
                       </div>
+                              <button className="expandImg">
+                                <img id="expandIcon" src={expand} alt="expand image"/>
+                        </button>
 
                       {detailsLoading === true && isSelected === artwork.id ? (
                         <>
