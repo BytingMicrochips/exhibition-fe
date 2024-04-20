@@ -8,6 +8,7 @@ import DOMPurify from "dompurify";
 import expandArrow from "./assets/expandArrow.png";
 import collapseArrow from "./assets/collapseArrow.png";
 import { Fragment } from "react";
+import Title from "./Title";
 
 function App() {
   const [input, setInput] = useState("");
@@ -387,15 +388,7 @@ function App() {
     )
   ) : (
     <>
-      <div className="titleCard">
-        <h1>Artwork & artifacts explorer</h1>
-      </div>
-      <div className="subheadingCard">
-        <p>
-          Results are sourced from the Art Institute of Chicago and Metropolitan
-          Museum NYC collections
-        </p>
-      </div>
+<Title />
       <div>
         <div className="searchCard">
           <h3>Input search criteria:</h3>
