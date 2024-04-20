@@ -24,6 +24,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails.data.description)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -604,8 +605,12 @@ function App() {
                                           <div
                                             className="detailDescr"
                                             dangerouslySetInnerHTML={{
-                                              __html:
-                                                DOMPurify.sanitize(description),
+                                              __html: DOMPurify.sanitize(
+                                                description,
+                                                {
+                                                  FORBID_ATTR: ["href"],
+                                                }
+                                              ),
                                             }}
                                           />
                                         </>
