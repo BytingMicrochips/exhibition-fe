@@ -95,7 +95,7 @@ function App() {
     setIsLoading(true);
     let currentArtworkId = metIdList[counter];
 
-    if (typeof currentArtworkId === "number") {
+    if (typeof currentArtworkId === "number" && typeof currentArtworkId !== "undefined") {
       const result = await fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
       );
