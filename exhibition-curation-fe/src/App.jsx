@@ -134,6 +134,7 @@ function App() {
 
   const handleSearch = (e) => {
     setLastSearch(input);
+    setFullDetails([]);
     if (chicagoPage != 1) {
       setChicagoPage(1);
     } else {
