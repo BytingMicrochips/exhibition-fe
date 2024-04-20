@@ -11,7 +11,6 @@ import collapseArrow from "./assets/collapseArrow.png";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -36,7 +35,6 @@ function App() {
   const [modalAltText, setModalAltText] = useState("");
   const [metModal, setMetModal] = useState({});
   const [thumbLength, setThumbLength] = useState(0);
-  console.log("🚀 ~ App ~ thumbLength:", thumbLength)
 
   const allArtworks = [];
   let counter = 0;
@@ -273,7 +271,6 @@ function App() {
         const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
         const fullDetails = await fetch(chicSingleArt + id);
         fullDetails.json().then((jsonResponse) => {
-          console.log("🚀 ~ fullDetails.json ~ jsonResponse:", jsonResponse)
           setFullDetails(jsonResponse);
         });
       }
