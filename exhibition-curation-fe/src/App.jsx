@@ -52,25 +52,20 @@ function App() {
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
       )
-      //   .then((res) => {
-      //     if (!res.ok) {
-      //       throw Error('Failed to fetch from Chicago API');
-      //   }
-      // })
-      result.json()
-        .then((jsonResponse) => {
-        setResults(jsonResponse);
-        setIsLoading(false);
-        setSearchMade(true);
+        result.json()
+          .then((jsonResponse) => {
+          setResults(jsonResponse);
+          setIsLoading(false);
+          setSearchMade(true);
+          })
+          .catch(err => {
+            console.log(err.message);
         })
-        .catch(err => {
-          console.log(err.message);
-      })
-    }
-
+      }
     if (apiSelector === metMuseumUrl) {
       const result = await fetch(`${fullRequest}`);
-      result.json().then((jsonResponse) => {
+      result.json()
+        .then((jsonResponse) => {
         if (jsonResponse.total > 0) {
           setMetIdList(jsonResponse.objectIDs);
           setMetTotal(jsonResponse.total);
@@ -80,7 +75,10 @@ function App() {
           setIsLoading(false);
           setSearchMade(true);
         }
-      });
+        })
+        .catch((err) => {
+        console.log(err.message)
+      })
     }
   };
 
@@ -106,35 +104,44 @@ function App() {
     if (typeof currentArtworkId === "number" && typeof currentArtworkId !== "undefined") {
       const result = await fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
-      );
-      result
-        .json()
-        .then((jsonResponse) => {
-          if (
-            jsonResponse.hasOwnProperty("message") ||
-            jsonResponse.primaryImageSmall === ""
-          ) {
-            counter++;
-          } else {
-            allArtworks.push(jsonResponse);
-            counter++;
-            loadTen++;
-            if (!metPrevious.includes(jsonResponse.objectID)) {
-              metPrevious.push(jsonResponse.objectID);
+      )
+      if (typeof result !== "undefined") {
+        result
+          .json()
+          .then((jsonResponse) => {
+            if (
+              jsonResponse.primaryImageSmall === ""
+            ) {
+              counter++;
+            } else if (jsonResponse.hasOwnProperty("message")) {
+              counter++;
+              fetchMet(counter);
+              throw Error(`Server says: ${jsonResponse.message}`);
             }
-          }
-        })
-        .then(() => {
-          if (counter < metIdList.length - 1 && loadTen < 10) {
-            fetchMet(counter);
-          } else {
-            setResults(allArtworks);
-            setIsLoading(false);
-            setMetIndex(counter);
-            loadTen = 0;
-          }
-        });
-    }
+            else {
+              allArtworks.push(jsonResponse);
+              counter++;
+              loadTen++;
+              if (!metPrevious.includes(jsonResponse.objectID)) {
+                metPrevious.push(jsonResponse.objectID);
+              }
+            }
+          })
+          .then(() => {
+            if (counter < metIdList.length - 1 && loadTen < 10) {
+              fetchMet(counter);
+            } else {
+              setResults(allArtworks);
+              setIsLoading(false);
+              setMetIndex(counter);
+              loadTen = 0;
+            }
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      }
+      }
   };
 
   const handleInput = (e) => {
@@ -224,6 +231,9 @@ function App() {
           recallIndex = 0;
           setLoadMetPrev(false);
         }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -248,6 +258,9 @@ function App() {
           recallIndex = 0;
           setLoadMetPrev(false);
         }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -263,9 +276,14 @@ function App() {
       setDetailsLoading(true);
       const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
       const fullDetails = await fetch(metSingleArt + id);
-      fullDetails.json().then((jsonResponse) => {
-        setFullDetails(jsonResponse);
-      });
+      fullDetails
+        .json()
+        .then((jsonResponse) => {
+          setFullDetails(jsonResponse);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
     }
   };
 
@@ -281,9 +299,14 @@ function App() {
       ) {
         const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
         const fullDetails = await fetch(chicSingleArt + id);
-        fullDetails.json().then((jsonResponse) => {
-          setFullDetails(jsonResponse);
-        });
+        fullDetails
+          .json()
+          .then((jsonResponse) => {
+            setFullDetails(jsonResponse);
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
       }
   };
 
@@ -319,7 +342,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (apiSelector === chicagoArtUrl && results.length !== 0) {
+    if (apiSelector === chicagoArtUrl && results.length !== 0 && results.data) {
       const hasThumbnail = results.data.filter((artwork) => artwork.thumbnail)
       setThumbLength(hasThumbnail.length)
     }
