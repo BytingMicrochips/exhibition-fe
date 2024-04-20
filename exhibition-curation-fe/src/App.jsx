@@ -135,6 +135,7 @@ function App() {
   const handleSearch = (e) => {
     setLastSearch(input);
     setFullDetails([]);
+    setIsSelected("");
     if (chicagoPage != 1) {
       setChicagoPage(1);
     } else {
