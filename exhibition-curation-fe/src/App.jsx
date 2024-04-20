@@ -11,7 +11,6 @@ import collapseArrow from "./assets/collapseArrow.png";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -25,7 +24,6 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -36,6 +34,7 @@ function App() {
   const [modalImgId, setModalImgId] = useState("");
   const [modalAltText, setModalAltText] = useState("");
   const [metModal, setMetModal] = useState({});
+  const [thumbLength, setThumbLength] = useState(0);
 
   const allArtworks = [];
   let counter = 0;
@@ -95,7 +94,7 @@ function App() {
     setIsLoading(true);
     let currentArtworkId = metIdList[counter];
 
-    if (typeof currentArtworkId === "number") {
+    if (typeof currentArtworkId === "number" && typeof currentArtworkId !== "undefined") {
       const result = await fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
       );
@@ -308,6 +307,12 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (apiSelector === chicagoArtUrl && results.length !== 0) {
+      const hasThumbnail = results.data.filter((artwork) => artwork.thumbnail)
+      setThumbLength(hasThumbnail.length)
+    }
+  },[results])
   return modal ? (
     apiSelector === chicagoArtUrl ? (
       <>
@@ -381,7 +386,7 @@ function App() {
           <>
             <div className="resultsFound">
               <p>
-                <em>{metIdList.length} results found!</em>
+                <em>Showing {results.length} results!</em>
               </p>
             </div>
           </>
@@ -400,7 +405,7 @@ function App() {
             <>
               <div className="resultsFound">
                 <p>
-                  <em>{results.pagination.total} results found!</em>
+                  <em>Showing {thumbLength} results!</em>
                 </p>
               </div>
 
@@ -585,7 +590,14 @@ function App() {
                                 )}
                                 <div className="viewAt">
                                   {fullDetails.data.is_on_view ? (
-                                    <p>On view at Art Institute of Chicago</p>
+                                    fullDetails.data.gallery_title ? (
+                                      <p>
+                                        On view at Art Institute of Chicago,{" "}
+                                        {fullDetails.data.gallery_title}
+                                      </p>
+                                    ) : (
+                                      <p>On view at Art Institute of Chicago</p>
+                                    )
                                   ) : (
                                     <p>
                                       Stored at Art Institute of Chicago - not
@@ -593,12 +605,12 @@ function App() {
                                     </p>
                                   )}
                                 </div>
-                              <img
-                                className="expColButton"
-                                alt="expand for details"
-                                src={collapseArrow}
+                                <img
+                                  className="expColButton"
+                                  alt="expand for details"
+                                  src={collapseArrow}
                                 />
-                                </button>
+                              </button>
                             </div>
                           ) : (
                             <></>
