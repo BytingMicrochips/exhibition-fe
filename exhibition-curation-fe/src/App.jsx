@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
@@ -7,6 +7,7 @@ import expand from "./assets/expand.png";
 import DOMPurify from "dompurify";
 import expandArrow from "./assets/expandArrow.png";
 import collapseArrow from "./assets/collapseArrow.png";
+import { Fragment } from "react";
 
 function App() {
   const [input, setInput] = useState("");
@@ -24,7 +25,6 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails.data.description)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -434,7 +434,7 @@ function App() {
               </p>
             </>
           ) : (
-            <>
+            <Fragment key="resultsFrag">
               <div className="resultsFound">
                 <p>
                   <em>Showing {thumbLength} results!</em>
@@ -486,8 +486,8 @@ function App() {
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
                   return (
-                    <>
-                      <div key={artwork.id} className="artworkCard">
+                    <Fragment key={artwork.id}>
+                      <div className="artworkCard">
                         <button
                           className="artworkButton"
                           onClick={() => handleChicInfo(artwork.id)}
@@ -523,7 +523,6 @@ function App() {
                       </div>
 
                       <button
-                        key={`${artwork.id}ExpandButton`}
                         className="expandImg"
                         onClick={() => {
                           handleFullImg(
@@ -538,7 +537,9 @@ function App() {
 
                       {detailsLoading === true && isSelected === artwork.id ? (
                         <>
-                          <div className="fullDetails">
+                          <div
+                            className="fullDetails"
+                          >
                             <button onClick={() => handleChicInfo(artwork.id)}>
                               <img
                                 id="smallLoadingGif"
@@ -646,16 +647,16 @@ function App() {
                             )}
                         </>
                       )}
-                    </>
+                    </Fragment>
                   );
                 }
               })}
 
               {results.data.length > 3 && (
-                <>
+                <React.Fragment key={"bottomPagin"}>
                   <div className="prevNextButtons">
                     {chicagoPage === 1 ? (
-                      <>
+                      <React.Fragment key="bottomPag">
                         <button id="hidden" onClick={handlePrevPageC}>
                           Last results
                         </button>
@@ -664,7 +665,7 @@ function App() {
                           src={cube}
                           alt="results loaded"
                         />
-                      </>
+                      </React.Fragment>
                     ) : (
                       <>
                         <button onClick={handlePrevPageC}>Last results</button>
@@ -684,21 +685,19 @@ function App() {
                       </>
                     )}
                     {results.data.length > 9 ? (
-                      <>
-                        <button onClick={handleNextPageC}>Next results</button>
-                      </>
+                      <button onClick={handleNextPageC}>Next results</button>
                     ) : (
                       <button id="hidden" onClick={handleNextPageC}>
                         Next results
                       </button>
                     )}
                   </div>
-                </>
+                </React.Fragment>
               )}
-            </>
+            </Fragment>
           )
         ) : results.length > 0 ? (
-          <>
+          <React.Fragment key="showingRes">
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
               metPrevious[0] === results[0].objectID ? (
@@ -728,8 +727,8 @@ function App() {
 
             {results.map((artwork) => {
               return (
-                <>
-                  <div key={artwork.objectID} className="artworkCard">
+                <Fragment key={artwork.objectID}>
+                  <div className="artworkCard">
                     <button
                       className="artworkButton"
                       onClick={() => handleMetInfo(artwork.objectID)}
@@ -884,7 +883,7 @@ function App() {
                         </div>
                       </>
                     )}
-                </>
+                </Fragment>
               );
             })}
             {results.length > 3 && (
@@ -932,7 +931,7 @@ function App() {
                 </div>
               </>
             )}
-          </>
+          </React.Fragment>
         ) : (
           searchMade === true &&
           isLoading === false && (
