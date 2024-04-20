@@ -25,6 +25,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -261,8 +262,9 @@ function App() {
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     setDetailsLoading(true);
-    if (results.data.length > 0) {
-      if (
+    if (fullDetails.data && fullDetails.data.id  === id) {
+      setDetailsLoading(false);
+    } else if (
         fullDetails.length === 0 ||
         fullDetails.objectID ||
         fullDetails.data.id != id
@@ -273,10 +275,6 @@ function App() {
           setFullDetails(jsonResponse);
         });
       }
-      if (fullDetails.data.id === id) {
-        setDetailsLoading(false);
-      }
-    }
   };
 
   useEffect(() => {
