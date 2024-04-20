@@ -11,6 +11,7 @@ import collapseArrow from "./assets/collapseArrow.png";
 function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
+  console.log("🚀 ~ App ~ results:", results)
   const [apiSelector, setApiSelector] = useState(
     "https://api.artic.edu/api/v1/artworks/search?q="
   );
@@ -24,6 +25,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -133,6 +135,8 @@ function App() {
 
   const handleSearch = (e) => {
     setLastSearch(input);
+    setFullDetails([]);
+    setIsSelected("");
     if (chicagoPage != 1) {
       setChicagoPage(1);
     } else {
@@ -258,20 +262,19 @@ function App() {
   const handleChicInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     setDetailsLoading(true);
-    if (
-      fullDetails.length === 0 ||
-      fullDetails.objectID ||
-      fullDetails.data.id != id
-    ) {
-      const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
-      const fullDetails = await fetch(chicSingleArt + id);
-      fullDetails.json().then((jsonResponse) => {
-        setFullDetails(jsonResponse);
-      });
-    }
-    if (fullDetails.data.id === id) {
+    if (fullDetails.data && fullDetails.data.id  === id) {
       setDetailsLoading(false);
-    }
+    } else if (
+        fullDetails.length === 0 ||
+        fullDetails.objectID ||
+        fullDetails.data.id != id
+      ) {
+        const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+        const fullDetails = await fetch(chicSingleArt + id);
+        fullDetails.json().then((jsonResponse) => {
+          setFullDetails(jsonResponse);
+        });
+      }
   };
 
   useEffect(() => {
