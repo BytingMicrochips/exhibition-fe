@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import loadingGif from "./assets/loadingGif.gif";
 import smallLoadingGif from "./assets/smallLoadingGif.gif";
@@ -7,6 +7,7 @@ import expand from "./assets/expand.png";
 import DOMPurify from "dompurify";
 import expandArrow from "./assets/expandArrow.png";
 import collapseArrow from "./assets/collapseArrow.png";
+import { Fragment } from "react";
 
 function App() {
   const [input, setInput] = useState("");
@@ -35,7 +36,7 @@ function App() {
   const [modalAltText, setModalAltText] = useState("");
   const [metModal, setMetModal] = useState({});
   const [thumbLength, setThumbLength] = useState(0);
-
+  const [controlApi, setControlApi] = useState("Art Institute of Chicago");
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
@@ -51,17 +52,21 @@ function App() {
       setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-      );
-      result.json().then((jsonResponse) => {
-        setResults(jsonResponse);
-        setIsLoading(false);
-        setSearchMade(true);
-      });
-    }
-
+      )
+        result.json()
+          .then((jsonResponse) => {
+          setResults(jsonResponse);
+          setIsLoading(false);
+          setSearchMade(true);
+          })
+          .catch(err => {
+            console.log(err.message);
+        })
+      }
     if (apiSelector === metMuseumUrl) {
       const result = await fetch(`${fullRequest}`);
-      result.json().then((jsonResponse) => {
+      result.json()
+        .then((jsonResponse) => {
         if (jsonResponse.total > 0) {
           setMetIdList(jsonResponse.objectIDs);
           setMetTotal(jsonResponse.total);
@@ -71,7 +76,10 @@ function App() {
           setIsLoading(false);
           setSearchMade(true);
         }
-      });
+        })
+        .catch((err) => {
+        console.log(err.message)
+      })
     }
   };
 
@@ -97,35 +105,44 @@ function App() {
     if (typeof currentArtworkId === "number" && typeof currentArtworkId !== "undefined") {
       const result = await fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
-      );
-      result
-        .json()
-        .then((jsonResponse) => {
-          if (
-            jsonResponse.hasOwnProperty("message") ||
-            jsonResponse.primaryImageSmall === ""
-          ) {
-            counter++;
-          } else {
-            allArtworks.push(jsonResponse);
-            counter++;
-            loadTen++;
-            if (!metPrevious.includes(jsonResponse.objectID)) {
-              metPrevious.push(jsonResponse.objectID);
+      )
+      if (typeof result !== "undefined") {
+        result
+          .json()
+          .then((jsonResponse) => {
+            if (
+              jsonResponse.primaryImageSmall === ""
+            ) {
+              counter++;
+            } else if (jsonResponse.hasOwnProperty("message")) {
+              counter++;
+              fetchMet(counter);
+              throw Error(`Server says: ${jsonResponse.message}`);
             }
-          }
-        })
-        .then(() => {
-          if (counter < metIdList.length - 1 && loadTen < 10) {
-            fetchMet(counter);
-          } else {
-            setResults(allArtworks);
-            setIsLoading(false);
-            setMetIndex(counter);
-            loadTen = 0;
-          }
-        });
-    }
+            else {
+              allArtworks.push(jsonResponse);
+              counter++;
+              loadTen++;
+              if (!metPrevious.includes(jsonResponse.objectID)) {
+                metPrevious.push(jsonResponse.objectID);
+              }
+            }
+          })
+          .then(() => {
+            if (counter < metIdList.length - 1 && loadTen < 10) {
+              fetchMet(counter);
+            } else {
+              setResults(allArtworks);
+              setIsLoading(false);
+              setMetIndex(counter);
+              loadTen = 0;
+            }
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      }
+      }
   };
 
   const handleInput = (e) => {
@@ -144,15 +161,17 @@ function App() {
   };
 
   const handleCollection = (e) => {
-    switch (e.currentTarget.value) {
-      case "Art Institute of Chicago":
-        setApiSelector(chicagoArtUrl);
-        break;
-      default:
+    if (e.currentTarget.value !== controlApi) {
+      if (e.currentTarget.value === "Art Institute of Chicago") {
+          setControlApi("Art Institute of Chicago");
+          setApiSelector(chicagoArtUrl);
+      } else {
         setApiSelector(metMuseumUrl);
+          setControlApi("Metropolitan Museum NYC");
+      }
+    };
     }
-  };
-
+  
   const handleNextPageC = () => {
     let currentPage = chicagoPage;
     setChicagoPage(currentPage + 1);
@@ -213,6 +232,9 @@ function App() {
           recallIndex = 0;
           setLoadMetPrev(false);
         }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -237,6 +259,9 @@ function App() {
           recallIndex = 0;
           setLoadMetPrev(false);
         }
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   };
 
@@ -252,9 +277,14 @@ function App() {
       setDetailsLoading(true);
       const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
       const fullDetails = await fetch(metSingleArt + id);
-      fullDetails.json().then((jsonResponse) => {
-        setFullDetails(jsonResponse);
-      });
+      fullDetails
+        .json()
+        .then((jsonResponse) => {
+          setFullDetails(jsonResponse);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
     }
   };
 
@@ -270,9 +300,14 @@ function App() {
       ) {
         const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
         const fullDetails = await fetch(chicSingleArt + id);
-        fullDetails.json().then((jsonResponse) => {
-          setFullDetails(jsonResponse);
-        });
+        fullDetails
+          .json()
+          .then((jsonResponse) => {
+            setFullDetails(jsonResponse);
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
       }
   };
 
@@ -308,11 +343,12 @@ function App() {
   };
 
   useEffect(() => {
-    if (apiSelector === chicagoArtUrl && results.length !== 0) {
+    if (apiSelector === chicagoArtUrl && results.length !== 0 && results.data) {
       const hasThumbnail = results.data.filter((artwork) => artwork.thumbnail)
       setThumbLength(hasThumbnail.length)
     }
-  },[results])
+  }, [results])
+  
   return modal ? (
     apiSelector === chicagoArtUrl ? (
       <>
@@ -365,7 +401,7 @@ function App() {
           <h3>Input search criteria:</h3>
           <div className="inputSelect">
             <input onChange={handleInput}></input>
-            <select onChange={handleCollection}>
+            <select value={controlApi} onChange={handleCollection}>
               <option>Art Institute of Chicago</option>
               <option>Metropolitan Museum NYC</option>
             </select>
@@ -374,15 +410,13 @@ function App() {
             <button onClick={handleSearch}>Search collections!</button>
           </div>
         </div>
-        {isLoading ? (
+        {isLoading && (
           <>
             <img alt="loading results" src={loadingGif} width="250" />
           </>
-        ) : (
-          <></>
         )}
 
-        {metIdList.length > 0 && isLoading === false ? (
+        {metIdList.length > 0 && isLoading === false && (
           <>
             <div className="resultsFound">
               <p>
@@ -390,8 +424,6 @@ function App() {
               </p>
             </div>
           </>
-        ) : (
-          <></>
         )}
 
         {results.data ? (
@@ -402,7 +434,7 @@ function App() {
               </p>
             </>
           ) : (
-            <>
+            <Fragment key="resultsFrag">
               <div className="resultsFound">
                 <p>
                   <em>Showing {thumbLength} results!</em>
@@ -454,7 +486,7 @@ function App() {
               {results.data.map((artwork) => {
                 if (artwork.thumbnail) {
                   return (
-                    <>
+                    <Fragment key={artwork.id}>
                       <div className="artworkCard">
                         <button
                           className="artworkButton"
@@ -505,7 +537,9 @@ function App() {
 
                       {detailsLoading === true && isSelected === artwork.id ? (
                         <>
-                          <div className="fullDetails">
+                          <div
+                            className="fullDetails"
+                          >
                             <button onClick={() => handleChicInfo(artwork.id)}>
                               <img
                                 id="smallLoadingGif"
@@ -518,115 +552,111 @@ function App() {
                       ) : (
                         <>
                           {fullDetails.length != 0 &&
-                          isSelected === artwork.id ? (
-                            <div className="fullDetails">
-                              <button
-                                onClick={() => handleChicInfo(artwork.id)}
-                              >
-                                {isSelected === artwork.id ? (
-                                  <>
-                                    <div className="detailHeadings">
-                                      <p className="artistDetails">
-                                        <em>
-                                          {fullDetails.data.artist_title ||
-                                            "Unidentified artist"}
-                                        </em>
-                                      </p>
-                                      <div className="mediumDate">
-                                        <p>
-                                          {fullDetails.data.date_display ||
-                                            fullDetails.data.date_end ||
-                                            fullDetails.data.date_start}
+                            isSelected === artwork.id && (
+                              <div className="fullDetails">
+                                <button
+                                  onClick={() => handleChicInfo(artwork.id)}
+                                >
+                                  {isSelected === artwork.id && (
+                                    <>
+                                      <div className="detailHeadings">
+                                        <p className="artistDetails">
+                                          <em>
+                                            {fullDetails.data.artist_title ||
+                                              "Unidentified artist"}
+                                          </em>
                                         </p>
-                                        <p>
-                                          {fullDetails.data.medium_display ||
-                                            fullDetails.data
-                                              .artwork_type_title ||
-                                            fullDetails.data
-                                              .classification_title}
-                                        </p>
-                                      </div>
-                                      {fullDetails.data.place_of_origin !=
-                                      null ? (
-                                        <>
+                                        <div className="mediumDate">
                                           <p>
-                                            Produced in{" "}
-                                            {fullDetails.data.place_of_origin}
+                                            {fullDetails.data.date_display ||
+                                              fullDetails.data.date_end ||
+                                              fullDetails.data.date_start}
                                           </p>
-                                        </>
-                                      ) : (
-                                        <></>
-                                      )}
-
-                                      {fullDetails.data.credit_line ? (
-                                        <>
-                                          <div className="creditLine">
+                                          <p>
+                                            {fullDetails.data.medium_display ||
+                                              fullDetails.data
+                                                .artwork_type_title ||
+                                              fullDetails.data
+                                                .classification_title}
+                                          </p>
+                                        </div>
+                                        {fullDetails.data.place_of_origin !=
+                                          null && (
+                                          <>
                                             <p>
-                                              {fullDetails.data.credit_line}
+                                              Produced in{" "}
+                                              {fullDetails.data.place_of_origin}
                                             </p>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        <></>
-                                      )}
-                                    </div>
+                                          </>
+                                        )}
 
-                                    {description === "" ? (
-                                      <></>
-                                    ) : (
-                                      <>
-                                        <div
-                                          className="detailDescr"
-                                          dangerouslySetInnerHTML={{
-                                            __html:
-                                              DOMPurify.sanitize(description),
-                                          }}
-                                        />
-                                      </>
-                                    )}
-                                  </>
-                                ) : (
-                                  <></>
-                                )}
-                                <div className="viewAt">
-                                  {fullDetails.data.is_on_view ? (
-                                    fullDetails.data.gallery_title ? (
-                                      <p>
-                                        On view at Art Institute of Chicago,{" "}
-                                        {fullDetails.data.gallery_title}
-                                      </p>
-                                    ) : (
-                                      <p>On view at Art Institute of Chicago</p>
-                                    )
-                                  ) : (
-                                    <p>
-                                      Stored at Art Institute of Chicago - not
-                                      on view
-                                    </p>
+                                        {fullDetails.data.credit_line && (
+                                          <>
+                                            <div className="creditLine">
+                                              <p>
+                                                {fullDetails.data.credit_line}
+                                              </p>
+                                            </div>
+                                          </>
+                                        )}
+                                      </div>
+
+                                      {description !== "" && (
+                                        <>
+                                          <div
+                                            className="detailDescr"
+                                            dangerouslySetInnerHTML={{
+                                              __html: DOMPurify.sanitize(
+                                                description,
+                                                {
+                                                  FORBID_ATTR: ["href"],
+                                                }
+                                              ),
+                                            }}
+                                          />
+                                        </>
+                                      )}
+                                    </>
                                   )}
-                                </div>
-                                <img
-                                  className="expColButton"
-                                  alt="expand for details"
-                                  src={collapseArrow}
-                                />
-                              </button>
-                            </div>
-                          ) : (
-                            <></>
-                          )}
+                                  <div className="viewAt">
+                                    {fullDetails.data.is_on_view ? (
+                                      fullDetails.data.gallery_title ? (
+                                        <p>
+                                          On view at Art Institute of Chicago,{" "}
+                                          {fullDetails.data.gallery_title}
+                                        </p>
+                                      ) : (
+                                        <p>
+                                          On view at Art Institute of Chicago
+                                        </p>
+                                      )
+                                    ) : (
+                                      <p>
+                                        Stored at Art Institute of Chicago - not
+                                        on view
+                                      </p>
+                                    )}
+                                  </div>
+                                  <img
+                                    className="expColButton"
+                                    alt="expand for details"
+                                    src={collapseArrow}
+                                  />
+                                </button>
+                              </div>
+                            )}
                         </>
                       )}
-                    </>
+                    </Fragment>
                   );
                 }
               })}
 
-              {results.data.length > 3 ? (
-                <>
+              {results.data.length > 3 && (
+                <React.Fragment key={"bottomPagin"}>
                   <div className="prevNextButtons">
                     {chicagoPage === 1 ? (
-                      <>
+                      <React.Fragment key="bottomPag">
                         <button id="hidden" onClick={handlePrevPageC}>
                           Last results
                         </button>
@@ -635,7 +665,7 @@ function App() {
                           src={cube}
                           alt="results loaded"
                         />
-                      </>
+                      </React.Fragment>
                     ) : (
                       <>
                         <button onClick={handlePrevPageC}>Last results</button>
@@ -655,23 +685,19 @@ function App() {
                       </>
                     )}
                     {results.data.length > 9 ? (
-                      <>
-                        <button onClick={handleNextPageC}>Next results</button>
-                      </>
+                      <button onClick={handleNextPageC}>Next results</button>
                     ) : (
                       <button id="hidden" onClick={handleNextPageC}>
                         Next results
                       </button>
                     )}
                   </div>
-                </>
-              ) : (
-                <></>
+                </React.Fragment>
               )}
-            </>
+            </Fragment>
           )
         ) : results.length > 0 ? (
-          <>
+          <React.Fragment key="showingRes">
             <div className="prevNextButtons">
               {metPrevious.length <= 10 ||
               metPrevious[0] === results[0].objectID ? (
@@ -701,7 +727,7 @@ function App() {
 
             {results.map((artwork) => {
               return (
-                <>
+                <Fragment key={artwork.objectID}>
                   <div className="artworkCard">
                     <button
                       className="artworkButton"
@@ -743,127 +769,124 @@ function App() {
                     </div>
                   </div>
                   {detailsLoading === true &&
-                  isSelected === artwork.objectID ? (
-                    <>
-                      <div className="fullDetails">
-                        <button onClick={() => handleMetInfo(artwork.objectID)}>
-                          <img src={smallLoadingGif} alt="loading details" />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <></>
-                  )}
+                    isSelected === artwork.objectID && (
+                      <>
+                        <div className="fullDetails">
+                          <button
+                            onClick={() => handleMetInfo(artwork.objectID)}
+                          >
+                            <img src={smallLoadingGif} alt="loading details" />
+                          </button>
+                        </div>
+                      </>
+                    )}
                   {detailsLoading === false &&
-                  isSelected === artwork.objectID ? (
-                    <>
-                      <div className="fullDetails">
-                        <button onClick={() => handleMetInfo(artwork.objectID)}>
-                          {artwork.artistDisplayName ? (
-                            <>
-                              <p className="artistDetails">
-                                <em>
-                                  {fullDetails.artistDisplayName},{" "}
-                                  {fullDetails.artistRole ? (
-                                    `${fullDetails.artistRole}, `
-                                  ) : (
-                                    <></>
-                                  )}
-                                  {fullDetails.culture ||
-                                    fullDetails.country ||
-                                    ` department of ${fullDetails.department}`}
-                                </em>
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              <p className="artistDetails">
-                                <em>
-                                  Unidentified artist,{" "}
-                                  {fullDetails.culture ||
-                                    fullDetails.country ||
-                                    ` department of ${fullDetails.department}`}
-                                </em>
-                              </p>
-                            </>
-                          )}
-                          <div className="mediumDate">
-                            <p>
-                              {fullDetails.medium ? fullDetails.medium : <></>}
-                            </p>
-                            <p>
-                              {fullDetails.objectDate
-                                ? fullDetails.objectDate
-                                : fullDetails.objectEndDate ||
-                                  fullDetails.objectBeginDate ||
-                                  fullDetails.excavation ||
-                                  fullDetails.period}
-                            </p>
-                          </div>
-                          {fullDetails.creditLine ? (
-                            <p className="creditLine">
-                              {fullDetails.creditLine}
-                            </p>
-                          ) : (
-                            <></>
-                          )}
-
-                          {fullDetails.repository ? (
-                            <>
-                              <div className="viewAt">
-                                <p>
-                                  {fullDetails.GalleryNumber != ""
-                                    ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
-                                    : `Stored at ${fullDetails.repository} - not on
-                                    view`}
+                    isSelected === artwork.objectID && (
+                      <>
+                        <div className="fullDetails">
+                          <button
+                            onClick={() => handleMetInfo(artwork.objectID)}
+                          >
+                            {artwork.artistDisplayName ? (
+                              <>
+                                <div className="artistDetails">
+                                  <p>
+                                    <em>
+                                      {fullDetails.artistDisplayName}
+                                      {fullDetails.artistRole &&
+                                        `, ${fullDetails.artistRole}, `}
+                                    </em>
+                                  </p>
+                                  <em>
+                                    {fullDetails.culture ||
+                                      fullDetails.country ||
+                                      ` department of ${fullDetails.department}`}
+                                  </em>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="artistDetails">
+                                  <em>
+                                    Unidentified artist,{" "}
+                                    {fullDetails.culture ||
+                                      fullDetails.country ||
+                                      ` department of ${fullDetails.department}`}
+                                  </em>
                                 </p>
-                              </div>
-                            </>
-                          ) : (
-                            <></>
-                          )}
-                          {fullDetails.objectURL != "" ? (
-                            <a
-                              className="moreInfo"
-                              href={fullDetails.objectURL}
-                              target="_blank"
-                            >
-                              More info
-                            </a>
-                          ) : fullDetails.objectWikidata_URL != "" ? (
-                            <a
-                              className="moreInfo"
-                              href={fullDetails.objectWikidata_URL}
-                              target="_blank"
-                            >
-                              More info
-                            </a>
-                          ) : fullDetails.linkResource != "" ? (
-                            <a
-                              className="moreInfo"
-                              href={fullDetails.linkResource}
-                              target="_blank"
-                            >
-                              More info
-                            </a>
-                          ) : (
-                            <></>
-                          )}
-                          <img
-                            className="expColButton"
-                            alt="expand for details"
-                            src={collapseArrow}
-                          />
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </>
+                              </>
+                            )}
+                            <div className="mediumDate">
+                              {fullDetails.medium && (
+                                <p>{fullDetails.medium}</p>
+                              )}
+                              <p>
+                                {fullDetails.objectDate
+                                  ? fullDetails.objectDate
+                                  : fullDetails.objectEndDate ||
+                                    fullDetails.objectBeginDate ||
+                                    fullDetails.excavation ||
+                                    fullDetails.period}
+                              </p>
+                            </div>
+                            {fullDetails.creditLine && (
+                              <p className="creditLine">
+                                {fullDetails.creditLine}
+                              </p>
+                            )}
+
+                            {fullDetails.repository && (
+                              <>
+                                <div className="viewAt">
+                                  <p>
+                                    {fullDetails.GalleryNumber != ""
+                                      ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
+                                      : `Stored at ${fullDetails.repository} - not on
+                                    view`}
+                                  </p>
+                                </div>
+                              </>
+                            )}
+                            {fullDetails.objectURL != "" ? (
+                              <a
+                                className="moreInfo"
+                                href={fullDetails.objectURL}
+                                target="_blank"
+                              >
+                                More info
+                              </a>
+                            ) : fullDetails.objectWikidata_URL != "" ? (
+                              <a
+                                className="moreInfo"
+                                href={fullDetails.objectWikidata_URL}
+                                target="_blank"
+                              >
+                                More info
+                              </a>
+                            ) : (
+                              fullDetails.linkResource != "" && (
+                                <a
+                                  className="moreInfo"
+                                  href={fullDetails.linkResource}
+                                  target="_blank"
+                                >
+                                  More info
+                                </a>
+                              )
+                            )}
+                            <img
+                              className="expColButton"
+                              alt="expand for details"
+                              src={collapseArrow}
+                            />
+                          </button>
+                        </div>
+                      </>
+                    )}
+                </Fragment>
               );
             })}
-            {results.length > 3 ? (
+            {results.length > 3 && (
               <>
                 <div className="prevNextButtons">
                   {metPrevious.length <= 10 ||
@@ -907,18 +930,17 @@ function App() {
                   )}
                 </div>
               </>
-            ) : (
-              <></>
             )}
-          </>
-        ) : searchMade === true && isLoading === false ? (
-          <>
-            <p>
-              <em>No results currently archived about: {lastSearch}</em>
-            </p>
-          </>
+          </React.Fragment>
         ) : (
-          <></>
+          searchMade === true &&
+          isLoading === false && (
+            <>
+              <p>
+                <em>No results currently archived about: {lastSearch}</em>
+              </p>
+            </>
+          )
         )}
       </div>
     </>
