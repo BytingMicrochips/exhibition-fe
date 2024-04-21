@@ -9,19 +9,22 @@ import Modal from "./Modal";
 import ResultsMapChic from "./ResultsMapChic";
 import ResultsMapMet from "./ResultsMapMet";
 import ResultsCounter from "./ResultsCounter";
+import PaginationBar from "./PaginationBar";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
 export const ModalPropsContext = createContext();
+export const PaginationContext = createContext();
 
 function App() {
+  const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
+  const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
+  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
+  const [controlApi, setControlApi] = useState("Art Institute of Chicago");
+
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
-  const [apiSelector, setApiSelector] = useState(
-    "https://api.artic.edu/api/v1/artworks/search?q="
-  );
   const [metIdList, setMetIdList] = useState([]);
-  const [metTotal, setMetTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [chicagoPage, setChicagoPage] = useState(1);
   const [metIndex, setMetIndex] = useState(0);
@@ -34,17 +37,16 @@ function App() {
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
-  const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
-  const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
   const [modal, setModal] = useState(false);
-  const [metModal, setMetModal] = useState({});
   const [modalProps, setModalProps] = useState({});
-
   const [thumbLength, setThumbLength] = useState(0);
-  const [controlApi, setControlApi] = useState("Art Institute of Chicago");
+  const [pageValue, setPageValue] = useState(1);
+  const [lastPageValue, setLastPageValue] = useState(1);
+
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
+  let recallIndex = 0;
 
   const fetchResults = async () => {
     const emptyMet = [];
@@ -54,7 +56,6 @@ function App() {
 
     if (apiSelector === chicagoArtUrl) {
       setMetIdList(emptyMet);
-      setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
       );
@@ -76,10 +77,8 @@ function App() {
         .then((jsonResponse) => {
           if (jsonResponse.total > 0) {
             setMetIdList(jsonResponse.objectIDs);
-            setMetTotal(jsonResponse.total);
           } else {
             setMetIdList(emptyMet);
-            setMetTotal(jsonResponse.total);
             setIsLoading(false);
             setSearchMade(true);
           }
@@ -160,8 +159,9 @@ function App() {
     setLastSearch(input);
     setFullDetails([]);
     setIsSelected("");
-    if (chicagoPage != 1) {
+    if (chicagoPage != 1 || pageValue != 1) {
       setChicagoPage(1);
+      setPageValue(1);
     } else {
       fetchResults();
     }
@@ -179,15 +179,22 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (pageValue > lastPageValue) {
+      handleNextPageC();
+      setLastPageValue(pageValue)
+    } else {
+      handlePrevPageC();
+    }
+  }, [pageValue]);
+
   const handleNextPageC = () => {
-    let currentPage = chicagoPage;
-    setChicagoPage(currentPage + 1);
+    setChicagoPage(pageValue);
   };
 
   const handlePrevPageC = () => {
-    let currentPage = chicagoPage;
-    if (currentPage - 1 > 0) {
-      setChicagoPage(currentPage - 1);
+    if (lastPageValue - 1 > 0) {
+      setChicagoPage(pageValue);
     }
   };
 
@@ -216,7 +223,6 @@ function App() {
     }
   }, [loadMetPrev]);
 
-  let recallIndex = 0;
   const fetchPrevMet = async () => {
     const displayIndex = metPrevious.indexOf(results[0].objectID);
     let validId = metPrevious[displayIndex - 10 + recallIndex];
@@ -357,246 +363,170 @@ function App() {
     <>
       <ModalContext.Provider value={[modal, setModal]}>
         <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
-          {modal ? (
-            <Modal />
-          ) : (
-            <>
-              <Title />
-              <div>
-                <div className="searchCard">
-                  <h3>Input search criteria:</h3>
-                  <div className="inputSelect">
-                    <input onChange={handleInput}></input>
-                    <select value={controlApi} onChange={handleCollection}>
-                      <option>Art Institute of Chicago</option>
-                      <option>Metropolitan Museum NYC</option>
-                    </select>
+          <PaginationContext.Provider value={[pageValue, setPageValue]}>
+            {modal ? (
+              <Modal />
+            ) : (
+              <>
+                <Title />
+                <div>
+                  <div className="searchCard">
+                    <h3>Input search criteria:</h3>
+                    <div className="inputSelect">
+                      <input onChange={handleInput}></input>
+                      <select value={controlApi} onChange={handleCollection}>
+                        <option>Art Institute of Chicago</option>
+                        <option>Metropolitan Museum NYC</option>
+                      </select>
+                    </div>
+                    <div className="searchButton">
+                      <button onClick={handleSearch}>
+                        Search collections!
+                      </button>
+                    </div>
                   </div>
-                  <div className="searchButton">
-                    <button onClick={handleSearch}>Search collections!</button>
-                  </div>
-                </div>
-                {isLoading && (
-                  <>
-                    <img alt="loading results" src={loadingGif} width="250" />
-                  </>
-                )}
+                  {isLoading && (
+                    <>
+                      <img alt="loading results" src={loadingGif} width="250" />
+                    </>
+                  )}
 
-                {metIdList.length > 0 && isLoading === false && (
-                      <ResultsCounter total={results.length}/>   
-                )}
+                  {metIdList.length > 0 && isLoading === false && (
+                    <ResultsCounter total={results.length} />
+                  )}
 
-                {results.data ? (
-                  results.pagination.total === 0 && isLoading === false ? (
-                    <ResultsCounter lastSearch={lastSearch} total={0} />
-                  ) : (
-                    <Fragment key="resultsFrag">
-                      <ResultsCounter total={thumbLength}/>
-                      <div className="prevNextButtons">
-                        {chicagoPage === 1 ? (
-                          <>
-                            <button id="hidden" onClick={handlePrevPageC}>
-                              Last results
-                            </button>
-                            <img
-                              id="paginationLoading"
-                              src={cube}
-                              alt="results loaded"
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <button onClick={handlePrevPageC}>
-                              Last results
-                            </button>
-                            {isLoading ? (
-                              <img
-                                id="paginationLoading"
-                                src={smallLoadingGif}
-                                alt="results loading"
-                              />
-                            ) : (
-                              <img
-                                id="paginationLoading"
-                                src={cube}
-                                alt="results loaded"
-                              />
-                            )}
-                          </>
+                  {results.data ? (
+                    results.pagination.total === 0 && isLoading === false ? (
+                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                    ) : (
+                      <Fragment key="resultsFrag">
+                        <ResultsCounter total={thumbLength} />
+                        <PaginationBar results={results} isLoading={isLoading} />
+                        <IsSelectedContext.Provider
+                          value={[expanded, setExpanded]}
+                        >
+                          <ResultsMapChic
+                            results={results}
+                            isSelected={isSelected}
+                            detailsLoading={detailsLoading}
+                            fullDetails={fullDetails}
+                            description={description}
+                          />
+                        </IsSelectedContext.Provider>
+                        {results.data.length > 3 && (
+                          <React.Fragment key={"bottomPagin"}>
+                            <PaginationBar results={results} isLoading={isLoading} />
+                          </React.Fragment>
                         )}
-                        {results.data.length > 9 ? (
-                          <>
-                            <button onClick={handleNextPageC}>
-                              Next results
-                            </button>
-                          </>
+                      </Fragment>
+                    )
+                  ) : results.length > 0 ? (
+                    <React.Fragment key="showingRes">
+                      <div className="prevNextButtons">
+                        {metPrevious.length <= 10 ||
+                        metPrevious[0] === results[0].objectID ? (
+                          <button id="hidden" onClick={handlePrevPageM}>
+                            Last results
+                          </button>
                         ) : (
-                          <>
-                            <button id="hidden" onClick={handleNextPageC}>
-                              Next results
-                            </button>
-                          </>
+                          <button onClick={handlePrevPageM}>
+                            Last results
+                          </button>
+                        )}
+                        {isLoading ? (
+                          <img
+                            id="paginationLoading"
+                            src={smallLoadingGif}
+                            alt="results loading"
+                          />
+                        ) : (
+                          <img
+                            id="paginationLoading"
+                            src={cube}
+                            alt="results loaded"
+                          />
+                        )}
+                        {results.length > 9 ? (
+                          <button onClick={handleNextPageM}>
+                            Next results
+                          </button>
+                        ) : (
+                          <button id="hidden" onClick={handleNextPageM}>
+                            Next results
+                          </button>
                         )}
                       </div>
+
                       <IsSelectedContext.Provider
                         value={[expanded, setExpanded]}
                       >
-                        <ResultsMapChic
+                        <ResultsMapMet
                           results={results}
-                          isSelected={isSelected}
                           detailsLoading={detailsLoading}
                           fullDetails={fullDetails}
-                          description={description}
                         />
                       </IsSelectedContext.Provider>
-                      {results.data.length > 3 && (
-                        <React.Fragment key={"bottomPagin"}>
+
+                      {results.length > 3 && (
+                        <>
                           <div className="prevNextButtons">
-                            {chicagoPage === 1 ? (
-                              <React.Fragment key="bottomPag">
-                                <button id="hidden" onClick={handlePrevPageC}>
-                                  Last results
-                                </button>
-                                <img
-                                  id="paginationLoading"
-                                  src={cube}
-                                  alt="results loaded"
-                                />
-                              </React.Fragment>
+                            {metPrevious.length <= 10 ||
+                            metPrevious[0] === results[0].objectID ? (
+                              <>
+                                <button id="hidden">Last results</button>
+                              </>
                             ) : (
                               <>
-                                <button onClick={handlePrevPageC}>
+                                <button onClick={handlePrevPageM}>
                                   Last results
                                 </button>
+                              </>
+                            )}
+                            {results.length >= 10 ? (
+                              <>
                                 {isLoading ? (
                                   <img
-                                    id="paginationLoading"
                                     src={smallLoadingGif}
                                     alt="results loading"
+                                    id="paginationLoading"
                                   />
                                 ) : (
                                   <img
-                                    id="paginationLoading"
                                     src={cube}
                                     alt="results loaded"
+                                    id="paginationLoading"
                                   />
                                 )}
+                                <button onClick={handleNextPageM}>
+                                  Next results
+                                </button>
                               </>
-                            )}
-                            {results.data.length > 9 ? (
-                              <button onClick={handleNextPageC}>
-                                Next results
-                              </button>
                             ) : (
-                              <button id="hidden" onClick={handleNextPageC}>
-                                Next results
-                              </button>
-                            )}
-                          </div>
-                        </React.Fragment>
-                      )}
-                    </Fragment>
-                  )
-                ) : results.length > 0 ? (
-                  <React.Fragment key="showingRes">
-                    <div className="prevNextButtons">
-                      {metPrevious.length <= 10 ||
-                      metPrevious[0] === results[0].objectID ? (
-                        <button id="hidden" onClick={handlePrevPageM}>
-                          Last results
-                        </button>
-                      ) : (
-                        <button onClick={handlePrevPageM}>Last results</button>
-                      )}
-                      {isLoading ? (
-                        <img
-                          id="paginationLoading"
-                          src={smallLoadingGif}
-                          alt="results loading"
-                        />
-                      ) : (
-                        <img
-                          id="paginationLoading"
-                          src={cube}
-                          alt="results loaded"
-                        />
-                      )}
-                      {results.length > 9 ? (
-                        <button onClick={handleNextPageM}>Next results</button>
-                      ) : (
-                        <button id="hidden" onClick={handleNextPageM}>
-                          Next results
-                        </button>
-                      )}
-                    </div>
-
-                    <IsSelectedContext.Provider value={[expanded, setExpanded]}>
-                      <ResultsMapMet
-                        results={results}
-                        detailsLoading={detailsLoading}
-                        fullDetails={fullDetails}
-                      />
-                    </IsSelectedContext.Provider>
-
-                    {results.length > 3 && (
-                      <>
-                        <div className="prevNextButtons">
-                          {metPrevious.length <= 10 ||
-                          metPrevious[0] === results[0].objectID ? (
-                            <>
-                              <button id="hidden">Last results</button>
-                            </>
-                          ) : (
-                            <>
-                              <button onClick={handlePrevPageM}>
-                                Last results
-                              </button>
-                            </>
-                          )}
-                          {results.length >= 10 ? (
-                            <>
-                              {isLoading ? (
-                                <img
-                                  src={smallLoadingGif}
-                                  alt="results loading"
-                                  id="paginationLoading"
-                                />
-                              ) : (
+                              <>
                                 <img
                                   src={cube}
                                   alt="results loaded"
                                   id="paginationLoading"
                                 />
-                              )}
-                              <button onClick={handleNextPageM}>
-                                Next results
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <img
-                                src={cube}
-                                alt="results loaded"
-                                id="paginationLoading"
-                              />
-                              <button id="hidden" onClick={handleNextPageM}>
-                                Next results
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </React.Fragment>
-                ) : (
-                  searchMade === true &&
-                  isLoading === false && (
-                    <ResultsCounter lastSearch={lastSearch} total={0} />
-                  )
-                )}
-              </div>
-            </>
-          )}
+                                <button id="hidden" onClick={handleNextPageM}>
+                                  Next results
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </React.Fragment>
+                  ) : (
+                    searchMade === true &&
+                    isLoading === false && (
+                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                    )
+                  )}
+                </div>
+              </>
+            )}
+          </PaginationContext.Provider>
         </ModalPropsContext.Provider>
       </ModalContext.Provider>
     </>
