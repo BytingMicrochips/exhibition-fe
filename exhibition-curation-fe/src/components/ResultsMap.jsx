@@ -4,20 +4,22 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext } from "../components/App";
+import { ModalContext, IsSelectedContext, ModalPropsContext } from "../components/App";
 import DOMPurify from "dompurify";
 
 const ResultsMap = (props) => {
   const [modal, setModal] = useContext(ModalContext);
+  const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
 
-  const handleModal = () => {
+  const handleModal = (config, id, altText) => {
+    setModalProps({ config, id, altText });
     setModal(!modal);
   };
 
   const handleExpanded = (id) => {
   id === selected ? setSelected("") : setSelected(id);
-    
+
   }
 
   return (
@@ -60,11 +62,17 @@ const ResultsMap = (props) => {
                   </div>
                 </div>
               </div>
-
-              <button className="expandImg" onClick={handleModal}>
+              <button
+                className="expandImg"
+                onClick={() =>
+                  handleModal(
+                    props.results.config.iiif_url, artwork.image_id,
+                    artwork.thumbnail.alt_text
+                  )
+                }
+              >
                 <img id="expandIcon" src={expand} alt="expand image" />
               </button>
-
               {props.detailsLoading === true &&
               props.isSelected === artwork.id ? (
                 <>

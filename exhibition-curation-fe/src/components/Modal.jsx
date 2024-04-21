@@ -1,27 +1,32 @@
 import { Fragment } from "react";
 import { useContext } from "react";
-import { ModalContext } from "./App";
+import { ModalContext, ModalPropsContext } from "./App";
 
 const Modal = (props) => {
     const [modal, setModal] = useContext(ModalContext);
-
-    const handleModal = () => {
+    const [modalProps, setModalProps] = useContext(ModalPropsContext);
+    
+  const handleExitModal = (e) => {
     setModal(!modal);
     }
     
   return (
-    <>
-      <div className="modal" onClick={handleModal}>
+    <Fragment key={"ModalPage"}>
+      <div className="modal" onClick={handleExitModal}>
         <div className="overlay">
           <div className="modalContent">
-            <img className="modalImg" alt={props.altText} src={props.srcLink} />
+            <img
+              className="modalImg"
+              alt={modalProps.altText}
+              src={`${modalProps.config}/${modalProps.id}/full/400,/0/default.jpg`}
+            />
             <p>
               <em>Touch anywhere to close</em>
             </p>
           </div>
         </div>
       </div>
-    </>
+    </Fragment>
   );
 };
 

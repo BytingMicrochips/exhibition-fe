@@ -13,6 +13,7 @@ import ResultsMap from "./ResultsMap";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
+export const ModalPropsContext = createContext();
 
 function App() {
   const [input, setInput] = useState("");
@@ -32,16 +33,18 @@ function App() {
   const [fullDetails, setFullDetails] = useState([]);
   const [expanded, setExpanded] = useState("");
   const [isSelected, setIsSelected] = useState("");
-  console.log("🚀 ~ App ~ isSelected:", isSelected)
   const [description, setDescription] = useState("");
   const [detailsLoading, setDetailsLoading] = useState(false);
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
   const [modal, setModal] = useState(false);
-  const [modalId, setModalId] = useState("");
-  const [modalImgId, setModalImgId] = useState("");
-  const [modalAltText, setModalAltText] = useState("");
+
+  // const [modalId, setModalId] = useState("");
+  // const [modalImgId, setModalImgId] = useState("");
+  // const [modalAltText, setModalAltText] = useState("");
   const [metModal, setMetModal] = useState({});
+  const [modalProps, setModalProps] = useState({});
+
   const [thumbLength, setThumbLength] = useState(0);
   const [controlApi, setControlApi] = useState("Art Institute of Chicago");
   const allArtworks = [];
@@ -342,17 +345,19 @@ function App() {
   }, [fullDetails]);
 
   const handleFullImg = (id, imgId, altText) => {
-    setModal(!modal);
-    if (apiSelector === metMuseumUrl) {
-      const match = results.filter((item) => {
-        return item.objectID === id
-      })
-      setMetModal(match[0]);
-    } else {
-    setModalId(id);
-    setModalImgId(imgId);
-    setModalAltText(altText);
-    }
+    console.log("handleFullImg");
+    // setModal(!modal);
+    // if (apiSelector === metMuseumUrl) {
+    //   const match = results.filter((item) => {
+    //     return item.objectID === id
+    //   })
+    //   setMetModal(match[0]);
+    // } else {
+    // setModalId(id);
+    // setModalImgId(imgId);
+    //   setModalAltText(altText);
+      
+    // }
   };
 
   useEffect(() => {
@@ -365,438 +370,442 @@ function App() {
   return (
     <>
       <ModalContext.Provider value={[modal, setModal]}>
-        {modal ? (
-          apiSelector === chicagoArtUrl ? (
-            <Modal
-              altText={modalAltText}
-              srcLink={`https://www.artic.edu/iiif/2/${id}/full/400,/0/default.jpg`}
-            />
+        <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
+          {modal ? (
+            apiSelector === chicagoArtUrl ? (
+              <Modal/>
+            ) : (
+              <Modal
+                altText={metModal.medium}
+                srcLink={metModal.primaryImageSmall}
+              />
+            )
           ) : (
-            <Modal
-              altText={metModal.medium}
-              srcLink={metModal.primaryImageSmall}
-            />
-          )
-        ) : (
-          <>
-            <Title />
-            <div>
-              <div className="searchCard">
-                <h3>Input search criteria:</h3>
-                <div className="inputSelect">
-                  <input onChange={handleInput}></input>
-                  <select value={controlApi} onChange={handleCollection}>
-                    <option>Art Institute of Chicago</option>
-                    <option>Metropolitan Museum NYC</option>
-                  </select>
-                </div>
-                <div className="searchButton">
-                  <button onClick={handleSearch}>Search collections!</button>
-                </div>
-              </div>
-              {isLoading && (
-                <>
-                  <img alt="loading results" src={loadingGif} width="250" />
-                </>
-              )}
-
-              {metIdList.length > 0 && isLoading === false && (
-                <>
-                  <div className="resultsFound">
-                    <p>
-                      <em>Showing {results.length} results!</em>
-                    </p>
+            <>
+              <Title />
+              <div>
+                <div className="searchCard">
+                  <h3>Input search criteria:</h3>
+                  <div className="inputSelect">
+                    <input onChange={handleInput}></input>
+                    <select value={controlApi} onChange={handleCollection}>
+                      <option>Art Institute of Chicago</option>
+                      <option>Metropolitan Museum NYC</option>
+                    </select>
                   </div>
-                </>
-              )}
-
-              {results.data ? (
-                results.pagination.total === 0 && isLoading === false ? (
+                  <div className="searchButton">
+                    <button onClick={handleSearch}>Search collections!</button>
+                  </div>
+                </div>
+                {isLoading && (
                   <>
-                    <p>
-                      <em>No results currently archived about: {lastSearch}</em>
-                    </p>
+                    <img alt="loading results" src={loadingGif} width="250" />
                   </>
-                ) : (
-                  <Fragment key="resultsFrag">
+                )}
+
+                {metIdList.length > 0 && isLoading === false && (
+                  <>
                     <div className="resultsFound">
                       <p>
-                        <em>Showing {thumbLength} results!</em>
+                        <em>Showing {results.length} results!</em>
                       </p>
                     </div>
+                  </>
+                )}
 
-                    <div className="prevNextButtons">
-                      {chicagoPage === 1 ? (
-                        <>
-                          <button id="hidden" onClick={handlePrevPageC}>
-                            Last results
-                          </button>
-                          <img
-                            id="paginationLoading"
-                            src={cube}
-                            alt="results loaded"
-                          />
-                        </>
-                      ) : (
-                        <>
-                          <button onClick={handlePrevPageC}>
-                            Last results
-                          </button>
-                          {isLoading ? (
-                            <img
-                              id="paginationLoading"
-                              src={smallLoadingGif}
-                              alt="results loading"
-                            />
-                          ) : (
+                {results.data ? (
+                  results.pagination.total === 0 && isLoading === false ? (
+                    <>
+                      <p>
+                        <em>
+                          No results currently archived about: {lastSearch}
+                        </em>
+                      </p>
+                    </>
+                  ) : (
+                    <Fragment key="resultsFrag">
+                      <div className="resultsFound">
+                        <p>
+                          <em>Showing {thumbLength} results!</em>
+                        </p>
+                      </div>
+
+                      <div className="prevNextButtons">
+                        {chicagoPage === 1 ? (
+                          <>
+                            <button id="hidden" onClick={handlePrevPageC}>
+                              Last results
+                            </button>
                             <img
                               id="paginationLoading"
                               src={cube}
                               alt="results loaded"
                             />
-                          )}
-                        </>
-                      )}
-                      {results.data.length > 9 ? (
-                        <>
-                          <button onClick={handleNextPageC}>
-                            Next results
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button id="hidden" onClick={handleNextPageC}>
-                            Next results
-                          </button>
-                        </>
-                      )}
-                    </div>
-                    <IsSelectedContext.Provider value={[expanded, setExpanded]}>
-                      <ResultsMap
-                        results={results}
-                        isSelected={isSelected}
-                        detailsLoading={detailsLoading}
-                        fullDetails={fullDetails}
-                        description={description}
-                      />
-                    </IsSelectedContext.Provider>
-
-                    {results.data.length > 3 && (
-                      <React.Fragment key={"bottomPagin"}>
-                        <div className="prevNextButtons">
-                          {chicagoPage === 1 ? (
-                            <React.Fragment key="bottomPag">
-                              <button id="hidden" onClick={handlePrevPageC}>
-                                Last results
-                              </button>
-                              <img
-                                id="paginationLoading"
-                                src={cube}
-                                alt="results loaded"
-                              />
-                            </React.Fragment>
-                          ) : (
-                            <>
-                              <button onClick={handlePrevPageC}>
-                                Last results
-                              </button>
-                              {isLoading ? (
-                                <img
-                                  id="paginationLoading"
-                                  src={smallLoadingGif}
-                                  alt="results loading"
-                                />
-                              ) : (
-                                <img
-                                  id="paginationLoading"
-                                  src={cube}
-                                  alt="results loaded"
-                                />
-                              )}
-                            </>
-                          )}
-                          {results.data.length > 9 ? (
-                            <button onClick={handleNextPageC}>
-                              Next results
-                            </button>
-                          ) : (
-                            <button id="hidden" onClick={handleNextPageC}>
-                              Next results
-                            </button>
-                          )}
-                        </div>
-                      </React.Fragment>
-                    )}
-                  </Fragment>
-                )
-              ) : results.length > 0 ? (
-                <React.Fragment key="showingRes">
-                  <div className="prevNextButtons">
-                    {metPrevious.length <= 10 ||
-                    metPrevious[0] === results[0].objectID ? (
-                      <button id="hidden" onClick={handlePrevPageM}>
-                        Last results
-                      </button>
-                    ) : (
-                      <button onClick={handlePrevPageM}>Last results</button>
-                    )}
-                    {isLoading ? (
-                      <img
-                        id="paginationLoading"
-                        src={smallLoadingGif}
-                        alt="results loading"
-                      />
-                    ) : (
-                      <img
-                        id="paginationLoading"
-                        src={cube}
-                        alt="results loaded"
-                      />
-                    )}
-                    {results.length > 9 ? (
-                      <button onClick={handleNextPageM}>Next results</button>
-                    ) : (
-                      <button id="hidden" onClick={handleNextPageM}>
-                        Next results
-                      </button>
-                    )}
-                  </div>
-
-                  {results.map((artwork) => {
-                    return (
-                      <Fragment key={artwork.objectID}>
-                        <div className="artworkCard">
-                          <button
-                            className="artworkButton"
-                            onClick={() => handleMetInfo(artwork.objectID)}
-                          >
-                            <div id="headingArrow">
-                              <div className="artworkCardHeader">
-                                <p>{artwork.title || "Untitled"}</p>
-                              </div>
-                              {isSelected === artwork.objectID ? (
-                                <img
-                                  className="expColButton"
-                                  alt="expand for details"
-                                  src={collapseArrow}
-                                />
-                              ) : (
-                                <img
-                                  className="expColButton"
-                                  alt="expand for details"
-                                  src={expandArrow}
-                                />
-                              )}
-                            </div>
-                          </button>
-                          <div className="artworkCardImg">
-                            <img
-                              alt={artwork.medium}
-                              src={artwork.primaryImageSmall}
-                              width="200"
-                            />
-                            <button
-                              className="expandImg"
-                              onClick={() => {
-                                handleFullImg(artwork.objectID);
-                              }}
-                            >
-                              <img
-                                id="expandIcon"
-                                src={expand}
-                                alt="expand image"
-                              />
-                            </button>
-                          </div>
-                        </div>
-                        {detailsLoading === true &&
-                          isSelected === artwork.objectID && (
-                            <>
-                              <div className="fullDetails">
-                                <button
-                                  onClick={() =>
-                                    handleMetInfo(artwork.objectID)
-                                  }
-                                >
-                                  <img
-                                    src={smallLoadingGif}
-                                    alt="loading details"
-                                  />
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        {detailsLoading === false &&
-                          isSelected === artwork.objectID && (
-                            <>
-                              <div className="fullDetails">
-                                <button
-                                  onClick={() =>
-                                    handleMetInfo(artwork.objectID)
-                                  }
-                                >
-                                  {artwork.artistDisplayName ? (
-                                    <>
-                                      <div className="artistDetails">
-                                        <p>
-                                          <em>
-                                            {fullDetails.artistDisplayName}
-                                            {fullDetails.artistRole &&
-                                              `, ${fullDetails.artistRole}, `}
-                                          </em>
-                                        </p>
-                                        <em>
-                                          {fullDetails.culture ||
-                                            fullDetails.country ||
-                                            ` department of ${fullDetails.department}`}
-                                        </em>
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <p className="artistDetails">
-                                        <em>
-                                          Unidentified artist,{" "}
-                                          {fullDetails.culture ||
-                                            fullDetails.country ||
-                                            ` department of ${fullDetails.department}`}
-                                        </em>
-                                      </p>
-                                    </>
-                                  )}
-                                  <div className="mediumDate">
-                                    {fullDetails.medium && (
-                                      <p>{fullDetails.medium}</p>
-                                    )}
-                                    <p>
-                                      {fullDetails.objectDate
-                                        ? fullDetails.objectDate
-                                        : fullDetails.objectEndDate ||
-                                          fullDetails.objectBeginDate ||
-                                          fullDetails.excavation ||
-                                          fullDetails.period}
-                                    </p>
-                                  </div>
-                                  {fullDetails.creditLine && (
-                                    <p className="creditLine">
-                                      {fullDetails.creditLine}
-                                    </p>
-                                  )}
-
-                                  {fullDetails.repository && (
-                                    <>
-                                      <div className="viewAt">
-                                        <p>
-                                          {fullDetails.GalleryNumber != ""
-                                            ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
-                                            : `Stored at ${fullDetails.repository} - not on
-                                    view`}
-                                        </p>
-                                      </div>
-                                    </>
-                                  )}
-                                  {fullDetails.objectURL != "" ? (
-                                    <a
-                                      className="moreInfo"
-                                      href={fullDetails.objectURL}
-                                      target="_blank"
-                                    >
-                                      More info
-                                    </a>
-                                  ) : fullDetails.objectWikidata_URL != "" ? (
-                                    <a
-                                      className="moreInfo"
-                                      href={fullDetails.objectWikidata_URL}
-                                      target="_blank"
-                                    >
-                                      More info
-                                    </a>
-                                  ) : (
-                                    fullDetails.linkResource != "" && (
-                                      <a
-                                        className="moreInfo"
-                                        href={fullDetails.linkResource}
-                                        target="_blank"
-                                      >
-                                        More info
-                                      </a>
-                                    )
-                                  )}
-                                  <img
-                                    className="expColButton"
-                                    alt="expand for details"
-                                    src={collapseArrow}
-                                  />
-                                </button>
-                              </div>
-                            </>
-                          )}
-                      </Fragment>
-                    );
-                  })}
-                  {results.length > 3 && (
-                    <>
-                      <div className="prevNextButtons">
-                        {metPrevious.length <= 10 ||
-                        metPrevious[0] === results[0].objectID ? (
-                          <>
-                            <button id="hidden">Last results</button>
                           </>
                         ) : (
                           <>
-                            <button onClick={handlePrevPageM}>
+                            <button onClick={handlePrevPageC}>
                               Last results
                             </button>
-                          </>
-                        )}
-                        {results.length >= 10 ? (
-                          <>
                             {isLoading ? (
                               <img
+                                id="paginationLoading"
                                 src={smallLoadingGif}
                                 alt="results loading"
-                                id="paginationLoading"
                               />
                             ) : (
                               <img
+                                id="paginationLoading"
                                 src={cube}
                                 alt="results loaded"
-                                id="paginationLoading"
                               />
                             )}
-                            <button onClick={handleNextPageM}>
+                          </>
+                        )}
+                        {results.data.length > 9 ? (
+                          <>
+                            <button onClick={handleNextPageC}>
                               Next results
                             </button>
                           </>
                         ) : (
                           <>
-                            <img
-                              src={cube}
-                              alt="results loaded"
-                              id="paginationLoading"
-                            />
-                            <button id="hidden" onClick={handleNextPageM}>
+                            <button id="hidden" onClick={handleNextPageC}>
                               Next results
                             </button>
                           </>
                         )}
                       </div>
+                      <IsSelectedContext.Provider
+                        value={[expanded, setExpanded]}
+                      >
+                        <ResultsMap
+                          results={results}
+                          isSelected={isSelected}
+                          detailsLoading={detailsLoading}
+                          fullDetails={fullDetails}
+                          description={description}
+                        />
+                      </IsSelectedContext.Provider>
+                      {results.data.length > 3 && (
+                        <React.Fragment key={"bottomPagin"}>
+                          <div className="prevNextButtons">
+                            {chicagoPage === 1 ? (
+                              <React.Fragment key="bottomPag">
+                                <button id="hidden" onClick={handlePrevPageC}>
+                                  Last results
+                                </button>
+                                <img
+                                  id="paginationLoading"
+                                  src={cube}
+                                  alt="results loaded"
+                                />
+                              </React.Fragment>
+                            ) : (
+                              <>
+                                <button onClick={handlePrevPageC}>
+                                  Last results
+                                </button>
+                                {isLoading ? (
+                                  <img
+                                    id="paginationLoading"
+                                    src={smallLoadingGif}
+                                    alt="results loading"
+                                  />
+                                ) : (
+                                  <img
+                                    id="paginationLoading"
+                                    src={cube}
+                                    alt="results loaded"
+                                  />
+                                )}
+                              </>
+                            )}
+                            {results.data.length > 9 ? (
+                              <button onClick={handleNextPageC}>
+                                Next results
+                              </button>
+                            ) : (
+                              <button id="hidden" onClick={handleNextPageC}>
+                                Next results
+                              </button>
+                            )}
+                          </div>
+                        </React.Fragment>
+                      )}
+                    </Fragment>
+                  )
+                ) : results.length > 0 ? (
+                  <React.Fragment key="showingRes">
+                    <div className="prevNextButtons">
+                      {metPrevious.length <= 10 ||
+                      metPrevious[0] === results[0].objectID ? (
+                        <button id="hidden" onClick={handlePrevPageM}>
+                          Last results
+                        </button>
+                      ) : (
+                        <button onClick={handlePrevPageM}>Last results</button>
+                      )}
+                      {isLoading ? (
+                        <img
+                          id="paginationLoading"
+                          src={smallLoadingGif}
+                          alt="results loading"
+                        />
+                      ) : (
+                        <img
+                          id="paginationLoading"
+                          src={cube}
+                          alt="results loaded"
+                        />
+                      )}
+                      {results.length > 9 ? (
+                        <button onClick={handleNextPageM}>Next results</button>
+                      ) : (
+                        <button id="hidden" onClick={handleNextPageM}>
+                          Next results
+                        </button>
+                      )}
+                    </div>
+
+                    {results.map((artwork) => {
+                      return (
+                        <Fragment key={artwork.objectID}>
+                          <div className="artworkCard">
+                            <button
+                              className="artworkButton"
+                              onClick={() => handleMetInfo(artwork.objectID)}
+                            >
+                              <div id="headingArrow">
+                                <div className="artworkCardHeader">
+                                  <p>{artwork.title || "Untitled"}</p>
+                                </div>
+                                {isSelected === artwork.objectID ? (
+                                  <img
+                                    className="expColButton"
+                                    alt="expand for details"
+                                    src={collapseArrow}
+                                  />
+                                ) : (
+                                  <img
+                                    className="expColButton"
+                                    alt="expand for details"
+                                    src={expandArrow}
+                                  />
+                                )}
+                              </div>
+                            </button>
+                            <div className="artworkCardImg">
+                              <img
+                                alt={artwork.medium}
+                                src={artwork.primaryImageSmall}
+                                width="200"
+                              />
+                              <button
+                                className="expandImg"
+                                // onClick={() => {
+                                //   handleFullImg(artwork.objectID);
+                                // }}
+                              >
+                                <img
+                                  id="expandIcon"
+                                  src={expand}
+                                  alt="expand image"
+                                />
+                              </button>
+                            </div>
+                          </div>
+                          {detailsLoading === true &&
+                            isSelected === artwork.objectID && (
+                              <>
+                                <div className="fullDetails">
+                                  <button
+                                    onClick={() =>
+                                      handleMetInfo(artwork.objectID)
+                                    }
+                                  >
+                                    <img
+                                      src={smallLoadingGif}
+                                      alt="loading details"
+                                    />
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          {detailsLoading === false &&
+                            isSelected === artwork.objectID && (
+                              <>
+                                <div className="fullDetails">
+                                  <button
+                                    onClick={() =>
+                                      handleMetInfo(artwork.objectID)
+                                    }
+                                  >
+                                    {artwork.artistDisplayName ? (
+                                      <>
+                                        <div className="artistDetails">
+                                          <p>
+                                            <em>
+                                              {fullDetails.artistDisplayName}
+                                              {fullDetails.artistRole &&
+                                                `, ${fullDetails.artistRole}, `}
+                                            </em>
+                                          </p>
+                                          <em>
+                                            {fullDetails.culture ||
+                                              fullDetails.country ||
+                                              ` department of ${fullDetails.department}`}
+                                          </em>
+                                        </div>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <p className="artistDetails">
+                                          <em>
+                                            Unidentified artist,{" "}
+                                            {fullDetails.culture ||
+                                              fullDetails.country ||
+                                              ` department of ${fullDetails.department}`}
+                                          </em>
+                                        </p>
+                                      </>
+                                    )}
+                                    <div className="mediumDate">
+                                      {fullDetails.medium && (
+                                        <p>{fullDetails.medium}</p>
+                                      )}
+                                      <p>
+                                        {fullDetails.objectDate
+                                          ? fullDetails.objectDate
+                                          : fullDetails.objectEndDate ||
+                                            fullDetails.objectBeginDate ||
+                                            fullDetails.excavation ||
+                                            fullDetails.period}
+                                      </p>
+                                    </div>
+                                    {fullDetails.creditLine && (
+                                      <p className="creditLine">
+                                        {fullDetails.creditLine}
+                                      </p>
+                                    )}
+
+                                    {fullDetails.repository && (
+                                      <>
+                                        <div className="viewAt">
+                                          <p>
+                                            {fullDetails.GalleryNumber != ""
+                                              ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
+                                              : `Stored at ${fullDetails.repository} - not on
+                                    view`}
+                                          </p>
+                                        </div>
+                                      </>
+                                    )}
+                                    {fullDetails.objectURL != "" ? (
+                                      <a
+                                        className="moreInfo"
+                                        href={fullDetails.objectURL}
+                                        target="_blank"
+                                      >
+                                        More info
+                                      </a>
+                                    ) : fullDetails.objectWikidata_URL != "" ? (
+                                      <a
+                                        className="moreInfo"
+                                        href={fullDetails.objectWikidata_URL}
+                                        target="_blank"
+                                      >
+                                        More info
+                                      </a>
+                                    ) : (
+                                      fullDetails.linkResource != "" && (
+                                        <a
+                                          className="moreInfo"
+                                          href={fullDetails.linkResource}
+                                          target="_blank"
+                                        >
+                                          More info
+                                        </a>
+                                      )
+                                    )}
+                                    <img
+                                      className="expColButton"
+                                      alt="expand for details"
+                                      src={collapseArrow}
+                                    />
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                        </Fragment>
+                      );
+                    })}
+                    {results.length > 3 && (
+                      <>
+                        <div className="prevNextButtons">
+                          {metPrevious.length <= 10 ||
+                          metPrevious[0] === results[0].objectID ? (
+                            <>
+                              <button id="hidden">Last results</button>
+                            </>
+                          ) : (
+                            <>
+                              <button onClick={handlePrevPageM}>
+                                Last results
+                              </button>
+                            </>
+                          )}
+                          {results.length >= 10 ? (
+                            <>
+                              {isLoading ? (
+                                <img
+                                  src={smallLoadingGif}
+                                  alt="results loading"
+                                  id="paginationLoading"
+                                />
+                              ) : (
+                                <img
+                                  src={cube}
+                                  alt="results loaded"
+                                  id="paginationLoading"
+                                />
+                              )}
+                              <button onClick={handleNextPageM}>
+                                Next results
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <img
+                                src={cube}
+                                alt="results loaded"
+                                id="paginationLoading"
+                              />
+                              <button id="hidden" onClick={handleNextPageM}>
+                                Next results
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </React.Fragment>
+                ) : (
+                  searchMade === true &&
+                  isLoading === false && (
+                    <>
+                      <p>
+                        <em>
+                          No results currently archived about: {lastSearch}
+                        </em>
+                      </p>
                     </>
-                  )}
-                </React.Fragment>
-              ) : (
-                searchMade === true &&
-                isLoading === false && (
-                  <>
-                    <p>
-                      <em>No results currently archived about: {lastSearch}</em>
-                    </p>
-                  </>
-                )
-              )}
-            </div>
-          </>
-        )}
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </ModalPropsContext.Provider>
       </ModalContext.Provider>
     </>
   );
