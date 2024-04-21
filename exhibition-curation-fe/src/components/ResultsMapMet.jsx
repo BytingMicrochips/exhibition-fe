@@ -23,7 +23,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   return results.map((artwork) => {
     return (
       <Fragment key={artwork.objectID}>
-        <div className="artworkCard">
+        <div key={artwork.objectID+"artworkCard"} className="artworkCard">
           <button
             className="artworkButton"
             onClick={() => handleExpanded(artwork.objectID)}
