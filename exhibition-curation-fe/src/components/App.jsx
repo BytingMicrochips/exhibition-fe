@@ -428,7 +428,7 @@ function App() {
                   <CollectionContext.Provider value={[viewCol, setViewCol]}>
                     <Navigation />
                   </CollectionContext.Provider>
-                  <Title />
+                  <Title viewCol={viewCol} />
                   {!viewCol && (
                     <div>
                       <div className="searchCard">
