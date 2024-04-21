@@ -4,14 +4,15 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext, ModalPropsContext } from "./App";
+import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "./App";
 import DOMPurify from "dompurify";
 
 const ResultsMapChic = (props) => {
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
-
+  const [userCol, setUserCol] = useContext(UserColContext);
+  console.log("🚀 ~ ResultsMapChic ~ userCol:", userCol)
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
     setModal(!modal);
@@ -20,6 +21,21 @@ const ResultsMapChic = (props) => {
   const handleExpanded = (id) => {
     id === selected ? setSelected("") : setSelected(id);
   };
+
+  const handleCol = (id) => {
+    const currentCol = [...userCol]
+    const match = currentCol.findIndex((item) => item.id === id)
+    if (match != -1) {
+      currentCol.splice(match, 1);
+      setUserCol(currentCol);
+    } else {
+      typeof props.fullDetails.data !== "undefined" && props.fullDetails.data.id === id ? 
+        currentCol.push({ id, api: "chicago", fullDetails: props.fullDetails }) 
+        :
+        currentCol.push({ id, api: "chicago", fullDetails: null });
+      setUserCol(currentCol);
+    }
+  }
 
   return (
     <>
@@ -73,11 +89,13 @@ const ResultsMapChic = (props) => {
               >
                 <img id="expandIcon" src={expand} alt="expand image" />
               </button>
+              <button onClick={() => handleCol(artwork.id)}>
+                Add to collection
+              </button>
               {props.detailsLoading === true &&
               props.isSelected === artwork.id ? (
                 <>
                   <div className="fullDetails">
-                    {/* <button onClick={() => handleChicInfo(artwork.id)}> */}
                     <button onClick={() => handleExpanded(artwork.id)}>
                       <img
                         id="smallLoadingGif"
@@ -92,7 +110,6 @@ const ResultsMapChic = (props) => {
                   {props.fullDetails.length != 0 &&
                     props.isSelected === artwork.id && (
                       <div className="fullDetails">
-                        {/* <button onClick={() => handleChicInfo(artwork.id)}> */}
                         <button onClick={() => handleExpanded(artwork.id)}>
                           {props.isSelected === artwork.id && (
                             <>

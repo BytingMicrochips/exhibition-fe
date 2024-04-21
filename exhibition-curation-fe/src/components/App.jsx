@@ -15,6 +15,7 @@ export const IsSelectedContext = createContext();
 export const ModalPropsContext = createContext();
 export const PaginationContext = createContext();
 export const CollectionContext = createContext();
+export const UserColContext = createContext();
 
 function App() {
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
@@ -45,6 +46,7 @@ function App() {
   const [errMsg, setErrorMsg] = useState("");
   const [errCounter, setErrorCounter] = useState(0);
   const [viewCol, setViewCol] = useState(false);
+  const [userCol, setUserCol] = useState([]);
 
   const allArtworks = [];
   let counter = 0;
@@ -418,21 +420,25 @@ function App() {
       <ModalContext.Provider value={[modal, setModal]}>
         <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
           <PaginationContext.Provider value={[pageValue, setPageValue]}>
-            {modal ? (
-              <Modal />
-            ) : (
-              <>
-                <CollectionContext.Provider value={[viewCol, setViewCol]}>
-                  <Navigation />
-                </CollectionContext.Provider>
-                <Title />
-                  {!viewCol &&
+            <UserColContext.Provider value={[userCol, setUserCol]}>
+              {modal ? (
+                <Modal />
+              ) : (
+                <>
+                  <CollectionContext.Provider value={[viewCol, setViewCol]}>
+                    <Navigation />
+                  </CollectionContext.Provider>
+                  <Title />
+                  {!viewCol && (
                     <div>
                       <div className="searchCard">
                         <h3>Input search criteria:</h3>
                         <div className="inputSelect">
                           <input onChange={handleInput}></input>
-                          <select value={controlApi} onChange={handleCollection}>
+                          <select
+                            value={controlApi}
+                            onChange={handleCollection}
+                          >
                             <option>Art Institute of Chicago</option>
                             <option>Metropolitan Museum NYC</option>
                           </select>
@@ -443,7 +449,7 @@ function App() {
                           </button>
                         </div>
                       </div>
-                    
+
                       {isLoading && results.length === 0 && (
                         <Loading errMsg={errMsg} errCounter={errCounter} />
                       )}
@@ -457,7 +463,8 @@ function App() {
                       )}
 
                       {results.data ? (
-                        results.pagination.total === 0 && isLoading === false ? (
+                        results.pagination.total === 0 &&
+                        isLoading === false ? (
                           <ResultsCounter
                             lastSearch={lastSearch}
                             total={0}
@@ -534,13 +541,11 @@ function App() {
                           />
                         )
                       )}
-            
                     </div>
-                  }
-              </>
-                      
-            )}
-            
+                  )}
+                </>
+              )}
+            </UserColContext.Provider>
           </PaginationContext.Provider>
         </ModalPropsContext.Provider>
       </ModalContext.Provider>
