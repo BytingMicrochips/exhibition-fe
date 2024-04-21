@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import "../../src/App.css";
-import loadingGif from "../assets/loadingGif.gif";
 import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
@@ -42,11 +41,13 @@ function App() {
   const [pageValue, setPageValue] = useState(1);
   const [lastPageValue, setLastPageValue] = useState(1);
   const [errMsg, setErrorMsg] = useState("");
+  const [errCounter, setErrorCounter] = useState(0);
 
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
   let recallIndex = 0;
+  let errorsFound = 0;
 
   const fetchResults = async () => {
     const emptyMet = [];
@@ -68,6 +69,8 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
+          errorsFound++
+          setErrorCounter(errorsFound);
         });
     }
     if (apiSelector === metMuseumUrl) {
@@ -85,6 +88,8 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -146,6 +151,8 @@ function App() {
           })
           .catch((err) => {
             setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
           });
       }
     }
@@ -161,6 +168,8 @@ function App() {
     setMetPrevious([]);
     setIsSelected("");
     setErrorMsg("");
+    setErrorCounter(0);
+    errorsFound = 0;
     if (chicagoPage != 1 || pageValue != 1) {
       setChicagoPage(1);
       setPageValue(1);
@@ -183,6 +192,8 @@ function App() {
 
   useEffect(() => {
     setErrorMsg("");
+    setErrorCounter(0);
+    errorsFound = 0;
     if (apiSelector === chicagoArtUrl) {
       if (pageValue > lastPageValue) {
         handleNextPageC();
@@ -268,6 +279,8 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -300,7 +313,9 @@ function App() {
         }
       })
       .catch((err) => {
-          setErrorMsg(err.message);
+        setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
       });
   };
 
@@ -329,6 +344,8 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -349,6 +366,8 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -412,10 +431,16 @@ function App() {
                       </button>
                     </div>
                   </div>
-                  {isLoading && <Loading errMsg={errMsg} />}
+                  {isLoading && results.length === 0 && (
+                    <Loading errMsg={errMsg} errCounter={errCounter} />
+                  )}
 
                   {metIdList.length > 0 && isLoading === false && (
-                    <ResultsCounter total={results.length} errMsg={errMsg} />
+                    <ResultsCounter
+                      total={results.length}
+                      errMsg={errMsg}
+                      errCounter={errCounter}
+                    />
                   )}
 
                   {results.data ? (
@@ -424,10 +449,15 @@ function App() {
                         lastSearch={lastSearch}
                         total={0}
                         errMsg={errMsg}
+                        errCounter={errCounter}
                       />
                     ) : (
                       <Fragment key="resultsFrag">
-                        <ResultsCounter total={thumbLength} errMsg={errMsg} />
+                        <ResultsCounter
+                          total={thumbLength}
+                          errMsg={errMsg}
+                          errCounter={errCounter}
+                        />
                         <PaginationBar
                           results={results}
                           isLoading={isLoading}
@@ -483,7 +513,12 @@ function App() {
                   ) : (
                     searchMade === true &&
                     isLoading === false && (
-                      <ResultsCounter lastSearch={lastSearch} total={0} errMsg={errMsg}/>
+                      <ResultsCounter
+                        lastSearch={lastSearch}
+                        total={0}
+                        errMsg={errMsg}
+                        errCounter={errCounter}
+                      />
                     )
                   )}
                 </div>

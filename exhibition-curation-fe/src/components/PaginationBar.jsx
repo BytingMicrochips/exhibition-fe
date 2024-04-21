@@ -20,12 +20,20 @@ const PaginationBar = ({ results, isLoading}) => {
       <Fragment key={"prevNextButtons"}>
         <div className="prevNextButtons">
           {pageValue === 1 ? (
-            <>
+            <Fragment key={"buttonOrLoading"}>
               <button id="hidden" onClick={handlePrev}>
                 Last results
               </button>
-              <img id="paginationLoading" src={cube} alt="results loaded" />
-            </>
+              {isLoading ? (
+                <img
+                  id="paginationLoading"
+                  src={smallLoadingGif}
+                  alt="results loading"
+                />
+              ) : (
+                <img id="paginationLoading" src={cube} alt="results loaded" />
+              )}
+            </Fragment>
           ) : (
             <>
               <button onClick={handlePrev}>Last results</button>
@@ -41,7 +49,7 @@ const PaginationBar = ({ results, isLoading}) => {
             </>
           )}
 
-          {results.data? (
+          {results.data ? (
             results.data.length > 9 ? (
               <>
                 <button onClick={handleNext}>Next results</button>
