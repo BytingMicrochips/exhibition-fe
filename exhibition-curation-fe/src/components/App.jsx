@@ -426,131 +426,28 @@ function App() {
                       <ResultsCounter lastSearch={lastSearch} total={0} />
                     ) : (
                       <Fragment key="resultsFrag">
-                        <ResultsCounter total={thumbLength} />
-                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
-                        <IsSelectedContext.Provider
-                          value={[expanded, setExpanded]}
-                        >
-                          <ResultsMapChic
-                            results={results}
-                            isSelected={isSelected}
-                            detailsLoading={detailsLoading}
-                            fullDetails={fullDetails}
-                            description={description}
-                          />
-                        </IsSelectedContext.Provider>
-                        {results.data.length > 3 && (
-                          <React.Fragment key={"bottomPagin"}>
-                            <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
-                          </React.Fragment>
-                        )}
+                          <ResultsCounter total={thumbLength} />
+                              <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
+                            <IsSelectedContext.Provider value={[expanded, setExpanded]} >
+                              <ResultsMapChic results={results} isSelected={isSelected} detailsLoading={detailsLoading} fullDetails={fullDetails} description={description} />
+                            </IsSelectedContext.Provider>
+                          {results.data.length > 3 && (
+                            <React.Fragment key={"bottomPagin"}>
+                              <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
+                            </React.Fragment>
+                          )}
                       </Fragment>
                     )
                   ) : results.length > 0 ? (
-                        <React.Fragment key="showingRes">
-                          
-                      <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
+                      <React.Fragment key="showingRes">      
+                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
+                        <IsSelectedContext.Provider value={[expanded, setExpanded]} >
+                            <ResultsMapMet results={results} detailsLoading={detailsLoading} fullDetails={fullDetails} />
+                        </IsSelectedContext.Provider>
 
-                      {/* <div className="prevNextButtons">
-                        {metPrevious.length <= 10 ||
-                        metPrevious[0] === results[0].objectID ? (
-                          <button id="hidden" onClick={handlePrevPageM}>
-                            Last results
-                          </button>
-                        ) : (
-                          <button onClick={handlePrevPageM}>
-                            Last results
-                          </button>
-                        )}
-                        {isLoading ? (
-                          <img
-                            id="paginationLoading"
-                            src={smallLoadingGif}
-                            alt="results loading"
-                          />
-                        ) : (
-                          <img
-                            id="paginationLoading"
-                            src={cube}
-                            alt="results loaded"
-                          />
-                        )}
-                        {results.length > 9 ? (
-                          <button onClick={handleNextPageM}>
-                            Next results
-                          </button>
-                        ) : (
-                          <button id="hidden" onClick={handleNextPageM}>
-                            Next results
-                          </button>
-                        )}
-                      </div> */}
-
-                          
-
-                      <IsSelectedContext.Provider
-                        value={[expanded, setExpanded]}
-                      >
-                        <ResultsMapMet
-                          results={results}
-                          detailsLoading={detailsLoading}
-                          fullDetails={fullDetails}
-                        />
-                      </IsSelectedContext.Provider>
-
-                          {results.length > 3 &&
-                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
-                            
-                            // (
-                        // <>
-                        //   <div className="prevNextButtons">
-                        //     {metPrevious.length <= 10 ||
-                        //     metPrevious[0] === results[0].objectID ? (
-                        //       <>
-                        //         <button id="hidden">Last results</button>
-                        //       </>
-                        //     ) : (
-                        //       <>
-                        //         <button onClick={handlePrevPageM}>
-                        //           Last results
-                        //         </button>
-                        //       </>
-                        //     )}
-                        //     {results.length >= 10 ? (
-                        //       <>
-                        //         {isLoading ? (
-                        //           <img
-                        //             src={smallLoadingGif}
-                        //             alt="results loading"
-                        //             id="paginationLoading"
-                        //           />
-                        //         ) : (
-                        //           <img
-                        //             src={cube}
-                        //             alt="results loaded"
-                        //             id="paginationLoading"
-                        //           />
-                        //         )}
-                        //         <button onClick={handleNextPageM}>
-                        //           Next results
-                        //         </button>
-                        //       </>
-                        //     ) : (
-                        //       <>
-                        //         <img
-                        //           src={cube}
-                        //           alt="results loaded"
-                        //           id="paginationLoading"
-                        //         />
-                        //         <button id="hidden" onClick={handleNextPageM}>
-                        //           Next results
-                        //         </button>
-                        //       </>
-                        //     )}
-                        //   </div>
-                        // </>
-                        //   )
-                          }
+                        {results.length > 3 &&
+                          <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
+                        }
                     </React.Fragment>
                   ) : (
                     searchMade === true &&
