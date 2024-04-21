@@ -429,11 +429,12 @@ function App() {
                   <CollectionContext.Provider value={[viewCol, setViewCol]}>
                     <Navigation />
                   </CollectionContext.Provider>
-                    <Title viewCol={viewCol} />
-                    {viewCol ? (
-                    <Collection/>
-                    ) :
-                    (
+                  <Title viewCol={viewCol} />
+                  {viewCol ? (
+                    <CollectionContext.Provider value={[viewCol, setViewCol]}>
+                      <Collection />
+                    </CollectionContext.Provider>
+                  ) : (
                     <div>
                       <div className="searchCard">
                         <h3>Input search criteria:</h3>
