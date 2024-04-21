@@ -56,7 +56,7 @@ function App() {
     if (apiSelector === chicagoArtUrl) {
       setMetIdList(emptyMet);
       const result = await fetch(
-        `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
+        `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`, {mode: "cors"}
       );
       result
         .json()
@@ -70,7 +70,7 @@ function App() {
         });
     }
     if (apiSelector === metMuseumUrl) {
-      const result = await fetch(`${fullRequest}`);
+      const result = await fetch(`${fullRequest}`,{mode: "cors"});
       result
         .json()
         .then((jsonResponse) => {
@@ -112,7 +112,8 @@ function App() {
       typeof currentArtworkId !== "undefined"
     ) {
       const result = await fetch(
-        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`,
+        { mode: "cors" }
       );
       if (typeof result !== "undefined") {
         result
@@ -240,7 +241,8 @@ function App() {
       let validId = metPrevious[displayIndex - 10 + recallIndex];
 
       const result = await fetch(
-        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`,
+        { mode: "cors" }
       );
       result
         .json()
@@ -274,7 +276,8 @@ function App() {
     setIsLoading(true);
     let validId = metPrevious[displayIndex + 10 + recallIndex];
     const result = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`,
+      { mode: "cors" }
     );
     result
       .json()
@@ -319,7 +322,9 @@ function App() {
       fullDetails.data.id != expanded
     ) {
       const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
-      const fullDetails = await fetch(chicSingleArt + expanded);
+      const fullDetails = await fetch(chicSingleArt + expanded, {
+        mode: "cors",
+      });
       fullDetails
         .json()
         .then((jsonResponse) => {
@@ -339,7 +344,7 @@ function App() {
     ) {
       setDetailsLoading(true);
       const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
-      const fullDetails = await fetch(metSingleArt + id);
+      const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
       fullDetails
         .json()
         .then((jsonResponse) => {
