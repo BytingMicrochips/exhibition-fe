@@ -8,7 +8,6 @@ import { ModalContext, IsSelectedContext } from "../components/App";
 import DOMPurify from "dompurify";
 
 const ResultsMap = (props) => {
-  console.log("🚀 ~ ResultsMap ~ props.fullDetails:", props.fullDetails);
   const [modal, setModal] = useContext(ModalContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
 
@@ -17,7 +16,6 @@ const ResultsMap = (props) => {
   };
 
   const handleExpanded = (id) => {
-    console.log("ResultsMap: handleExpanded");
   id === selected ? setSelected("") : setSelected(id);
     
   }
@@ -31,7 +29,6 @@ const ResultsMap = (props) => {
               <div className="artworkCard">
                 <button
                   className="artworkButton"
-                  // onClick={() => handleChicInfo(artwork.id)}
                   onClick={() => handleExpanded(artwork.id)}
                 >
                   <div id="headingArrow">

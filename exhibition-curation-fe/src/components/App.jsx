@@ -369,7 +369,7 @@ function App() {
           apiSelector === chicagoArtUrl ? (
             <Modal
               altText={modalAltText}
-              srcLink={`https://www.artic.edu/iiif/2/${modalImgId}/full/400,/0/default.jpg`}
+              srcLink={`https://www.artic.edu/iiif/2/${id}/full/400,/0/default.jpg`}
             />
           ) : (
             <Modal
