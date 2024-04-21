@@ -359,15 +359,8 @@ function App() {
     <>
       <ModalContext.Provider value={[modal, setModal]}>
         <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
-          {modal ? (
-            apiSelector === chicagoArtUrl ? (
-              <Modal />
-            ) : (
-              <Modal
-                altText={metModal.medium}
-                srcLink={metModal.primaryImageSmall}
-              />
-            )
+          {modal ?
+            (<Modal />
           ) : (
             <>
               <Title />
