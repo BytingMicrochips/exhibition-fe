@@ -172,7 +172,7 @@ width: fit-content;
   width: 100%;
 }
 
-.expandImg {
+.expandImg, .addRemoveCol {
   height: fit-content;
   float: right;
   position:relative;
@@ -185,10 +185,12 @@ width: fit-content;
   z-index: 1;
 }
 
-#expandIcon{
-  width: 18px;
-  height: 18px;
+#expandIcon, #heart{
+  width: 21px;
+  height: 21px;
   object-fit: scale-down;
+    margin: 0%;
+      padding: 0%;
 }
 
 .modal, .overlay {
@@ -252,4 +254,9 @@ width: fit-content;
   margin-top: 3px;
   margin-bottom: 3px;
   margin-right: 3px;
+}
+
+.addRemoveCol {
+  
+  margin-right: 10px;
 }

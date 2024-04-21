@@ -3,6 +3,8 @@ import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
+import whiteHeart from "../assets/whiteHeart.png";
+import blackHeart from "../assets/blackHeart.png";
 import { useContext } from "react";
 import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "./App";
 import DOMPurify from "dompurify";
@@ -45,7 +47,7 @@ const ResultsMapChic = (props) => {
         if (artwork.thumbnail) {
           return (
             <Fragment key={artwork.id}>
-              <div className="artworkCard">
+              <div key={artwork.id + "artworkCard"} className="artworkCard">
                 <button
                   className="artworkButton"
                   onClick={() => handleExpanded(artwork.id)}
@@ -57,7 +59,7 @@ const ResultsMapChic = (props) => {
                     {props.isSelected === artwork.id ? (
                       <img
                         className="expColButton"
-                        alt="expand for details"
+                        alt="hide details"
                         src={collapseArrow}
                       />
                     ) : (
@@ -77,29 +79,39 @@ const ResultsMapChic = (props) => {
                       width="200"
                     />
                   </div>
+                  <button
+                    className="expandImg"
+                    onClick={() =>
+                      handleModal(
+                        props.results.config.iiif_url,
+                        artwork.image_id,
+                        artwork.thumbnail.alt_text
+                      )
+                    }
+                  >
+                    <img id="expandIcon" src={expand} alt="expand image" />
+                  </button>
+                  {userCol.findIndex(
+                    (item) => item.id === artwork.id && item.api === "chicago"
+                  ) === -1 ? (
+                    <button
+                      aria-label="add to my collection"
+                      className="addRemoveCol"
+                      onClick={() => handleCol(artwork.id)}
+                    >
+                      <img id="heart" alt="like button" src={blackHeart} />
+                    </button>
+                  ) : (
+                    <button
+                      aria-label="remove from my collection"
+                      className="addRemoveCol"
+                      onClick={() => handleCol(artwork.id)}
+                    >
+                      <img id="heart" alt="unlike button" src={whiteHeart} />
+                    </button>
+                  )}
                 </div>
               </div>
-              <button
-                className="expandImg"
-                onClick={() =>
-                  handleModal(
-                    props.results.config.iiif_url,
-                    artwork.image_id,
-                    artwork.thumbnail.alt_text
-                  )
-                }
-              >
-                <img id="expandIcon" src={expand} alt="expand image" />
-              </button>
-              {userCol.findIndex((item) => (item.id === artwork.id && item.api === "chicago")) === -1 ? (
-                <button onClick={() => handleCol(artwork.id)}>
-                  Add to collection
-                </button>
-              ) : (
-                <button onClick={() => handleCol(artwork.id)}>
-                  Remove from collection
-                </button>
-              )}
 
               {props.detailsLoading === true &&
               props.isSelected === artwork.id ? (
