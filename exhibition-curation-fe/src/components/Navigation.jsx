@@ -12,7 +12,7 @@ const Navigation = () => {
       <Fragment key={"navigationFrag"}>
         <div className="navigation">
           {viewCol ? (
-            <button onClick={handleCollection}>New Search</button>
+            <button onClick={handleCollection}>Return to search</button>
           ) : (
             <button onClick={handleCollection}>My collection</button>
           )}
