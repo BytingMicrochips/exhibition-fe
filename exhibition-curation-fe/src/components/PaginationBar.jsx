@@ -3,9 +3,8 @@ import cube from "../assets/cube.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { PaginationContext } from "./App";
 
-const PaginationBar = ({ results, isLoading, apiSelector }) => {
+const PaginationBar = ({ results, isLoading}) => {
     const [pageValue, setPageValue] = useContext(PaginationContext);
-    const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
 
     const handleNext = () => {
         let currentPage = pageValue;
@@ -21,12 +20,20 @@ const PaginationBar = ({ results, isLoading, apiSelector }) => {
       <Fragment key={"prevNextButtons"}>
         <div className="prevNextButtons">
           {pageValue === 1 ? (
-            <>
+            <Fragment key={"buttonOrLoading"}>
               <button id="hidden" onClick={handlePrev}>
                 Last results
               </button>
-              <img id="paginationLoading" src={cube} alt="results loaded" />
-            </>
+              {isLoading ? (
+                <img
+                  id="paginationLoading"
+                  src={smallLoadingGif}
+                  alt="results loading"
+                />
+              ) : (
+                <img id="paginationLoading" src={cube} alt="results loaded" />
+              )}
+            </Fragment>
           ) : (
             <>
               <button onClick={handlePrev}>Last results</button>
@@ -42,7 +49,7 @@ const PaginationBar = ({ results, isLoading, apiSelector }) => {
             </>
           )}
 
-          {apiSelector === chicagoArtUrl && results.data? (
+          {results.data ? (
             results.data.length > 9 ? (
               <>
                 <button onClick={handleNext}>Next results</button>

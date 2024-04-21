@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import "../../src/App.css";
-import loadingGif from "../assets/loadingGif.gif";
 import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
@@ -8,6 +7,7 @@ import ResultsMapChic from "./ResultsMapChic";
 import ResultsMapMet from "./ResultsMapMet";
 import ResultsCounter from "./ResultsCounter";
 import PaginationBar from "./PaginationBar";
+import Loading from "./Loading";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -39,13 +39,15 @@ function App() {
   const [modalProps, setModalProps] = useState({});
   const [thumbLength, setThumbLength] = useState(0);
   const [pageValue, setPageValue] = useState(1);
-
   const [lastPageValue, setLastPageValue] = useState(1);
+  const [errMsg, setErrorMsg] = useState("");
+  const [errCounter, setErrorCounter] = useState(0);
 
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
   let recallIndex = 0;
+  let errorsFound = 0;
 
   const fetchResults = async () => {
     const emptyMet = [];
@@ -66,7 +68,9 @@ function App() {
           setSearchMade(true);
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrorMsg(err.message);
+          errorsFound++
+          setErrorCounter(errorsFound);
         });
     }
     if (apiSelector === metMuseumUrl) {
@@ -83,7 +87,9 @@ function App() {
           }
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -145,7 +151,9 @@ function App() {
             }
           })
           .catch((err) => {
-            console.log(err.message);
+            setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
           });
       }
     }
@@ -160,6 +168,9 @@ function App() {
     setFullDetails([]);
     setMetPrevious([]);
     setIsSelected("");
+    setErrorMsg("");
+    setErrorCounter(0);
+    errorsFound = 0;
     if (chicagoPage != 1 || pageValue != 1) {
       setChicagoPage(1);
       setPageValue(1);
@@ -181,6 +192,9 @@ function App() {
   };
 
   useEffect(() => {
+    setErrorMsg("");
+    setErrorCounter(0);
+    errorsFound = 0;
     if (apiSelector === chicagoArtUrl) {
       if (pageValue > lastPageValue) {
         handleNextPageC();
@@ -210,7 +224,6 @@ function App() {
   };
 
   const handleNextPageM = () => {
-    console.log("handleNextPageM");
     const displayIndex = metPrevious.indexOf(results[0].objectID);
     allArtworks.length = 0;
     counter = metIndex;
@@ -267,7 +280,9 @@ function App() {
             }
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -301,7 +316,9 @@ function App() {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
       });
   };
 
@@ -331,7 +348,9 @@ function App() {
           setFullDetails(jsonResponse);
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
@@ -351,10 +370,13 @@ function App() {
           setFullDetails(jsonResponse);
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrorMsg(err.message);
+          errorsFound++;
+          setErrorCounter(errorsFound);
         });
     }
   };
+
   useEffect(() => {
     if (apiSelector === chicagoArtUrl) {
       handleChicInfo(expanded);
@@ -414,48 +436,94 @@ function App() {
                       </button>
                     </div>
                   </div>
-                  {isLoading && (
-                    <>
-                      <img alt="loading results" src={loadingGif} width="250" />
-                    </>
+                  {isLoading && results.length === 0 && (
+                    <Loading errMsg={errMsg} errCounter={errCounter} />
                   )}
 
                   {metIdList.length > 0 && isLoading === false && (
-                    <ResultsCounter total={results.length} />
+                    <ResultsCounter
+                      total={results.length}
+                      errMsg={errMsg}
+                      errCounter={errCounter}
+                    />
                   )}
 
                   {results.data ? (
                     results.pagination.total === 0 && isLoading === false ? (
-                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                      <ResultsCounter
+                        lastSearch={lastSearch}
+                        total={0}
+                        errMsg={errMsg}
+                        errCounter={errCounter}
+                      />
                     ) : (
                       <Fragment key="resultsFrag">
-                          <ResultsCounter total={thumbLength} />
-                              <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
-                            <IsSelectedContext.Provider value={[expanded, setExpanded]} >
-                              <ResultsMapChic results={results} isSelected={isSelected} detailsLoading={detailsLoading} fullDetails={fullDetails} description={description} />
-                            </IsSelectedContext.Provider>
-                          {results.data.length > 3 && (
-                            <React.Fragment key={"bottomPagin"}>
-                              <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
-                            </React.Fragment>
-                          )}
+                        <ResultsCounter
+                          total={thumbLength}
+                          errMsg={errMsg}
+                          errCounter={errCounter}
+                        />
+                        <PaginationBar
+                          results={results}
+                          isLoading={isLoading}
+                          apiSelector={apiSelector}
+                        />
+                        <IsSelectedContext.Provider
+                          value={[expanded, setExpanded]}
+                        >
+                          <ResultsMapChic
+                            results={results}
+                            isSelected={isSelected}
+                            detailsLoading={detailsLoading}
+                            fullDetails={fullDetails}
+                            description={description}
+                          />
+                        </IsSelectedContext.Provider>
+                        {results.data.length > 3 && (
+                          <React.Fragment key={"bottomPagin"}>
+                            <PaginationBar
+                              results={results}
+                              isLoading={isLoading}
+                              apiSelector={apiSelector}
+                            />
+                          </React.Fragment>
+                        )}
                       </Fragment>
                     )
                   ) : results.length > 0 ? (
-                      <React.Fragment key="showingRes">      
-                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
-                        <IsSelectedContext.Provider value={[expanded, setExpanded]} >
-                            <ResultsMapMet results={results} detailsLoading={detailsLoading} fullDetails={fullDetails} />
-                        </IsSelectedContext.Provider>
+                    <React.Fragment key="showingRes">
+                      <PaginationBar
+                        results={results}
+                        isLoading={isLoading}
+                        apiSelector={apiSelector}
+                      />
+                      <IsSelectedContext.Provider
+                        value={[expanded, setExpanded]}
+                      >
+                        <ResultsMapMet
+                          results={results}
+                          detailsLoading={detailsLoading}
+                          fullDetails={fullDetails}
+                        />
+                      </IsSelectedContext.Provider>
 
-                        {results.length > 3 &&
-                          <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
-                        }
+                      {results.length > 3 && (
+                        <PaginationBar
+                          results={results}
+                          isLoading={isLoading}
+                          apiSelector={apiSelector}
+                        />
+                      )}
                     </React.Fragment>
                   ) : (
                     searchMade === true &&
                     isLoading === false && (
-                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                      <ResultsCounter
+                        lastSearch={lastSearch}
+                        total={0}
+                        errMsg={errMsg}
+                        errCounter={errCounter}
+                      />
                     )
                   )}
                 </div>
