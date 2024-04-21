@@ -12,7 +12,6 @@ const ResultsMapChic = (props) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
-  console.log("🚀 ~ ResultsMapChic ~ userCol:", userCol)
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
     setModal(!modal);
