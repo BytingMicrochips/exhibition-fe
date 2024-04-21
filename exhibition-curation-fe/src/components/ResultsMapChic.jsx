@@ -89,9 +89,16 @@ const ResultsMapChic = (props) => {
               >
                 <img id="expandIcon" src={expand} alt="expand image" />
               </button>
-              <button onClick={() => handleCol(artwork.id)}>
-                Add to collection
-              </button>
+              {userCol.findIndex((item) => item.id === artwork.id) === -1 ? (
+                <button onClick={() => handleCol(artwork.id)}>
+                  Add to collection
+                </button>
+              ) : (
+                <button onClick={() => handleCol(artwork.id)}>
+                  Remove from collection
+                </button>
+              )}
+
               {props.detailsLoading === true &&
               props.isSelected === artwork.id ? (
                 <>
