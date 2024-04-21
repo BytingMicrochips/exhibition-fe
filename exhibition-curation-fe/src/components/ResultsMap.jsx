@@ -19,7 +19,6 @@ const ResultsMap = (props) => {
 
   const handleExpanded = (id) => {
   id === selected ? setSelected("") : setSelected(id);
-
   }
 
   return (

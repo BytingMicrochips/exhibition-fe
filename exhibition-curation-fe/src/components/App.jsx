@@ -10,6 +10,7 @@ import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
 import ResultsMap from "./ResultsMap";
+import ResultsMapMet from "./ResultsMapMet";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -281,24 +282,6 @@ function App() {
     }
   }, [input]);
 
-  const handleMetInfo = async (id) => {
-    isSelected === id ? setIsSelected("") : setIsSelected(id);
-    if (fullDetails.length === 0 || fullDetails.objectID != id) {
-      setDetailsLoading(true);
-      const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
-      const fullDetails = await fetch(metSingleArt + id);
-      fullDetails
-        .json()
-        .then((jsonResponse) => {
-          setFullDetails(jsonResponse);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    }
-  };
-
-
   const handleChicInfo = async (expanded) => {
     isSelected === expanded ? setIsSelected("") : setIsSelected(expanded);
     setDetailsLoading(true);
@@ -322,8 +305,29 @@ function App() {
     }
   };
 
+const handleMetInfo = async (id) => {
+  isSelected === id ? setIsSelected("") : setIsSelected(id);
+    if (fullDetails.length === 0 || fullDetails.objectID != id && id.length !== 0) {
+      setDetailsLoading(true);
+      const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+      const fullDetails = await fetch(metSingleArt + id);
+        fullDetails
+          .json()
+          .then((jsonResponse) => {
+            setFullDetails(jsonResponse);
+            })
+          .catch((err) => {
+            console.log(err.message);
+          });
+      }
+};
   useEffect(() => {
-    handleChicInfo(expanded);
+    if (apiSelector === chicagoArtUrl) {
+      handleChicInfo(expanded);
+    }
+    if (apiSelector === metMuseumUrl) {
+      handleMetInfo(expanded);
+    }
   },[expanded])
 
 
@@ -373,7 +377,7 @@ function App() {
         <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
           {modal ? (
             apiSelector === chicagoArtUrl ? (
-              <Modal/>
+              <Modal />
             ) : (
               <Modal
                 altText={metModal.medium}
@@ -568,178 +572,14 @@ function App() {
                       )}
                     </div>
 
-                    {results.map((artwork) => {
-                      return (
-                        <Fragment key={artwork.objectID}>
-                          <div className="artworkCard">
-                            <button
-                              className="artworkButton"
-                              onClick={() => handleMetInfo(artwork.objectID)}
-                            >
-                              <div id="headingArrow">
-                                <div className="artworkCardHeader">
-                                  <p>{artwork.title || "Untitled"}</p>
-                                </div>
-                                {isSelected === artwork.objectID ? (
-                                  <img
-                                    className="expColButton"
-                                    alt="expand for details"
-                                    src={collapseArrow}
-                                  />
-                                ) : (
-                                  <img
-                                    className="expColButton"
-                                    alt="expand for details"
-                                    src={expandArrow}
-                                  />
-                                )}
-                              </div>
-                            </button>
-                            <div className="artworkCardImg">
-                              <img
-                                alt={artwork.medium}
-                                src={artwork.primaryImageSmall}
-                                width="200"
-                              />
-                              <button
-                                className="expandImg"
-                                // onClick={() => {
-                                //   handleFullImg(artwork.objectID);
-                                // }}
-                              >
-                                <img
-                                  id="expandIcon"
-                                  src={expand}
-                                  alt="expand image"
-                                />
-                              </button>
-                            </div>
-                          </div>
-                          {detailsLoading === true &&
-                            isSelected === artwork.objectID && (
-                              <>
-                                <div className="fullDetails">
-                                  <button
-                                    onClick={() =>
-                                      handleMetInfo(artwork.objectID)
-                                    }
-                                  >
-                                    <img
-                                      src={smallLoadingGif}
-                                      alt="loading details"
-                                    />
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                          {detailsLoading === false &&
-                            isSelected === artwork.objectID && (
-                              <>
-                                <div className="fullDetails">
-                                  <button
-                                    onClick={() =>
-                                      handleMetInfo(artwork.objectID)
-                                    }
-                                  >
-                                    {artwork.artistDisplayName ? (
-                                      <>
-                                        <div className="artistDetails">
-                                          <p>
-                                            <em>
-                                              {fullDetails.artistDisplayName}
-                                              {fullDetails.artistRole &&
-                                                `, ${fullDetails.artistRole}, `}
-                                            </em>
-                                          </p>
-                                          <em>
-                                            {fullDetails.culture ||
-                                              fullDetails.country ||
-                                              ` department of ${fullDetails.department}`}
-                                          </em>
-                                        </div>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <p className="artistDetails">
-                                          <em>
-                                            Unidentified artist,{" "}
-                                            {fullDetails.culture ||
-                                              fullDetails.country ||
-                                              ` department of ${fullDetails.department}`}
-                                          </em>
-                                        </p>
-                                      </>
-                                    )}
-                                    <div className="mediumDate">
-                                      {fullDetails.medium && (
-                                        <p>{fullDetails.medium}</p>
-                                      )}
-                                      <p>
-                                        {fullDetails.objectDate
-                                          ? fullDetails.objectDate
-                                          : fullDetails.objectEndDate ||
-                                            fullDetails.objectBeginDate ||
-                                            fullDetails.excavation ||
-                                            fullDetails.period}
-                                      </p>
-                                    </div>
-                                    {fullDetails.creditLine && (
-                                      <p className="creditLine">
-                                        {fullDetails.creditLine}
-                                      </p>
-                                    )}
+                    <IsSelectedContext.Provider value={[expanded, setExpanded]}>
+                      <ResultsMapMet
+                        results={results}
+                        detailsLoading={detailsLoading}
+                        fullDetails={fullDetails}
+                      />
+                    </IsSelectedContext.Provider>
 
-                                    {fullDetails.repository && (
-                                      <>
-                                        <div className="viewAt">
-                                          <p>
-                                            {fullDetails.GalleryNumber != ""
-                                              ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
-                                              : `Stored at ${fullDetails.repository} - not on
-                                    view`}
-                                          </p>
-                                        </div>
-                                      </>
-                                    )}
-                                    {fullDetails.objectURL != "" ? (
-                                      <a
-                                        className="moreInfo"
-                                        href={fullDetails.objectURL}
-                                        target="_blank"
-                                      >
-                                        More info
-                                      </a>
-                                    ) : fullDetails.objectWikidata_URL != "" ? (
-                                      <a
-                                        className="moreInfo"
-                                        href={fullDetails.objectWikidata_URL}
-                                        target="_blank"
-                                      >
-                                        More info
-                                      </a>
-                                    ) : (
-                                      fullDetails.linkResource != "" && (
-                                        <a
-                                          className="moreInfo"
-                                          href={fullDetails.linkResource}
-                                          target="_blank"
-                                        >
-                                          More info
-                                        </a>
-                                      )
-                                    )}
-                                    <img
-                                      className="expColButton"
-                                      alt="expand for details"
-                                      src={collapseArrow}
-                                    />
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                        </Fragment>
-                      );
-                    })}
                     {results.length > 3 && (
                       <>
                         <div className="prevNextButtons">
@@ -809,8 +649,6 @@ function App() {
       </ModalContext.Provider>
     </>
   );
-
-  
 }
 
 export default App;
