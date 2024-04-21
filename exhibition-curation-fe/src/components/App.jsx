@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import "../../src/App.css";
 import loadingGif from "../assets/loadingGif.gif";
-import smallLoadingGif from "../assets/smallLoadingGif.gif";
-import cube from "../assets/cube.png";
 import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
