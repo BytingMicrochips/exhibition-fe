@@ -4,10 +4,10 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext, ModalPropsContext } from "../components/App";
+import { ModalContext, IsSelectedContext, ModalPropsContext } from "./App";
 import DOMPurify from "dompurify";
 
-const ResultsMap = (props) => {
+const ResultsMapChic = (props) => {
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
@@ -18,8 +18,8 @@ const ResultsMap = (props) => {
   };
 
   const handleExpanded = (id) => {
-  id === selected ? setSelected("") : setSelected(id);
-  }
+    id === selected ? setSelected("") : setSelected(id);
+  };
 
   return (
     <>
@@ -65,7 +65,8 @@ const ResultsMap = (props) => {
                 className="expandImg"
                 onClick={() =>
                   handleModal(
-                    props.results.config.iiif_url, artwork.image_id,
+                    props.results.config.iiif_url,
+                    artwork.image_id,
                     artwork.thumbnail.alt_text
                   )
                 }
@@ -188,4 +189,4 @@ const ResultsMap = (props) => {
   );
 };
 
-export default ResultsMap;
+export default ResultsMapChic;

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
-import "../../src/App.css"
+import "../../src/App.css";
 import loadingGif from "../assets/loadingGif.gif";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
-import cube from "../assets/cube.png"
+import cube from "../assets/cube.png";
 import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
-import ResultsMap from "./ResultsMap";
+import ResultsMapChic from "./ResultsMapChic";
 import ResultsMapMet from "./ResultsMapMet";
 
 export const ModalContext = createContext();
@@ -51,7 +51,7 @@ function App() {
   const allArtworks = [];
   let counter = 0;
   let loadTen = 0;
-  
+
   const fetchResults = async () => {
     const emptyMet = [];
     setModal(false);
@@ -63,34 +63,36 @@ function App() {
       setMetTotal(0);
       const result = await fetch(
         `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`
-      )
-        result.json()
-          .then((jsonResponse) => {
+      );
+      result
+        .json()
+        .then((jsonResponse) => {
           setResults(jsonResponse);
           setIsLoading(false);
           setSearchMade(true);
-          })
-          .catch(err => {
-            console.log(err.message);
-        })
-      }
-    if (apiSelector === metMuseumUrl) {
-      const result = await fetch(`${fullRequest}`);
-      result.json()
-        .then((jsonResponse) => {
-        if (jsonResponse.total > 0) {
-          setMetIdList(jsonResponse.objectIDs);
-          setMetTotal(jsonResponse.total);
-        } else {
-          setMetIdList(emptyMet);
-          setMetTotal(jsonResponse.total);
-          setIsLoading(false);
-          setSearchMade(true);
-        }
         })
         .catch((err) => {
-        console.log(err.message)
-      })
+          console.log(err.message);
+        });
+    }
+    if (apiSelector === metMuseumUrl) {
+      const result = await fetch(`${fullRequest}`);
+      result
+        .json()
+        .then((jsonResponse) => {
+          if (jsonResponse.total > 0) {
+            setMetIdList(jsonResponse.objectIDs);
+            setMetTotal(jsonResponse.total);
+          } else {
+            setMetIdList(emptyMet);
+            setMetTotal(jsonResponse.total);
+            setIsLoading(false);
+            setSearchMade(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
     }
   };
 
@@ -113,24 +115,24 @@ function App() {
     setIsLoading(true);
     let currentArtworkId = metIdList[counter];
 
-    if (typeof currentArtworkId === "number" && typeof currentArtworkId !== "undefined") {
+    if (
+      typeof currentArtworkId === "number" &&
+      typeof currentArtworkId !== "undefined"
+    ) {
       const result = await fetch(
         `https://collectionapi.metmuseum.org/public/collection/v1/objects/${currentArtworkId}`
-      )
+      );
       if (typeof result !== "undefined") {
         result
           .json()
           .then((jsonResponse) => {
-            if (
-              jsonResponse.primaryImageSmall === ""
-            ) {
+            if (jsonResponse.primaryImageSmall === "") {
               counter++;
             } else if (jsonResponse.hasOwnProperty("message")) {
               counter++;
               fetchMet(counter);
               throw Error(`Server says: ${jsonResponse.message}`);
-            }
-            else {
+            } else {
               allArtworks.push(jsonResponse);
               counter++;
               loadTen++;
@@ -153,7 +155,7 @@ function App() {
             console.log(err.message);
           });
       }
-      }
+    }
   };
 
   const handleInput = (e) => {
@@ -174,15 +176,15 @@ function App() {
   const handleCollection = (e) => {
     if (e.currentTarget.value !== controlApi) {
       if (e.currentTarget.value === "Art Institute of Chicago") {
-          setControlApi("Art Institute of Chicago");
-          setApiSelector(chicagoArtUrl);
+        setControlApi("Art Institute of Chicago");
+        setApiSelector(chicagoArtUrl);
       } else {
         setApiSelector(metMuseumUrl);
-          setControlApi("Metropolitan Museum NYC");
+        setControlApi("Metropolitan Museum NYC");
       }
-    };
     }
-  
+  };
+
   const handleNextPageC = () => {
     let currentPage = chicagoPage;
     setChicagoPage(currentPage + 1);
@@ -305,22 +307,25 @@ function App() {
     }
   };
 
-const handleMetInfo = async (id) => {
-  isSelected === id ? setIsSelected("") : setIsSelected(id);
-    if (fullDetails.length === 0 || fullDetails.objectID != id && id.length !== 0) {
+  const handleMetInfo = async (id) => {
+    isSelected === id ? setIsSelected("") : setIsSelected(id);
+    if (
+      fullDetails.length === 0 ||
+      (fullDetails.objectID != id && id.length !== 0)
+    ) {
       setDetailsLoading(true);
       const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
       const fullDetails = await fetch(metSingleArt + id);
-        fullDetails
-          .json()
-          .then((jsonResponse) => {
-            setFullDetails(jsonResponse);
-            })
-          .catch((err) => {
-            console.log(err.message);
-          });
-      }
-};
+      fullDetails
+        .json()
+        .then((jsonResponse) => {
+          setFullDetails(jsonResponse);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
+  };
   useEffect(() => {
     if (apiSelector === chicagoArtUrl) {
       handleChicInfo(expanded);
@@ -328,8 +333,7 @@ const handleMetInfo = async (id) => {
     if (apiSelector === metMuseumUrl) {
       handleMetInfo(expanded);
     }
-  },[expanded])
-
+  }, [expanded]);
 
   useEffect(() => {
     if (apiSelector === chicagoArtUrl) {
@@ -360,17 +364,17 @@ const handleMetInfo = async (id) => {
     // setModalId(id);
     // setModalImgId(imgId);
     //   setModalAltText(altText);
-      
+
     // }
   };
 
   useEffect(() => {
     if (apiSelector === chicagoArtUrl && results.length !== 0 && results.data) {
-      const hasThumbnail = results.data.filter((artwork) => artwork.thumbnail)
-      setThumbLength(hasThumbnail.length)
+      const hasThumbnail = results.data.filter((artwork) => artwork.thumbnail);
+      setThumbLength(hasThumbnail.length);
     }
-  }, [results])
-  
+  }, [results]);
+
   return (
     <>
       <ModalContext.Provider value={[modal, setModal]}>
@@ -483,7 +487,7 @@ const handleMetInfo = async (id) => {
                       <IsSelectedContext.Provider
                         value={[expanded, setExpanded]}
                       >
-                        <ResultsMap
+                        <ResultsMapChic
                           results={results}
                           isSelected={isSelected}
                           detailsLoading={detailsLoading}
