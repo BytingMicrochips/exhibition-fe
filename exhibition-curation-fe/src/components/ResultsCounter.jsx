@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-const ResultsCounter = ({ lastSearch, total }) => {
+const ResultsCounter = ({ lastSearch, total, errMsg }) => {
     return total === 0 ? (
       <Fragment key={"resultsCounter"}>
         <div className="resultsFound">
@@ -10,11 +10,20 @@ const ResultsCounter = ({ lastSearch, total }) => {
         </div>
       </Fragment>
     ) : (
-      <Fragment key={"resultsCounter"}>
+        <Fragment key={"resultsCounter"}>
+          <div className="resultsFoundErr">
         <div className="resultsFound">
           <p>
             <em>Showing {total} results!</em>
           </p>
+        </div>
+          {errMsg !== "" && (
+            <div className="resultsErr">
+              <p>
+                <em>Results filtered due to incompatible responses</em>
+              </p>
+            </div>
+          )}
         </div>
       </Fragment>
     );

@@ -412,20 +412,22 @@ function App() {
                       </button>
                     </div>
                   </div>
-                  {isLoading && (
-                    <Loading errMsg={errMsg}/>
-                  )}
+                  {isLoading && <Loading errMsg={errMsg} />}
 
                   {metIdList.length > 0 && isLoading === false && (
-                    <ResultsCounter total={results.length} />
+                    <ResultsCounter total={results.length} errMsg={errMsg} />
                   )}
 
                   {results.data ? (
                     results.pagination.total === 0 && isLoading === false ? (
-                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                      <ResultsCounter
+                        lastSearch={lastSearch}
+                        total={0}
+                        errMsg={errMsg}
+                      />
                     ) : (
                       <Fragment key="resultsFrag">
-                        <ResultsCounter total={thumbLength} />
+                        <ResultsCounter total={thumbLength} errMsg={errMsg} />
                         <PaginationBar
                           results={results}
                           isLoading={isLoading}
@@ -481,7 +483,7 @@ function App() {
                   ) : (
                     searchMade === true &&
                     isLoading === false && (
-                      <ResultsCounter lastSearch={lastSearch} total={0} />
+                      <ResultsCounter lastSearch={lastSearch} total={0} errMsg={errMsg}/>
                     )
                   )}
                 </div>
