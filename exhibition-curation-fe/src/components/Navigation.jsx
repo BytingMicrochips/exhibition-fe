@@ -1,10 +1,21 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
+import { CollectionContext } from "./App";
 
 const Navigation = () => {
+    const [viewCol, setViewCol] = useContext(CollectionContext);
+
+    const handleCollection = () => {
+        setViewCol(!viewCol);
+    }
+
     return (
       <Fragment key={"navigationFrag"}>
         <div className="navigation">
-          <button>My collection</button>
+          {viewCol ? (
+            <button onClick={handleCollection}>New Search</button>
+          ) : (
+            <button onClick={handleCollection}>My collection</button>
+          )}
         </div>
       </Fragment>
     );

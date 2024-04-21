@@ -14,6 +14,7 @@ export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
 export const ModalPropsContext = createContext();
 export const PaginationContext = createContext();
+export const CollectionContext = createContext();
 
 function App() {
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
@@ -43,6 +44,7 @@ function App() {
   const [lastPageValue, setLastPageValue] = useState(1);
   const [errMsg, setErrorMsg] = useState("");
   const [errCounter, setErrorCounter] = useState(0);
+  const [viewCol, setViewCol] = useState(false);
 
   const allArtworks = [];
   let counter = 0;
@@ -420,117 +422,125 @@ function App() {
               <Modal />
             ) : (
               <>
-                <Navigation />
+                <CollectionContext.Provider value={[viewCol, setViewCol]}>
+                  <Navigation />
+                </CollectionContext.Provider>
                 <Title />
-                  <div>
-                  <div className="searchCard">
-                    <h3>Input search criteria:</h3>
-                    <div className="inputSelect">
-                      <input onChange={handleInput}></input>
-                      <select value={controlApi} onChange={handleCollection}>
-                        <option>Art Institute of Chicago</option>
-                        <option>Metropolitan Museum NYC</option>
-                      </select>
-                    </div>
-                    <div className="searchButton">
-                      <button onClick={handleSearch}>
-                        Search collections!
-                      </button>
-                    </div>
-                  </div>
-                  {isLoading && results.length === 0 && (
-                    <Loading errMsg={errMsg} errCounter={errCounter} />
-                  )}
+                  {!viewCol &&
+                    <div>
+                      <div className="searchCard">
+                        <h3>Input search criteria:</h3>
+                        <div className="inputSelect">
+                          <input onChange={handleInput}></input>
+                          <select value={controlApi} onChange={handleCollection}>
+                            <option>Art Institute of Chicago</option>
+                            <option>Metropolitan Museum NYC</option>
+                          </select>
+                        </div>
+                        <div className="searchButton">
+                          <button onClick={handleSearch}>
+                            Search collections!
+                          </button>
+                        </div>
+                      </div>
+                    
+                      {isLoading && results.length === 0 && (
+                        <Loading errMsg={errMsg} errCounter={errCounter} />
+                      )}
 
-                  {metIdList.length > 0 && isLoading === false && (
-                    <ResultsCounter
-                      total={results.length}
-                      errMsg={errMsg}
-                      errCounter={errCounter}
-                    />
-                  )}
-
-                  {results.data ? (
-                    results.pagination.total === 0 && isLoading === false ? (
-                      <ResultsCounter
-                        lastSearch={lastSearch}
-                        total={0}
-                        errMsg={errMsg}
-                        errCounter={errCounter}
-                      />
-                    ) : (
-                      <Fragment key="resultsFrag">
+                      {metIdList.length > 0 && isLoading === false && (
                         <ResultsCounter
-                          total={thumbLength}
+                          total={results.length}
                           errMsg={errMsg}
                           errCounter={errCounter}
                         />
-                        <PaginationBar
-                          results={results}
-                          isLoading={isLoading}
-                          apiSelector={apiSelector}
-                        />
-                        <IsSelectedContext.Provider
-                          value={[expanded, setExpanded]}
-                        >
-                          <ResultsMapChic
-                            results={results}
-                            isSelected={isSelected}
-                            detailsLoading={detailsLoading}
-                            fullDetails={fullDetails}
-                            description={description}
+                      )}
+
+                      {results.data ? (
+                        results.pagination.total === 0 && isLoading === false ? (
+                          <ResultsCounter
+                            lastSearch={lastSearch}
+                            total={0}
+                            errMsg={errMsg}
+                            errCounter={errCounter}
                           />
-                        </IsSelectedContext.Provider>
-                        {results.data.length > 3 && (
-                          <React.Fragment key={"bottomPagin"}>
+                        ) : (
+                          <Fragment key="resultsFrag">
+                            <ResultsCounter
+                              total={thumbLength}
+                              errMsg={errMsg}
+                              errCounter={errCounter}
+                            />
                             <PaginationBar
                               results={results}
                               isLoading={isLoading}
                               apiSelector={apiSelector}
                             />
-                          </React.Fragment>
-                        )}
-                      </Fragment>
-                    )
-                  ) : results.length > 0 ? (
-                    <React.Fragment key="showingRes">
-                      <PaginationBar
-                        results={results}
-                        isLoading={isLoading}
-                        apiSelector={apiSelector}
-                      />
-                      <IsSelectedContext.Provider
-                        value={[expanded, setExpanded]}
-                      >
-                        <ResultsMapMet
-                          results={results}
-                          detailsLoading={detailsLoading}
-                          fullDetails={fullDetails}
-                        />
-                      </IsSelectedContext.Provider>
+                            <IsSelectedContext.Provider
+                              value={[expanded, setExpanded]}
+                            >
+                              <ResultsMapChic
+                                results={results}
+                                isSelected={isSelected}
+                                detailsLoading={detailsLoading}
+                                fullDetails={fullDetails}
+                                description={description}
+                              />
+                            </IsSelectedContext.Provider>
+                            {results.data.length > 3 && (
+                              <React.Fragment key={"bottomPagin"}>
+                                <PaginationBar
+                                  results={results}
+                                  isLoading={isLoading}
+                                  apiSelector={apiSelector}
+                                />
+                              </React.Fragment>
+                            )}
+                          </Fragment>
+                        )
+                      ) : results.length > 0 ? (
+                        <React.Fragment key="showingRes">
+                          <PaginationBar
+                            results={results}
+                            isLoading={isLoading}
+                            apiSelector={apiSelector}
+                          />
+                          <IsSelectedContext.Provider
+                            value={[expanded, setExpanded]}
+                          >
+                            <ResultsMapMet
+                              results={results}
+                              detailsLoading={detailsLoading}
+                              fullDetails={fullDetails}
+                            />
+                          </IsSelectedContext.Provider>
 
-                      {results.length > 3 && (
-                        <PaginationBar
-                          results={results}
-                          isLoading={isLoading}
-                          apiSelector={apiSelector}
-                        />
+                          {results.length > 3 && (
+                            <PaginationBar
+                              results={results}
+                              isLoading={isLoading}
+                              apiSelector={apiSelector}
+                            />
+                          )}
+                        </React.Fragment>
+                      ) : (
+                        searchMade === true &&
+                        isLoading === false && (
+                          <ResultsCounter
+                            lastSearch={lastSearch}
+                            total={0}
+                            errMsg={errMsg}
+                            errCounter={errCounter}
+                          />
+                        )
                       )}
-                    </React.Fragment>
-                  ) : (
-                    searchMade === true &&
-                    isLoading === false && (
-                      <ResultsCounter
-                        lastSearch={lastSearch}
-                        total={0}
-                        errMsg={errMsg}
-                        errCounter={errCounter}
-                      />
-                    )
-                  )}
-                </div>
+            
+                    </div>
+                  }
               </>
+                      
             )}
+            
           </PaginationContext.Provider>
         </ModalPropsContext.Provider>
       </ModalContext.Provider>
