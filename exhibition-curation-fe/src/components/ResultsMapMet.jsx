@@ -4,12 +4,14 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext, ModalPropsContext } from "../components/App";
-
+import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "../components/App";
+import whiteHeart from "../assets/whiteHeart.png";
+import blackHeart from "../assets/blackHeart.png";
 const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
+  const [userCol, setUserCol] = useContext(UserColContext);
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -20,10 +22,29 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
     setModal(!modal);
   };
 
+  const handleCol = (id) => {
+    const currentCol = [...userCol];
+    const match = currentCol.findIndex((item) => item.id === id && item.api === "met");
+    if (match != -1) {
+      currentCol.splice(match, 1);
+      setUserCol(currentCol);
+    } else {
+      typeof fullDetails.length !== 0 &&
+      fullDetails.objectID === id
+        ? currentCol.push({
+            id,
+            api: "met",
+            fullDetails: fullDetails,
+          })
+        : currentCol.push({ id, api: "met", fullDetails: null });
+      setUserCol(currentCol);
+    }
+  };
+
   return results.map((artwork) => {
     return (
       <Fragment key={artwork.objectID}>
-        <div key={artwork.objectID+"artworkCard"} className="artworkCard">
+        <div key={artwork.objectID + "artworkCard"} className="artworkCard">
           <button
             className="artworkButton"
             onClick={() => handleExpanded(artwork.objectID)}
@@ -35,7 +56,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
               {isSelected === artwork.objectID ? (
                 <img
                   className="expColButton"
-                  alt="expand for details"
+                  alt="hide details"
                   src={collapseArrow}
                 />
               ) : (
@@ -48,11 +69,14 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             </div>
           </button>
           <div className="artworkCardImg">
-            <img
-              alt={artwork.medium}
-              src={artwork.primaryImageSmall}
-              width="200"
-            />
+            <div className="centeredImg">
+              <img
+                alt={artwork.medium}
+                src={artwork.primaryImageSmall}
+                width="200"
+              />
+            </div>
+
             <button
               className="expandImg"
               onClick={() => {
@@ -61,13 +85,37 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             >
               <img id="expandIcon" src={expand} alt="expand image" />
             </button>
+            {userCol.findIndex(
+              (item) => item.id === artwork.objectID && item.api === "met"
+            ) === -1 ? (
+              <button
+                aria-label="add to my collection"
+                className="addRemoveCol"
+                onClick={() => handleCol(artwork.objectID)}
+              >
+                <img id="heart" alt="like button" src={blackHeart} />
+              </button>
+            ) : (
+              <button
+                aria-label="remove from my collection"
+                className="addRemoveCol"
+                onClick={() => handleCol(artwork.objectID)}
+              >
+                <img id="heart" alt="unlike button" src={whiteHeart} />
+              </button>
+            )}
           </div>
         </div>
+
         {detailsLoading === true && isSelected === artwork.objectID && (
           <>
             <div className="fullDetails">
               <button onClick={() => handleExpanded(artwork.objectID)}>
-                <img src={smallLoadingGif} alt="loading details" />
+                <img
+                  id="smallLoadingGif"
+                  src={smallLoadingGif}
+                  alt="loading details"
+                />
               </button>
             </div>
           </>
