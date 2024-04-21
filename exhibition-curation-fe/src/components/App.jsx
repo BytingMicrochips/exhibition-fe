@@ -8,6 +8,7 @@ import ResultsMapMet from "./ResultsMapMet";
 import ResultsCounter from "./ResultsCounter";
 import PaginationBar from "./PaginationBar";
 import Loading from "./Loading";
+import Navigation from "./Navigation";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -419,8 +420,9 @@ function App() {
               <Modal />
             ) : (
               <>
+                <Navigation />
                 <Title />
-                <div>
+                  <div>
                   <div className="searchCard">
                     <h3>Input search criteria:</h3>
                     <div className="inputSelect">
