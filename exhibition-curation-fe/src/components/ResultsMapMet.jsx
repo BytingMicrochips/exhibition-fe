@@ -7,12 +7,10 @@ import { useContext } from "react";
 import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "../components/App";
 
 const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
-  console.log("🚀 ~ ResultsMapMet ~ fullDetails:", fullDetails)
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
-  console.log("🚀 ~ ResultsMapMet ~ userCol:", userCol)
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
