@@ -8,6 +8,7 @@ import Title from "./Title";
 import Modal from "./Modal";
 import ResultsMapChic from "./ResultsMapChic";
 import ResultsMapMet from "./ResultsMapMet";
+import ResultsCounter from "./ResultsCounter";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -356,8 +357,8 @@ function App() {
     <>
       <ModalContext.Provider value={[modal, setModal]}>
         <ModalPropsContext.Provider value={[modalProps, setModalProps]}>
-          {modal ?
-            (<Modal />
+          {modal ? (
+            <Modal />
           ) : (
             <>
               <Title />
@@ -382,32 +383,15 @@ function App() {
                 )}
 
                 {metIdList.length > 0 && isLoading === false && (
-                  <>
-                    <div className="resultsFound">
-                      <p>
-                        <em>Showing {results.length} results!</em>
-                      </p>
-                    </div>
-                  </>
+                      <ResultsCounter total={results.length}/>   
                 )}
 
                 {results.data ? (
                   results.pagination.total === 0 && isLoading === false ? (
-                    <>
-                      <p>
-                        <em>
-                          No results currently archived about: {lastSearch}
-                        </em>
-                      </p>
-                    </>
+                    <ResultsCounter lastSearch={lastSearch} total={0} />
                   ) : (
                     <Fragment key="resultsFrag">
-                      <div className="resultsFound">
-                        <p>
-                          <em>Showing {thumbLength} results!</em>
-                        </p>
-                      </div>
-
+                      <ResultsCounter total={thumbLength}/>
                       <div className="prevNextButtons">
                         {chicagoPage === 1 ? (
                           <>
@@ -607,13 +591,7 @@ function App() {
                 ) : (
                   searchMade === true &&
                   isLoading === false && (
-                    <>
-                      <p>
-                        <em>
-                          No results currently archived about: {lastSearch}
-                        </em>
-                      </p>
-                    </>
+                    <ResultsCounter lastSearch={lastSearch} total={0} />
                   )
                 )}
               </div>
