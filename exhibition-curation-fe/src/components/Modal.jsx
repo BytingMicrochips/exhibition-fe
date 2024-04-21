@@ -15,11 +15,20 @@ const Modal = (props) => {
       <div className="modal" onClick={handleExitModal}>
         <div className="overlay">
           <div className="modalContent">
-            <img
-              className="modalImg"
-              alt={modalProps.altText}
-              src={`${modalProps.config}/${modalProps.id}/full/400,/0/default.jpg`}
-            />
+            {modalProps.config ? (
+              <img
+                className="modalImg"
+                alt={modalProps.altText}
+                src={
+                  `${modalProps.config}/${modalProps.id}/full/400,/0/default.jpg`}
+              />
+            ) : (
+              <img
+                className="modalImg"
+                alt={modalProps.medium}
+                src={modalProps.src}
+              />
+            )}
             <p>
               <em>Touch anywhere to close</em>
             </p>

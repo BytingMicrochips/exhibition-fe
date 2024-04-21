@@ -15,6 +15,11 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
   };
 
+  const handleModal = (medium, src) => {
+    setModalProps({ medium, src });
+    setModal(!modal);
+  };
+
   return results.map((artwork) => {
     return (
       <Fragment key={artwork.objectID}>
@@ -50,9 +55,9 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             />
             <button
               className="expandImg"
-              // onClick={() => {
-              //   handleFullImg(artwork.objectID);
-              // }}
+              onClick={() => {
+                handleModal(artwork.medium, artwork.primaryImageSmall);
+              }}
             >
               <img id="expandIcon" src={expand} alt="expand image" />
             </button>

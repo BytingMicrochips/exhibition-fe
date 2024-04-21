@@ -39,10 +39,6 @@ function App() {
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
   const [modal, setModal] = useState(false);
-
-  // const [modalId, setModalId] = useState("");
-  // const [modalImgId, setModalImgId] = useState("");
-  // const [modalAltText, setModalAltText] = useState("");
   const [metModal, setMetModal] = useState({});
   const [modalProps, setModalProps] = useState({});
 
@@ -351,22 +347,6 @@ function App() {
       setDetailsLoading(false);
     }
   }, [fullDetails]);
-
-  const handleFullImg = (id, imgId, altText) => {
-    console.log("handleFullImg");
-    // setModal(!modal);
-    // if (apiSelector === metMuseumUrl) {
-    //   const match = results.filter((item) => {
-    //     return item.objectID === id
-    //   })
-    //   setMetModal(match[0]);
-    // } else {
-    // setModalId(id);
-    // setModalImgId(imgId);
-    //   setModalAltText(altText);
-
-    // }
-  };
 
   useEffect(() => {
     if (apiSelector === chicagoArtUrl && results.length !== 0 && results.data) {
