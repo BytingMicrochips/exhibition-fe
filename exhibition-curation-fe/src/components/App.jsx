@@ -9,6 +9,7 @@ import ResultsCounter from "./ResultsCounter";
 import PaginationBar from "./PaginationBar";
 import Loading from "./Loading";
 import Navigation from "./Navigation";
+import Collection from "./Collection";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -428,8 +429,11 @@ function App() {
                   <CollectionContext.Provider value={[viewCol, setViewCol]}>
                     <Navigation />
                   </CollectionContext.Provider>
-                  <Title viewCol={viewCol} />
-                  {!viewCol && (
+                    <Title viewCol={viewCol} />
+                    {viewCol ? (
+                    <Collection/>
+                    ) :
+                    (
                     <div>
                       <div className="searchCard">
                         <h3>Input search criteria:</h3>
