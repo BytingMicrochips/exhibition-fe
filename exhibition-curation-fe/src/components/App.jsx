@@ -41,6 +41,7 @@ function App() {
   const [modalProps, setModalProps] = useState({});
   const [thumbLength, setThumbLength] = useState(0);
   const [pageValue, setPageValue] = useState(1);
+
   const [lastPageValue, setLastPageValue] = useState(1);
 
   const allArtworks = [];
@@ -158,6 +159,7 @@ function App() {
   const handleSearch = (e) => {
     setLastSearch(input);
     setFullDetails([]);
+    setMetPrevious([]);
     setIsSelected("");
     if (chicagoPage != 1 || pageValue != 1) {
       setChicagoPage(1);
@@ -180,12 +182,22 @@ function App() {
   };
 
   useEffect(() => {
-    if (pageValue > lastPageValue) {
-      handleNextPageC();
-      setLastPageValue(pageValue)
+    if (apiSelector === chicagoArtUrl) {
+      if (pageValue > lastPageValue) {
+        handleNextPageC();
+        setLastPageValue(pageValue)
+      } else {
+        handlePrevPageC();
+      }
     } else {
-      handlePrevPageC();
-    }
+      if (pageValue > lastPageValue) {
+        handleNextPageM();
+        setLastPageValue(pageValue);
+      } else {
+        handlePrevPageM();
+        setLastPageValue(pageValue);
+      }
+  }
   }, [pageValue]);
 
   const handleNextPageC = () => {
@@ -199,6 +211,7 @@ function App() {
   };
 
   const handleNextPageM = () => {
+    console.log("handleNextPageM");
     const displayIndex = metPrevious.indexOf(results[0].objectID);
     allArtworks.length = 0;
     counter = metIndex;
@@ -224,31 +237,39 @@ function App() {
   }, [loadMetPrev]);
 
   const fetchPrevMet = async () => {
-    const displayIndex = metPrevious.indexOf(results[0].objectID);
-    let validId = metPrevious[displayIndex - 10 + recallIndex];
+    if (Array.isArray(results)) {
+      const displayIndex = metPrevious.indexOf(results[0].objectID);
+      let validId = metPrevious[displayIndex - 10 + recallIndex];
 
-    const result = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
-    );
-    result
-      .json()
-      .then((jsonResponse) => {
-        allArtworks.push(jsonResponse);
-        recallIndex++;
-      })
-      .then(() => {
-        if (recallIndex < 10) {
-          fetchPrevMet();
-        } else {
-          setResults(allArtworks);
-          setIsLoading(false);
-          recallIndex = 0;
-          setLoadMetPrev(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+      const result = await fetch(
+        `https://collectionapi.metmuseum.org/public/collection/v1/objects/${validId}`
+      );
+      result
+        .json()
+        .then((jsonResponse) => {
+          allArtworks.push(jsonResponse);
+          recallIndex++;
+        })
+        .then(() => {
+          if (validId === metPrevious[metPrevious.length - 1]) {
+                setResults(allArtworks);
+                setIsLoading(false);
+                recallIndex = 0;
+                setLoadMetPrev(false);
+          }
+          else if (recallIndex < 10) {
+              fetchPrevMet();
+            } else {
+              setResults(allArtworks);
+              setIsLoading(false);
+              recallIndex = 0;
+              setLoadMetPrev(false);
+            }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
   };
 
   const fetchNextKnown = async (displayIndex) => {
@@ -264,7 +285,12 @@ function App() {
         recallIndex++;
       })
       .then(() => {
-        if (recallIndex < 10) {
+          if (validId === metPrevious[metPrevious.length - 1]) {
+            setResults(allArtworks);
+            setIsLoading(false);
+            recallIndex = 0;
+            setLoadMetPrev(false);
+          } else if (recallIndex < 10) {
           fetchNextKnown(displayIndex);
         } else {
           setResults(allArtworks);
@@ -401,7 +427,7 @@ function App() {
                     ) : (
                       <Fragment key="resultsFrag">
                         <ResultsCounter total={thumbLength} />
-                        <PaginationBar results={results} isLoading={isLoading} />
+                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
                         <IsSelectedContext.Provider
                           value={[expanded, setExpanded]}
                         >
@@ -415,14 +441,17 @@ function App() {
                         </IsSelectedContext.Provider>
                         {results.data.length > 3 && (
                           <React.Fragment key={"bottomPagin"}>
-                            <PaginationBar results={results} isLoading={isLoading} />
+                            <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
                           </React.Fragment>
                         )}
                       </Fragment>
                     )
                   ) : results.length > 0 ? (
-                    <React.Fragment key="showingRes">
-                      <div className="prevNextButtons">
+                        <React.Fragment key="showingRes">
+                          
+                      <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector}/>
+
+                      {/* <div className="prevNextButtons">
                         {metPrevious.length <= 10 ||
                         metPrevious[0] === results[0].objectID ? (
                           <button id="hidden" onClick={handlePrevPageM}>
@@ -455,7 +484,9 @@ function App() {
                             Next results
                           </button>
                         )}
-                      </div>
+                      </div> */}
+
+                          
 
                       <IsSelectedContext.Provider
                         value={[expanded, setExpanded]}
@@ -467,55 +498,59 @@ function App() {
                         />
                       </IsSelectedContext.Provider>
 
-                      {results.length > 3 && (
-                        <>
-                          <div className="prevNextButtons">
-                            {metPrevious.length <= 10 ||
-                            metPrevious[0] === results[0].objectID ? (
-                              <>
-                                <button id="hidden">Last results</button>
-                              </>
-                            ) : (
-                              <>
-                                <button onClick={handlePrevPageM}>
-                                  Last results
-                                </button>
-                              </>
-                            )}
-                            {results.length >= 10 ? (
-                              <>
-                                {isLoading ? (
-                                  <img
-                                    src={smallLoadingGif}
-                                    alt="results loading"
-                                    id="paginationLoading"
-                                  />
-                                ) : (
-                                  <img
-                                    src={cube}
-                                    alt="results loaded"
-                                    id="paginationLoading"
-                                  />
-                                )}
-                                <button onClick={handleNextPageM}>
-                                  Next results
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <img
-                                  src={cube}
-                                  alt="results loaded"
-                                  id="paginationLoading"
-                                />
-                                <button id="hidden" onClick={handleNextPageM}>
-                                  Next results
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </>
-                      )}
+                          {results.length > 3 &&
+                        <PaginationBar results={results} isLoading={isLoading} apiSelector={apiSelector} />
+                            
+                            // (
+                        // <>
+                        //   <div className="prevNextButtons">
+                        //     {metPrevious.length <= 10 ||
+                        //     metPrevious[0] === results[0].objectID ? (
+                        //       <>
+                        //         <button id="hidden">Last results</button>
+                        //       </>
+                        //     ) : (
+                        //       <>
+                        //         <button onClick={handlePrevPageM}>
+                        //           Last results
+                        //         </button>
+                        //       </>
+                        //     )}
+                        //     {results.length >= 10 ? (
+                        //       <>
+                        //         {isLoading ? (
+                        //           <img
+                        //             src={smallLoadingGif}
+                        //             alt="results loading"
+                        //             id="paginationLoading"
+                        //           />
+                        //         ) : (
+                        //           <img
+                        //             src={cube}
+                        //             alt="results loaded"
+                        //             id="paginationLoading"
+                        //           />
+                        //         )}
+                        //         <button onClick={handleNextPageM}>
+                        //           Next results
+                        //         </button>
+                        //       </>
+                        //     ) : (
+                        //       <>
+                        //         <img
+                        //           src={cube}
+                        //           alt="results loaded"
+                        //           id="paginationLoading"
+                        //         />
+                        //         <button id="hidden" onClick={handleNextPageM}>
+                        //           Next results
+                        //         </button>
+                        //       </>
+                        //     )}
+                        //   </div>
+                        // </>
+                        //   )
+                          }
                     </React.Fragment>
                   ) : (
                     searchMade === true &&
