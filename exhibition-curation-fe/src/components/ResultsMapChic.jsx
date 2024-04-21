@@ -12,6 +12,7 @@ const ResultsMapChic = (props) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
+
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
     setModal(!modal);
@@ -23,7 +24,9 @@ const ResultsMapChic = (props) => {
 
   const handleCol = (id) => {
     const currentCol = [...userCol]
-    const match = currentCol.findIndex((item) => item.id === id)
+    const match = currentCol.findIndex(
+      (item) => item.id === id && item.api === "chicago"
+    );
     if (match != -1) {
       currentCol.splice(match, 1);
       setUserCol(currentCol);
@@ -88,7 +91,7 @@ const ResultsMapChic = (props) => {
               >
                 <img id="expandIcon" src={expand} alt="expand image" />
               </button>
-              {userCol.findIndex((item) => item.id === artwork.id) === -1 ? (
+              {userCol.findIndex((item) => (item.id === artwork.id && item.api === "chicago")) === -1 ? (
                 <button onClick={() => handleCol(artwork.id)}>
                   Add to collection
                 </button>

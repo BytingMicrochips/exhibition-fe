@@ -4,12 +4,15 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext, ModalPropsContext } from "../components/App";
+import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "../components/App";
 
 const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
+  console.log("🚀 ~ ResultsMapMet ~ fullDetails:", fullDetails)
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
+  const [userCol, setUserCol] = useContext(UserColContext);
+  console.log("🚀 ~ ResultsMapMet ~ userCol:", userCol)
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -20,10 +23,29 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
     setModal(!modal);
   };
 
+  const handleCol = (id) => {
+    const currentCol = [...userCol];
+    const match = currentCol.findIndex((item) => item.id === id && item.api === "met");
+    if (match != -1) {
+      currentCol.splice(match, 1);
+      setUserCol(currentCol);
+    } else {
+      typeof fullDetails.length !== 0 &&
+      fullDetails.objectID === id
+        ? currentCol.push({
+            id,
+            api: "met",
+            fullDetails: fullDetails,
+          })
+        : currentCol.push({ id, api: "met", fullDetails: null });
+      setUserCol(currentCol);
+    }
+  };
+
   return results.map((artwork) => {
     return (
       <Fragment key={artwork.objectID}>
-        <div key={artwork.objectID+"artworkCard"} className="artworkCard">
+        <div key={artwork.objectID + "artworkCard"} className="artworkCard">
           <button
             className="artworkButton"
             onClick={() => handleExpanded(artwork.objectID)}
@@ -48,19 +70,33 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             </div>
           </button>
           <div className="artworkCardImg">
-            <img
-              alt={artwork.medium}
-              src={artwork.primaryImageSmall}
-              width="200"
-            />
-            <button
-              className="expandImg"
-              onClick={() => {
-                handleModal(artwork.medium, artwork.primaryImageSmall);
-              }}
-            >
-              <img id="expandIcon" src={expand} alt="expand image" />
-            </button>
+            <div className="centeredImg">
+              <img
+                alt={artwork.medium}
+                src={artwork.primaryImageSmall}
+                width="200"
+              />
+            </div>
+            <div>
+              <button
+                className="expandImg"
+                onClick={() => {
+                  handleModal(artwork.medium, artwork.primaryImageSmall);
+                }}
+              >
+                <img id="expandIcon" src={expand} alt="expand image" />
+              </button>
+              {userCol.findIndex((item) => (item.id === artwork.objectID && item.api === "met")) ===
+              -1 ? (
+                <button onClick={() => handleCol(artwork.objectID)}>
+                  Add to collection
+                </button>
+              ) : (
+                <button onClick={() => handleCol(artwork.objectID)}>
+                  Remove from collection
+                </button>
+              )}
+            </div>
           </div>
         </div>
         {detailsLoading === true && isSelected === artwork.objectID && (
