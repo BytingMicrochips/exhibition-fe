@@ -3,9 +3,8 @@ import cube from "../assets/cube.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { PaginationContext } from "./App";
 
-const PaginationBar = ({ results, isLoading, apiSelector }) => {
+const PaginationBar = ({ results, isLoading}) => {
     const [pageValue, setPageValue] = useContext(PaginationContext);
-    const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
 
     const handleNext = () => {
         let currentPage = pageValue;
@@ -42,7 +41,7 @@ const PaginationBar = ({ results, isLoading, apiSelector }) => {
             </>
           )}
 
-          {apiSelector === chicagoArtUrl && results.data? (
+          {results.data? (
             results.data.length > 9 ? (
               <>
                 <button onClick={handleNext}>Next results</button>
