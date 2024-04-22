@@ -12,6 +12,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
+  const [errorMsg, setErrorMsg] = useContext("");
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -37,7 +38,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
           fullDetails: fullDetails,
         })
         :
-        fetchDetails(id, item.api);
+        fetchDetails(id, "met");
     }
   };
 
@@ -48,10 +49,14 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
       fullDetails
         .json()
         .then((jsonResponse) => {
-          const index = userCol.findIndex(
-            (item) => item.id === id && api === "met"
+          console.log("🚀 ~ .then ~ jsonResponse:", jsonResponse)
+          currentCol.push(
+            {
+              id,
+              api: "met",
+              fullDetails: jsonResponse
+            }
           );
-          currentCol[index].fullDetails = jsonResponse;
           setUserCol(currentCol);
         })
         .catch((err) => {

@@ -14,6 +14,7 @@ const ResultsMapChic = (props) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
+  const [errorMsg, setErrorMsg] = useContext("");
 
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
@@ -55,10 +56,8 @@ const ResultsMapChic = (props) => {
                 id,
                 api: "chicago",
                 fullDetails: jsonResponse,
-              }); 
-              
+              });        
           setUserCol(currentCol);
-
             })
             .catch((err) => {
               setErrorMsg(err.msg);
