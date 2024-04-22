@@ -44,10 +44,11 @@ function App() {
   const [thumbLength, setThumbLength] = useState(0);
   const [pageValue, setPageValue] = useState(1);
   const [lastPageValue, setLastPageValue] = useState(1);
-  const [errMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [errCounter, setErrorCounter] = useState(0);
   const [viewCol, setViewCol] = useState(false);
   const [userCol, setUserCol] = useState([]);
+  console.log("🚀 ~ App ~ userCol:", userCol)
 
   const allArtworks = [];
   let counter = 0;
@@ -456,13 +457,13 @@ function App() {
                       </div>
 
                       {isLoading && results.length === 0 && (
-                        <Loading errMsg={errMsg} errCounter={errCounter} />
+                        <Loading errMsg={errorMsg} errCounter={errCounter} />
                       )}
 
                       {metIdList.length > 0 && isLoading === false && (
                         <ResultsCounter
                           total={results.length}
-                          errMsg={errMsg}
+                          errMsg={errorMsg}
                           errCounter={errCounter}
                         />
                       )}
@@ -473,14 +474,14 @@ function App() {
                           <ResultsCounter
                             lastSearch={lastSearch}
                             total={0}
-                            errMsg={errMsg}
+                            errMsg={errorMsg}
                             errCounter={errCounter}
                           />
                         ) : (
                           <Fragment key="resultsFrag">
                             <ResultsCounter
                               total={thumbLength}
-                              errMsg={errMsg}
+                              errMsg={errorMsg}
                               errCounter={errCounter}
                             />
                             <PaginationBar
@@ -541,7 +542,7 @@ function App() {
                           <ResultsCounter
                             lastSearch={lastSearch}
                             total={0}
-                            errMsg={errMsg}
+                            errMsg={errorMsg}
                             errCounter={errCounter}
                           />
                         )
