@@ -161,31 +161,38 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                   <button onClick={() => handleExpanded(artwork.objectID)}>
                     {artwork.artistDisplayName ? (
                       <>
-                        <div className="artistDetails">
-                          <p>
+                        <div className="detailHeadings">
+                          <div className="artistDetails">
+                            <p>
+                              <em>
+                                {fullDetails.artistDisplayName}
+                                {fullDetails.artistRole &&
+                                  `, ${fullDetails.artistRole}, `}
+                              </em>
+                            </p>
                             <em>
-                              {fullDetails.artistDisplayName}
-                              {fullDetails.artistRole &&
-                                `, ${fullDetails.artistRole}, `}
+                              {fullDetails.culture ||
+                                fullDetails.country ||
+                                ` department of ${fullDetails.department}`}
                             </em>
-                          </p>
-                          <em>
-                            {fullDetails.culture ||
-                              fullDetails.country ||
-                              ` department of ${fullDetails.department}`}
-                          </em>
+                          </div>
                         </div>
                       </>
                     ) : (
                       <>
-                        <p className="artistDetails">
-                          <em>
-                            Unidentified artist,{" "}
-                            {fullDetails.culture ||
-                              fullDetails.country ||
-                              ` department of ${fullDetails.department}`}
-                          </em>
-                        </p>
+                        <div className="detailHeadings">
+                          <p className="artistDetails">
+                            Unidentified artist
+                          </p>
+                          <p>
+                            <em>
+                              {" "}
+                              {fullDetails.culture ||
+                                fullDetails.country ||
+                                ` department of ${fullDetails.department}`}
+                            </em>
+                          </p>
+                        </div>
                       </>
                     )}
                     <div className="mediumDate">
@@ -202,7 +209,6 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     {fullDetails.creditLine && (
                       <p className="creditLine">{fullDetails.creditLine}</p>
                     )}
-
                     {fullDetails.repository && (
                       <>
                         <div className="viewAt">
@@ -210,7 +216,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                             {fullDetails.GalleryNumber != ""
                               ? `On view at ${fullDetails.repository}, gallery ${fullDetails.GalleryNumber}`
                               : `Stored at ${fullDetails.repository} - not on
-                                    view`}
+                                view`}
                           </p>
                         </div>
                       </>

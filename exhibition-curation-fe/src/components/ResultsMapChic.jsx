@@ -175,40 +175,37 @@ const ResultsMapChic = (props) => {
                                       "Unidentified artist"}
                                   </em>
                                 </p>
-                                <div className="mediumDate">
-                                  <p>
-                                    {props.fullDetails.data.date_display ||
-                                      props.fullDetails.data.date_end ||
-                                      props.fullDetails.data.date_start}
-                                  </p>
-                                  <p>
-                                    {props.fullDetails.data.medium_display ||
-                                      props.fullDetails.data
-                                        .artwork_type_title ||
-                                      props.fullDetails.data
-                                        .classification_title}
-                                  </p>
-                                </div>
-                                {props.fullDetails.data.place_of_origin !=
-                                  null && (
-                                  <>
-                                    <p>
-                                      Produced in{" "}
-                                      {props.fullDetails.data.place_of_origin}
-                                    </p>
-                                  </>
-                                )}
-
-                                {props.fullDetails.data.credit_line && (
-                                  <>
-                                    <div className="creditLine">
-                                      <p>
-                                        {props.fullDetails.data.credit_line}
-                                      </p>
-                                    </div>
-                                  </>
-                                )}
                               </div>
+
+                              <div className="mediumDate">
+                                <p>
+                                  {props.fullDetails.data.date_display ||
+                                    props.fullDetails.data.date_end ||
+                                    props.fullDetails.data.date_start}{' '}
+                                </p>
+                                <p>
+                                  {props.fullDetails.data.medium_display ||
+                                    props.fullDetails.data.artwork_type_title ||
+                                    props.fullDetails.data.classification_title}
+                                </p>
+                              </div>
+                              {props.fullDetails.data.place_of_origin !=
+                                null && (
+                                <>
+                                  <p>
+                                    Produced in{" "}
+                                    {props.fullDetails.data.place_of_origin}
+                                  </p>
+                                </>
+                              )}
+
+                              {props.fullDetails.data.credit_line && (
+                                <>
+                                  <div className="creditLine">
+                                    <p>{props.fullDetails.data.credit_line}</p>
+                                  </div>
+                                </>
+                              )}
 
                               {props.description !== "" && (
                                 <>
