@@ -109,7 +109,8 @@ border-radius: 5px;
 .resultsFound {
   background-color: #977bdd;
   font-weight: 600;
-  color:#292828
+  color:#292828;
+  border-radius: 5px;
 }
 
 .artworkCard {
