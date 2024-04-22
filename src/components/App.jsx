@@ -37,6 +37,7 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
+  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [expanded, setExpanded] = useState("");
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
@@ -371,26 +372,29 @@ function App() {
   const handleMetInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
     setDetailsLoading(true);
-    if (
-      fullDetails.length === 0 ||
-      (fullDetails.objectID != id && id.length !== 0)
-    ) {
-      setDetailsLoading(true);
-      const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
-      const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
-      fullDetails
-        .json()
-        .then((jsonResponse) => {
-          setFullDetails(jsonResponse);
-          setDetailsLoading(false);
-        })
-        .catch((err) => {
-          setErrorMsg(err.message);
-          errorsFound++;
-          setErrorCounter(errorsFound);
-          setDetailsLoading(false);
-        });
+    if (typeof fullDetails.objectID !== "undefined" && fullDetails.objectID === id) {
+      setDetailsLoading(false);
     }
+    else if (
+        fullDetails.length === 0 ||
+        (fullDetails.objectID != id && id.length !== 0)
+      ){
+        setDetailsLoading(true);
+        const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+        const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
+        fullDetails
+          .json()
+          .then((jsonResponse) => {
+            setFullDetails(jsonResponse);
+            setDetailsLoading(false);
+          })
+          .catch((err) => {
+            setErrorMsg(err.message);
+            errorsFound++;
+            setErrorCounter(errorsFound);
+            setDetailsLoading(false);
+          });
+      }
   };
 
   useEffect(() => {
