@@ -7,7 +7,7 @@ import MetArtworkCard from "./MetArtworkCard";
 const Collection = () => {
   const [userCol, setUserCol] = useContext(UserColContext);
   const [viewCol, setViewCol] = useContext(CollectionContext);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("a");
 
     const handleCollection = () => {
       setViewCol(!viewCol);
@@ -43,7 +43,6 @@ const Collection = () => {
                 <ChicArtworkCard
                   id={artwork.id}
                   fullDetails={artwork.fullDetails}
-                  description={artwork.fullDetails.description}
                 />
               </Fragment>
             ) : (

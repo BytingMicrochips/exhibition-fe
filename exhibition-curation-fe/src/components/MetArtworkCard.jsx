@@ -94,12 +94,14 @@ const MetArtworkCard = ({ artwork }) => {
                 {artwork.artistDisplayName ? (
                   <>
                     <div className="artistDetails">
+                  <div className="detailHeadings">
                       <p>
                         <em>
                           {artwork.artistDisplayName}
                           {artwork.artistRole && `, ${artwork.artistRole}, `}
                         </em>
-                      </p>
+                        </p>
+                        </div>
                       <em>
                         {artwork.culture ||
                           artwork.country ||
@@ -108,7 +110,8 @@ const MetArtworkCard = ({ artwork }) => {
                     </div>
                   </>
                 ) : (
-                  <>
+                    <>
+                  <div className="detailHeadings">
                     <p className="artistDetails">
                       <em>
                         Unidentified artist,{" "}
@@ -116,7 +119,8 @@ const MetArtworkCard = ({ artwork }) => {
                           artwork.country ||
                           ` department of ${artwork.department}`}
                       </em>
-                    </p>
+                        </p>
+                        </div>
                   </>
                 )}
                 <div className="mediumDate">

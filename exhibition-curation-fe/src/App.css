@@ -4,12 +4,15 @@
   padding: 1rem;
   text-align: center;
   height: 95vh;
+  background-color: #5c5470;
 }
 
 .titleCard {
-  background-color: rgb(191, 105, 19);
+  background-color: #2a2438;
   margin-bottom: 0%;
-  padding-bottom: 0%;
+  padding-bottom: 1px;
+  color: #dbd8e3;
+  border-radius: 5px;
 }
 
 .titleCard h1 {
@@ -20,8 +23,12 @@
 
 .subheadingCard {
   padding: 0.5em;
-  background-color: #555555;
+  background-color: #2a2438;
+  color: #edeaf6;
   margin: 0em;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  border-radius: 5px;
 }
 
 .subheadingCard h3, .subheadingCard h4{
@@ -34,7 +41,10 @@
 }
 
 .searchCard {
-background-color: rgb(43, 165, 165);
+background-color: #edeaf6;
+color: #2a2438;
+margin-top: 10px;
+border-radius: 5px;
 }
 
 .searchCard h3 {
@@ -47,35 +57,45 @@ background-color: rgb(43, 165, 165);
   margin-right: 5px;
   margin-left: 5px;
   margin-bottom: 7px;
+  font-weight: 500;
 }
 .searchButton {
-  background-color: rgb(177, 84, 84);
+  background-color: #edeaf6;
   padding: 4px;
+  border-radius: 5px;
 }
 
 .resultsFound {
-  background-color: rgb(237, 206, 51);
+  background-color: #977bdd;
+  font-weight: 600;
+  color:#292828
 }
 
 .artworkCard {
-  background-color: rgb(126, 125, 125);
+  background-color: #292828;
   display:flex;
   width: 98%;
   margin: auto;
   margin-top: 1em;
   padding: 2px;
+  border-radius: 5px;
+  border: #dbd8e3;
+  border-style: groove;
 }
 
 .artworkCardHeader {
-  background-color: rgb(164, 86, 176);
+  background-color: #dbd8e3;
   margin: auto;
   max-width: 90%;
   border-radius: 8px;
+  opacity: 1;
+  color: #292828;
+  font-weight: 500
 }
 
 
 .artworkCardImg {
-  background-color: rgb(183, 43, 238);
+  background-color: #292828;
   height: 200px;
   width: 200px;
 }
@@ -96,7 +116,7 @@ display: flex;
 width: 93%;
 margin: 0%;
 padding: 0%;
-background-color: rgb(255, 0, 0);
+background-color: #292828;
 }
 
 .artworkButton p {
@@ -104,30 +124,40 @@ background-color: rgb(255, 0, 0);
 }
 
 .prevNextButtons {
-  background-color: rgb(13, 225, 24);
+  background-color: #977bdd;
   display: flex;
   justify-content: space-between;
   padding-top: 2px;
   padding-bottom: 2px;
   width: 100%;
+  border-radius: 5px;
 }
 
 .prevNextButtons button {
   margin: auto;
 }
 
+
+
 .fullDetails button {
-background-color: rgb(106, 233, 237);
-width: 98%;
+background-color: #292828;
+width: 100.5%;
 margin-top: -10px;
 position: relative;
 top: -5px;
+color:#dbd8e3;
+border-left: #dbd8e3;
+border-right: #dbd8e3;
+border-bottom: #dbd8e3;
+border-style: groove;
 }
 
 .fullDetails p {
   width: 60%;
   text-align: center;
   margin: auto;
+  background-color: #2a2438;
+  border-radius: 5px;
 }
 
 #smallLoadingGif {
@@ -136,11 +166,21 @@ top: -5px;
 }
 
 .detailHeadings {
-background-color: aquamarine;
-margin-bottom: 5px;
+background-color: #5c5470;
+margin-bottom: 8px;
+border-radius: 5px;
+font-weight: 600;
+}
+
+.detailHeadings p  {
+  width: 90%;
+background-color: #5c5470;
 }
 .detailDescr {
-  background-color: blueviolet;
+  border: #977bdd;
+  border-style: solid;
+  border-radius: 5px;
+  margin-top: 10px;
 }
 
 .detailDescr p {
@@ -158,22 +198,45 @@ width: fit-content;
 }
 
 .moreInfo {
-  background-color: blue;
+  background-color: #5c5470;
   padding: 5px;
-  margin: 3px;
-  border-radius: 12px;
+  margin: 0px;
+  padding-bottom: 8px;
+  border-radius: 5px;
   display: flex;
   justify-content: center;
+  color: #dbd8e3;
+  font-weight: 700;
 }
 
-.viewAt {
-  background-color: rgb(78, 18, 73);
+.viewAt, .creditLine, .mediumDate {
   margin-top: 5px;
   margin-bottom: 10px;
+  border-radius: 5px;
+
+  
+}
+
+.viewAt p, .creditLine p, .mediumDate p {
+  width: 100%;
+  display: inline;
 }
 
 .viewAt p {
-  width: 100%;
+  background-color: #dbd8e3;
+  opacity: 0.7;
+  color:#2a2438;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.viewAt {
+  background-color: #dbd8e3;
+  opacity: 0.7;
+}
+
+.artistDetails{
+  margin: 0%;
 }
 
 .expandImg, .addRemoveCol {
@@ -182,7 +245,7 @@ width: fit-content;
   position:relative;
   bottom: 44px;
   right: 8px;
-  background-color: rgb(82, 214, 93);
+  background-color: #977bdd;
   margin: 0%;
   padding: 3px;
   display: flex;
@@ -193,8 +256,8 @@ width: fit-content;
   width: 21px;
   height: 21px;
   object-fit: scale-down;
-    margin: 0%;
-      padding: 0%;
+  margin: 0%;
+  padding: 0%;
 }
 
 .modal, .overlay {
@@ -205,6 +268,8 @@ width: fit-content;
   left: 0;
   right: 0;
   position: fixed;
+  color: #dbd8e3;
+  font-size: large;
 }
 
 .overlay {
@@ -227,16 +292,27 @@ width: fit-content;
 .expColButton {
   width: 40px;
   object-fit: scale-down;
-
+  background-color: #dbd8e3;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-top: 8px;
+  border-radius: 5px;
+  opacity: 0.7;
 }
 
 #headingArrow {
   margin: auto;
   position: relative;
+  background-color: #dbd8e3;
+  border-radius: 5px;
+  min-width: 100px;
+  max-width: 140px;
 }
 
+
+
 .resultsErr {
-  background-color: rgb(157, 97, 18);
+  background-color: #977bdd;
   padding-left: 1vw;
   padding-right: 1vw;
   width: fit-content;
@@ -244,14 +320,25 @@ width: fit-content;
 }
 
 .resultsFoundErr {
-  background-color: rgb(21, 154, 154);
+  background-color: #977bdd;
   padding-bottom: 1px;
+  font-weight: 500;
+  line-height: 0px;
+  color:#292828;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .navigation {
-  background-color: rgb(149, 119, 84);
+  background-color: #dbd8e3;
   display: flex;
   justify-content: end;
+  opacity: 0.7;
+  border-radius: 5px;
 }
 
 .navigation button {
@@ -281,4 +368,41 @@ width: fit-content;
 
 .colError {
   background-color: rgb(145, 98, 106);
+}
+
+.errShow {
+  background-color: #977bdd;
+  border-radius: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-weight: 700;
+  margin-top: 5px;
+  opacity: 0.9;
+}
+
+.loadingErr {
+  margin-top: 25px;
+}
+
+.loadingErr img {
+  border-radius: 5px;
+  opacity: 0.4;
+}
+
+.errMsg {
+  width: 250px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  font-weight: 600;
+  background-color: #977bdd;
+  opacity: 0.8;
+  border-radius: 5px;
+  margin:auto;
+}
+
+.errMsg p {
+  margin-bottom: 0%;
+  margin-top: 0%;
 }
