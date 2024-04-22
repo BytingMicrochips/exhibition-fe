@@ -22,37 +22,39 @@ const Collection = () => {
               <p className="nothingHere">
                 <em>Nothing here yet...</em>
               </p>
-              <p className="returnSearch">
-                Return to search and add your favourite results
-              </p>
             </div>
+            <div className="returnSearch">
+            <p >
+              Return to search and add your favourite results
+            </p>
             <button onClick={handleCollection}>Return to Search</button>
+            </div>
           </Fragment>
         )}
         {errorMsg !== "" && (
           <Fragment>
             <div className="errShow">
-                    <p>Problems occurred loading your collection</p>
-                    <p><em>{errorMsg}</em></p>
+              <p>Problems occurred loading your collection</p>
+              <p>
+                <em>{errorMsg}</em>
+              </p>
             </div>
           </Fragment>
-            )}
+        )}
         {userCol.map((artwork) => {
-            return artwork.api === "chicago" ? (
-              <Fragment key={artwork.id + artwork.api}>
-                <ChicArtworkCard
-                  id={artwork.id}
-                  fullDetails={artwork.fullDetails}
-                />
-              </Fragment>
-            ) : (
-              <Fragment key={artwork.id + artwork.api}>
-                <MetArtworkCard artwork={artwork.fullDetails}/>
-              </Fragment>
-            );
-        })
-        }
-            
+          return artwork.api === "chicago" ? (
+            <Fragment key={artwork.id + artwork.api}>
+              <ChicArtworkCard
+                id={artwork.id}
+                fullDetails={artwork.fullDetails}
+              />
+            </Fragment>
+          ) : (
+            <Fragment key={artwork.id + artwork.api}>
+              <MetArtworkCard artwork={artwork.fullDetails} />
+            </Fragment>
+          );
+        })}
       </Fragment>
     );
 }
