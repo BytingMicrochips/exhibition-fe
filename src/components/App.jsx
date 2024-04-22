@@ -37,7 +37,6 @@ function App() {
   const [searchMade, setSearchMade] = useState(false);
   const [lastSearch, setLastSearch] = useState("");
   const [fullDetails, setFullDetails] = useState([]);
-  console.log("🚀 ~ App ~ fullDetails:", fullDetails)
   const [expanded, setExpanded] = useState("");
   const [isSelected, setIsSelected] = useState("");
   const [description, setDescription] = useState("");
