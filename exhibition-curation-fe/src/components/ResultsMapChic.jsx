@@ -42,10 +42,8 @@ const ResultsMapChic = (props) => {
 
   const fetchDetails = async (id, api) => {
         const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
-        const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
         const currentCol = [...userCol];
 
-        if (api === "chicago") {
           const fullDetails = await fetch(chicSingleArt + id, { mode: "cors" });
           fullDetails
             .json()
@@ -65,21 +63,6 @@ const ResultsMapChic = (props) => {
             .catch((err) => {
               setErrorMsg(err.msg);
             });
-        }
-        if (api === "met") {
-          const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
-          fullDetails
-            .json()
-            .then((jsonResponse) => {
-              const index = userCol.findIndex(
-                (item) => item.id === id && item.api === "met"
-              );
-              userCol[index].fullDetails = jsonResponse;
-            })
-            .catch((err) => {
-              setErrorMsg(err.msg);
-            });
-        }
   };
 
   return (

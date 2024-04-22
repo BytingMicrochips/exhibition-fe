@@ -30,16 +30,34 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
       setUserCol(currentCol);
     } else {
       typeof fullDetails.length !== 0 &&
-      fullDetails.objectID === id
+        fullDetails.objectID === id
         ? currentCol.push({
-            id,
-            api: "met",
-            fullDetails: fullDetails,
-          })
-        : currentCol.push({ id, api: "met", fullDetails: null });
-      setUserCol(currentCol);
+          id,
+          api: "met",
+          fullDetails: fullDetails,
+        })
+        :
+        fetchDetails(id, item.api);
     }
   };
+
+  const fetchDetails = async (id, api) => {
+    const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+    const currentCol = [...userCol];
+      const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
+      fullDetails
+        .json()
+        .then((jsonResponse) => {
+          const index = userCol.findIndex(
+            (item) => item.id === id && api === "met"
+          );
+          currentCol[index].fullDetails = jsonResponse;
+          setUserCol(currentCol);
+        })
+        .catch((err) => {
+          setErrorMsg(err.msg);
+        });
+  }
 
   return results.map((artwork) => {
     return (
