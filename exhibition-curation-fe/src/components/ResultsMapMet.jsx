@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
@@ -7,12 +7,13 @@ import { useContext } from "react";
 import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "../components/App";
 import whiteHeart from "../assets/whiteHeart.png";
 import blackHeart from "../assets/blackHeart.png";
+
 const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   const [modal, setModal] = useContext(ModalContext);
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
-  const [errorMsg, setErrorMsg] = useContext("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -49,7 +50,6 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
       fullDetails
         .json()
         .then((jsonResponse) => {
-          console.log("🚀 ~ .then ~ jsonResponse:", jsonResponse)
           currentCol.push(
             {
               id,

@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
@@ -14,7 +14,7 @@ const ResultsMapChic = (props) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
-  const [errorMsg, setErrorMsg] = useContext("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
