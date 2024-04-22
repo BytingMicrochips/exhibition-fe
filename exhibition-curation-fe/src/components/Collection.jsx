@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect, useState} from "react";
 import { UserColContext } from "./App";
 import { CollectionContext } from "./App";
 import ChicArtworkCard from "./ChicArtworkCard";
+import MetArtworkCard from "./MetArtworkCard";
 
 const Collection = () => {
   const [userCol, setUserCol] = useContext(UserColContext);
@@ -12,13 +13,6 @@ const Collection = () => {
       setViewCol(!viewCol);
     };
 
-    useEffect(() => {
-        userCol.forEach((artwork) => {
-            if (artwork.fullDetails === null) {
-                fetchDetails(artwork.id, artwork.api);
-                }
-            });
-    },[])
 
     return (
       <Fragment key={"collectionComp"}>
@@ -44,13 +38,17 @@ const Collection = () => {
           </Fragment>
             )}
         {userCol.map((artwork) => {
-            return (
-              <Fragment key={artwork.id+artwork.api}>
+            return artwork.api === "chicago" ? (
+              <Fragment key={artwork.id + artwork.api}>
                 <ChicArtworkCard
                   id={artwork.id}
                   fullDetails={artwork.fullDetails}
                   description={artwork.fullDetails.description}
                 />
+              </Fragment>
+            ) : (
+              <Fragment key={artwork.id + artwork.api}>
+                <MetArtworkCard />
               </Fragment>
             );
         })
