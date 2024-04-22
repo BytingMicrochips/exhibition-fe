@@ -79,6 +79,8 @@ border-radius: 5px;
   margin-top: 1em;
   padding: 2px;
   border-radius: 5px;
+  border: #dbd8e3;
+  border-style: groove;
 }
 
 .artworkCardHeader {
@@ -135,13 +137,19 @@ background-color: #292828;
   margin: auto;
 }
 
+
+
 .fullDetails button {
 background-color: #292828;
-width: 99%;
+width: 100.5%;
 margin-top: -10px;
 position: relative;
 top: -5px;
 color:#dbd8e3;
+border-left: #dbd8e3;
+border-right: #dbd8e3;
+border-bottom: #dbd8e3;
+border-style: groove;
 }
 
 .fullDetails p {
