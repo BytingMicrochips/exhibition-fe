@@ -44,12 +44,6 @@ const Collection = () => {
           </Fragment>
             )}
         {userCol.map((artwork) => {
-            // if (artwork.fullDetails === null && artwork.api === 'chicago') {
-            //     { fetchDetails(artwork) }
-            //     <ChicArtwokCard fullDetails={artwork.fullDetails} description={artwork.fullDetails.description}/>
-            // } else {
-            //     <ChicArtwokCard fullDetails={artwork.fullDetails} description={artwork.fullDetails.description}/>
-            // }
             return (
               <Fragment key={artwork.id+artwork.api}>
                 <ChicArtworkCard
