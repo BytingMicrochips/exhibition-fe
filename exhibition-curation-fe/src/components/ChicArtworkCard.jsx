@@ -2,13 +2,10 @@ import { Fragment, useState } from "react";
 import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
-import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import whiteHeart from "../assets/whiteHeart.png";
-import blackHeart from "../assets/blackHeart.png";
 import { useContext } from "react";
 import {
   ModalContext,
-  IsSelectedContext,
   ModalPropsContext,
   UserColContext,
 } from "./App";

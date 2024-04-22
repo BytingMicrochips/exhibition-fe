@@ -48,7 +48,6 @@ function App() {
   const [errCounter, setErrorCounter] = useState(0);
   const [viewCol, setViewCol] = useState(false);
   const [userCol, setUserCol] = useState([]);
-  console.log("🚀 ~ App ~ userCol:", userCol)
 
   const allArtworks = [];
   let counter = 0;

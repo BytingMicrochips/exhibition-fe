@@ -6,7 +6,6 @@ import MetArtworkCard from "./MetArtworkCard";
 
 const Collection = () => {
   const [userCol, setUserCol] = useContext(UserColContext);
-  console.log("🚀 ~ Collection ~ userCol:", userCol)
   const [viewCol, setViewCol] = useContext(CollectionContext);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -49,7 +48,7 @@ const Collection = () => {
               </Fragment>
             ) : (
               <Fragment key={artwork.id + artwork.api}>
-                <MetArtworkCard />
+                <MetArtworkCard artwork={artwork.fullDetails}/>
               </Fragment>
             );
         })
