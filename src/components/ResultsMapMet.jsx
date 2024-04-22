@@ -4,7 +4,12 @@ import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
 import smallLoadingGif from "../assets/smallLoadingGif.gif";
 import { useContext } from "react";
-import { ModalContext, IsSelectedContext, ModalPropsContext, UserColContext } from "../components/App";
+import {
+  ModalContext,
+  IsSelectedContext,
+  ModalPropsContext,
+  UserColContext,
+} from "./App";
 import whiteHeart from "../assets/whiteHeart.png";
 import blackHeart from "../assets/blackHeart.png";
 
@@ -26,44 +31,43 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
 
   const handleCol = (id) => {
     const currentCol = [...userCol];
-    const match = currentCol.findIndex((item) => item.id === id && item.api === "met");
+    const match = currentCol.findIndex(
+      (item) => item.id === id && item.api === "met"
+    );
     if (match != -1) {
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
-        fullDetails.objectID === id
+      fullDetails.objectID === id
         ? currentCol.push({
-          id,
-          api: "met",
-          fullDetails: fullDetails,
-        })
-        :
-        fetchDetails(id, "met");
+            id,
+            api: "met",
+            fullDetails: fullDetails,
+          })
+        : fetchDetails(id, "met");
     }
-      setUserCol(currentCol);
+    setUserCol(currentCol);
   };
 
   const fetchDetails = async (id, api) => {
     setErrorMsg("");
     const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
     const currentCol = [...userCol];
-      const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
-      fullDetails
-        .json()
-        .then((jsonResponse) => {
-          currentCol.push(
-            {
-              id,
-              api: "met",
-              fullDetails: jsonResponse
-            }
-          );
-          setUserCol(currentCol);
-        })
-        .catch((err) => {
-          setErrorMsg(err.msg);
+    const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
+    fullDetails
+      .json()
+      .then((jsonResponse) => {
+        currentCol.push({
+          id,
+          api: "met",
+          fullDetails: jsonResponse,
         });
-  }
+        setUserCol(currentCol);
+      })
+      .catch((err) => {
+        setErrorMsg(err.msg);
+      });
+  };
 
   return (
     <Fragment key={"ResultsMapMet"}>
@@ -181,9 +185,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     ) : (
                       <>
                         <div className="detailHeadings">
-                          <p className="artistDetails">
-                            Unidentified artist
-                          </p>
+                          <p className="artistDetails">Unidentified artist</p>
                           <p>
                             <em>
                               {" "}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
-import "../../src/App.css";
+import "../App.css";
 import { Fragment } from "react";
 import Title from "./Title";
 import Modal from "./Modal";
@@ -21,7 +21,9 @@ export const UserColContext = createContext();
 function App() {
   const chicagoArtUrl = `https://api.artic.edu/api/v1/artworks/search?q=`;
   const metMuseumUrl = `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=`;
-  const [apiSelector, setApiSelector] = useState("https://api.artic.edu/api/v1/artworks/search?q=");
+  const [apiSelector, setApiSelector] = useState(
+    "https://api.artic.edu/api/v1/artworks/search?q="
+  );
   const [controlApi, setControlApi] = useState("Art Institute of Chicago");
 
   const [input, setInput] = useState("");
@@ -64,7 +66,8 @@ function App() {
     if (apiSelector === chicagoArtUrl) {
       setMetIdList(emptyMet);
       const result = await fetch(
-        `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`, {mode: "cors"}
+        `${fullRequest}&fields=id,title,thumbnail,image_id&page=${chicagoPage}`,
+        { mode: "cors" }
       );
       result
         .json()
@@ -75,12 +78,12 @@ function App() {
         })
         .catch((err) => {
           setErrorMsg(err.message);
-          errorsFound++
+          errorsFound++;
           setErrorCounter(errorsFound);
         });
     }
     if (apiSelector === metMuseumUrl) {
-      const result = await fetch(`${fullRequest}`,{mode: "cors"});
+      const result = await fetch(`${fullRequest}`, { mode: "cors" });
       result
         .json()
         .then((jsonResponse) => {
@@ -158,8 +161,8 @@ function App() {
           })
           .catch((err) => {
             setErrorMsg(err.message);
-          errorsFound++;
-          setErrorCounter(errorsFound);
+            errorsFound++;
+            setErrorCounter(errorsFound);
           });
       }
     }
@@ -204,7 +207,7 @@ function App() {
     if (apiSelector === chicagoArtUrl) {
       if (pageValue > lastPageValue) {
         handleNextPageC();
-        setLastPageValue(pageValue)
+        setLastPageValue(pageValue);
       } else {
         handlePrevPageC();
       }
@@ -216,7 +219,7 @@ function App() {
         handlePrevPageM();
         setLastPageValue(pageValue);
       }
-  }
+    }
   }, [pageValue]);
 
   const handleNextPageC = () => {
@@ -271,19 +274,18 @@ function App() {
         })
         .then(() => {
           if (validId === metPrevious[metPrevious.length - 1]) {
-                setResults(allArtworks);
-                setIsLoading(false);
-                recallIndex = 0;
-                setLoadMetPrev(false);
+            setResults(allArtworks);
+            setIsLoading(false);
+            recallIndex = 0;
+            setLoadMetPrev(false);
+          } else if (recallIndex < 10) {
+            fetchPrevMet();
+          } else {
+            setResults(allArtworks);
+            setIsLoading(false);
+            recallIndex = 0;
+            setLoadMetPrev(false);
           }
-          else if (recallIndex < 10) {
-              fetchPrevMet();
-            } else {
-              setResults(allArtworks);
-              setIsLoading(false);
-              recallIndex = 0;
-              setLoadMetPrev(false);
-            }
         })
         .catch((err) => {
           setErrorMsg(err.message);
@@ -307,12 +309,12 @@ function App() {
         recallIndex++;
       })
       .then(() => {
-          if (validId === metPrevious[metPrevious.length - 1]) {
-            setResults(allArtworks);
-            setIsLoading(false);
-            recallIndex = 0;
-            setLoadMetPrev(false);
-          } else if (recallIndex < 10) {
+        if (validId === metPrevious[metPrevious.length - 1]) {
+          setResults(allArtworks);
+          setIsLoading(false);
+          recallIndex = 0;
+          setLoadMetPrev(false);
+        } else if (recallIndex < 10) {
           fetchNextKnown(displayIndex);
         } else {
           setResults(allArtworks);
@@ -323,8 +325,8 @@ function App() {
       })
       .catch((err) => {
         setErrorMsg(err.message);
-          errorsFound++;
-          setErrorCounter(errorsFound);
+        errorsFound++;
+        setErrorCounter(errorsFound);
       });
   };
 
@@ -337,7 +339,10 @@ function App() {
   const handleChicInfo = async (expanded) => {
     isSelected === expanded ? setIsSelected("") : setIsSelected(expanded);
     setDetailsLoading(true);
-    if (typeof fullDetails.data !== "undefined" && fullDetails.data.id === expanded) {
+    if (
+      typeof fullDetails.data !== "undefined" &&
+      fullDetails.data.id === expanded
+    ) {
       setDetailsLoading(false);
     } else if (
       fullDetails.length === 0 ||
@@ -365,7 +370,7 @@ function App() {
 
   const handleMetInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
-        setDetailsLoading(true);
+    setDetailsLoading(true);
     if (
       fullDetails.length === 0 ||
       (fullDetails.objectID != id && id.length !== 0)
