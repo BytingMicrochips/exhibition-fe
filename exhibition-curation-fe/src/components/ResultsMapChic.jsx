@@ -33,7 +33,6 @@ const ResultsMapChic = (props) => {
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
-      console.log('inside else')
       typeof props.fullDetails.data !== 'undefined' && props.fullDetails.data.id === id
         ? currentCol.push({
             id,
