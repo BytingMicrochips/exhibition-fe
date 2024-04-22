@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import expand from "../assets/expand.png";
 import expandArrow from "../assets/expandArrow.png";
 import collapseArrow from "../assets/collapseArrow.png";
@@ -14,7 +14,7 @@ const ResultsMapChic = (props) => {
   const [modalProps, setModalProps] = useContext(ModalPropsContext);
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
-
+  const [errorMsg, setErrorMsg] = useState("");
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
     setModal(!modal);
@@ -33,16 +33,50 @@ const ResultsMapChic = (props) => {
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
-      typeof props.fullDetails.data !== "undefined" && props.fullDetails.data.id === id ? 
-        currentCol.push({ id, api: "chicago", fullDetails: props.fullDetails }) 
-        :
-        currentCol.push({ id, api: "chicago", fullDetails: null });
-      setUserCol(currentCol);
-    }
+      console.log('inside else')
+      typeof props.fullDetails.data !== 'undefined' && props.fullDetails.data.id === id
+        ? currentCol.push({
+            id,
+            api: "chicago",
+            fullDetails: props.fullDetails,
+          })
+        : fetchDetails(id, "chicago");
+      }
+      setUserCol(currentCol)
   }
+
+  const fetchDetails = async (id, api) => {
+    const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+    const currentCol = [...userCol];
+    setErrorMsg("");
+          const fullDetails = await fetch(chicSingleArt + id, { mode: "cors" });
+          fullDetails
+            .json()
+            .then((jsonResponse) => {
+              const index = userCol.findIndex(
+                (item) => item.id === id && item.api === "chicago"
+              );
+              currentCol.push({
+                id,
+                api: "chicago",
+                fullDetails: jsonResponse,
+              });        
+          setUserCol(currentCol);
+            })
+            .catch((err) => {
+              setErrorMsg(err.msg);
+            });
+  };
 
   return (
     <>
+      {errorMsg !== "" &&
+        <Fragment key={"colError"}>
+      <div className="colError">
+        <p><em>Failed to add an item to your collection!</em></p>
+      </div>
+        </Fragment>
+      }
       {props.results.data.map((artwork) => {
         if (artwork.thumbnail) {
           return (

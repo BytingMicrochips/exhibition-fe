@@ -24,6 +24,10 @@
   margin: 0em;
 }
 
+.subheadingCard h3, .subheadingCard h4{
+  margin: 0%;
+}
+
 .subheadingCard p {
   font-size: 16px;
   margin: 0%;
@@ -258,4 +262,23 @@ width: fit-content;
 
 .addRemoveCol {
   margin-right: 10px;
+}
+
+.colNoRes {
+  background-color: rgb(34, 147, 147);
+}
+
+.nothingHere {
+  padding-top: 50% ;
+  padding-bottom: 50% ;
+}
+
+.returnSearch {
+  background-color: rgb(255, 0, 238);
+  padding-top: 5%;
+  padding-bottom: 5%;
+}
+
+.colError {
+  background-color: rgb(145, 98, 106);
 }

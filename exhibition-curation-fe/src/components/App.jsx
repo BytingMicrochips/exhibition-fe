@@ -9,6 +9,7 @@ import ResultsCounter from "./ResultsCounter";
 import PaginationBar from "./PaginationBar";
 import Loading from "./Loading";
 import Navigation from "./Navigation";
+import Collection from "./Collection";
 
 export const ModalContext = createContext();
 export const IsSelectedContext = createContext();
@@ -43,7 +44,7 @@ function App() {
   const [thumbLength, setThumbLength] = useState(0);
   const [pageValue, setPageValue] = useState(1);
   const [lastPageValue, setLastPageValue] = useState(1);
-  const [errMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [errCounter, setErrorCounter] = useState(0);
   const [viewCol, setViewCol] = useState(false);
   const [userCol, setUserCol] = useState([]);
@@ -428,8 +429,12 @@ function App() {
                   <CollectionContext.Provider value={[viewCol, setViewCol]}>
                     <Navigation />
                   </CollectionContext.Provider>
-                  <Title />
-                  {!viewCol && (
+                  <Title viewCol={viewCol} />
+                  {viewCol ? (
+                    <CollectionContext.Provider value={[viewCol, setViewCol]}>
+                      <Collection />
+                    </CollectionContext.Provider>
+                  ) : (
                     <div>
                       <div className="searchCard">
                         <h3>Input search criteria:</h3>
@@ -451,13 +456,13 @@ function App() {
                       </div>
 
                       {isLoading && results.length === 0 && (
-                        <Loading errMsg={errMsg} errCounter={errCounter} />
+                        <Loading errMsg={errorMsg} errCounter={errCounter} />
                       )}
 
                       {metIdList.length > 0 && isLoading === false && (
                         <ResultsCounter
                           total={results.length}
-                          errMsg={errMsg}
+                          errMsg={errorMsg}
                           errCounter={errCounter}
                         />
                       )}
@@ -468,14 +473,14 @@ function App() {
                           <ResultsCounter
                             lastSearch={lastSearch}
                             total={0}
-                            errMsg={errMsg}
+                            errMsg={errorMsg}
                             errCounter={errCounter}
                           />
                         ) : (
                           <Fragment key="resultsFrag">
                             <ResultsCounter
                               total={thumbLength}
-                              errMsg={errMsg}
+                              errMsg={errorMsg}
                               errCounter={errCounter}
                             />
                             <PaginationBar
@@ -536,7 +541,7 @@ function App() {
                           <ResultsCounter
                             lastSearch={lastSearch}
                             total={0}
-                            errMsg={errMsg}
+                            errMsg={errorMsg}
                             errCounter={errCounter}
                           />
                         )
