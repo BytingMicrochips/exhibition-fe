@@ -14,6 +14,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
   const [errorMsg, setErrorMsg] = useState("");
+    console.log("🚀 ~ handleCol ~ fullDetails:", fullDetails);
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -25,13 +26,14 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   };
 
   const handleCol = (id) => {
+    console.log('handleCol')
     const currentCol = [...userCol];
     const match = currentCol.findIndex((item) => item.id === id && item.api === "met");
     if (match != -1) {
+      console.log('removing match')
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
-      typeof fullDetails.length !== 0 &&
         fullDetails.objectID === id
         ? currentCol.push({
           id,
@@ -39,6 +41,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
           fullDetails: fullDetails,
         })
         :
+        console.log('fetching details')
         fetchDetails(id, "met");
     }
   };
@@ -66,7 +69,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   }
 
   return (
-    <>
+    <Fragment key={"ResultsMapMet"}>
       {errorMsg !== "" && (
         <Fragment key={"colError"}>
           <div className="colError">
@@ -254,7 +257,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
           </Fragment>
         );
       })}
-    </>
+    </Fragment>
   );
 };
 
