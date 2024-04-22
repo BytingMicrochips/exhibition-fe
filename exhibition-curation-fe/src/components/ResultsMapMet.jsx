@@ -14,7 +14,6 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   const [isSelected, setIsSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
   const [errorMsg, setErrorMsg] = useState("");
-    console.log("🚀 ~ handleCol ~ fullDetails:", fullDetails);
 
   const handleExpanded = (id) => {
     id === isSelected ? setIsSelected("") : setIsSelected(id);
@@ -26,11 +25,9 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
   };
 
   const handleCol = (id) => {
-    console.log('handleCol')
     const currentCol = [...userCol];
     const match = currentCol.findIndex((item) => item.id === id && item.api === "met");
     if (match != -1) {
-      console.log('removing match')
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
@@ -41,9 +38,9 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
           fullDetails: fullDetails,
         })
         :
-        console.log('fetching details')
         fetchDetails(id, "met");
     }
+      setUserCol(currentCol);
   };
 
   const fetchDetails = async (id, api) => {

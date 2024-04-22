@@ -15,7 +15,6 @@ const ResultsMapChic = (props) => {
   const [selected, setSelected] = useContext(IsSelectedContext);
   const [userCol, setUserCol] = useContext(UserColContext);
   const [errorMsg, setErrorMsg] = useState("");
-
   const handleModal = (config, id, altText) => {
     setModalProps({ config, id, altText });
     setModal(!modal);
@@ -34,11 +33,16 @@ const ResultsMapChic = (props) => {
       currentCol.splice(match, 1);
       setUserCol(currentCol);
     } else {
-      typeof props.fullDetails.data !== "undefined" && props.fullDetails.data.id === id ? 
-        currentCol.push({ id, api: "chicago", fullDetails: props.fullDetails }) 
-        :
-        fetchDetails(id, "chicago");
-    }
+      console.log('inside else')
+      typeof props.fullDetails.data !== 'undefined' && props.fullDetails.data.id === id
+        ? currentCol.push({
+            id,
+            api: "chicago",
+            fullDetails: props.fullDetails,
+          })
+        : fetchDetails(id, "chicago");
+      }
+      setUserCol(currentCol)
   }
 
   const fetchDetails = async (id, api) => {
