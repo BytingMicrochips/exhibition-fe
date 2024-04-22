@@ -337,7 +337,7 @@ function App() {
   const handleChicInfo = async (expanded) => {
     isSelected === expanded ? setIsSelected("") : setIsSelected(expanded);
     setDetailsLoading(true);
-    if (fullDetails.data && fullDetails.data.id === expanded) {
+    if (typeof fullDetails.data !== "undefined" && fullDetails.data.id === expanded) {
       setDetailsLoading(false);
     } else if (
       fullDetails.length === 0 ||
@@ -352,17 +352,20 @@ function App() {
         .json()
         .then((jsonResponse) => {
           setFullDetails(jsonResponse);
+          setDetailsLoading(false);
         })
         .catch((err) => {
           setErrorMsg(err.message);
           errorsFound++;
           setErrorCounter(errorsFound);
+          setDetailsLoading(false);
         });
     }
   };
 
   const handleMetInfo = async (id) => {
     isSelected === id ? setIsSelected("") : setIsSelected(id);
+        setDetailsLoading(true);
     if (
       fullDetails.length === 0 ||
       (fullDetails.objectID != id && id.length !== 0)
@@ -374,11 +377,13 @@ function App() {
         .json()
         .then((jsonResponse) => {
           setFullDetails(jsonResponse);
+          setDetailsLoading(false);
         })
         .catch((err) => {
           setErrorMsg(err.message);
           errorsFound++;
           setErrorCounter(errorsFound);
+          setDetailsLoading(false);
         });
     }
   };
