@@ -278,3 +278,7 @@ width: fit-content;
   padding-top: 5%;
   padding-bottom: 5%;
 }
+
+.colError {
+  background-color: rgb(145, 98, 106);
+}

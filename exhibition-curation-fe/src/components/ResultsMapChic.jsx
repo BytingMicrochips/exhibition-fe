@@ -42,9 +42,9 @@ const ResultsMapChic = (props) => {
   }
 
   const fetchDetails = async (id, api) => {
-        const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
-        const currentCol = [...userCol];
-
+    const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+    const currentCol = [...userCol];
+    setErrorMsg("");
           const fullDetails = await fetch(chicSingleArt + id, { mode: "cors" });
           fullDetails
             .json()
@@ -66,6 +66,13 @@ const ResultsMapChic = (props) => {
 
   return (
     <>
+      {errorMsg !== "" &&
+        <Fragment key={"colError"}>
+      <div className="colError">
+        <p><em>Failed to add an item to your collection!</em></p>
+      </div>
+        </Fragment>
+      }
       {props.results.data.map((artwork) => {
         if (artwork.thumbnail) {
           return (
