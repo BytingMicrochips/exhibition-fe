@@ -43,7 +43,6 @@ const Collection = () => {
                 <ChicArtworkCard
                   id={artwork.id}
                   fullDetails={artwork.fullDetails}
-                  description={artwork.fullDetails.description}
                 />
               </Fragment>
             ) : (

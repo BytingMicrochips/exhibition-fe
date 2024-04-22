@@ -62,6 +62,7 @@ border-radius: 5px;
 .searchButton {
   background-color: #edeaf6;
   padding: 4px;
+  border-radius: 5px;
 }
 
 .resultsFound {
@@ -127,6 +128,7 @@ background-color: #292828;
   padding-top: 2px;
   padding-bottom: 2px;
   width: 100%;
+  border-radius: 5px;
 }
 
 .prevNextButtons button {
@@ -210,6 +212,19 @@ width: fit-content;
 .viewAt p, .creditLine p, .mediumDate p {
   width: 100%;
   display: inline;
+}
+
+.viewAt p {
+  background-color: #dbd8e3;
+  opacity: 0.7;
+  color:#2a2438;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.viewAt {
+  background-color: #dbd8e3;
+  opacity: 0.7;
 }
 
 .artistDetails{
@@ -301,14 +316,13 @@ width: fit-content;
   padding-bottom: 1px;
   font-weight: 500;
   line-height: 0px;
-  color:#292828
+  color:#292828;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
 }
-
-.resultsFoundErr p {
-  padding-top: 12px;
-  margin-bottom: 11px;
-}
-
 
 .navigation {
   background-color: #dbd8e3;
