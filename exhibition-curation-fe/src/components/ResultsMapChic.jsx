@@ -36,10 +36,51 @@ const ResultsMapChic = (props) => {
       typeof props.fullDetails.data !== "undefined" && props.fullDetails.data.id === id ? 
         currentCol.push({ id, api: "chicago", fullDetails: props.fullDetails }) 
         :
-        currentCol.push({ id, api: "chicago", fullDetails: null });
-      setUserCol(currentCol);
+        fetchDetails(id, "chicago");
     }
   }
+
+  const fetchDetails = async (id, api) => {
+        const chicSingleArt = `https://api.artic.edu/api/v1/artworks/`;
+        const metSingleArt = `https://collectionapi.metmuseum.org/public/collection/v1/objects/`;
+        const currentCol = [...userCol];
+
+        if (api === "chicago") {
+          const fullDetails = await fetch(chicSingleArt + id, { mode: "cors" });
+          fullDetails
+            .json()
+            .then((jsonResponse) => {
+              const index = userCol.findIndex(
+                (item) => item.id === id && item.api === "chicago"
+              );
+              currentCol.push({
+                id,
+                api: "chicago",
+                fullDetails: jsonResponse,
+              }); 
+              
+          setUserCol(currentCol);
+
+            })
+            .catch((err) => {
+              setErrorMsg(err.msg);
+            });
+        }
+        if (api === "met") {
+          const fullDetails = await fetch(metSingleArt + id, { mode: "cors" });
+          fullDetails
+            .json()
+            .then((jsonResponse) => {
+              const index = userCol.findIndex(
+                (item) => item.id === id && item.api === "met"
+              );
+              userCol[index].fullDetails = jsonResponse;
+            })
+            .catch((err) => {
+              setErrorMsg(err.msg);
+            });
+        }
+  };
 
   return (
     <>
