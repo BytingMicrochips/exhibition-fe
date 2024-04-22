@@ -394,7 +394,9 @@ width: fit-content;
 }
 
 .colNoRes {
-  background-color: rgb(34, 147, 147);
+  background-color: #977bdd;
+  opacity: 0.7;
+  border-radius: 5px;
 }
 
 .nothingHere {
@@ -403,16 +405,13 @@ width: fit-content;
 }
 
 .returnSearch {
-  background-color: rgb(255, 0, 238);
+  background-color: #2a2438;
   padding-top: 5%;
-  padding-bottom: 5%;
+  padding-bottom: 5%;border-radius: 5px;
+  color: #dbd8e3;
 }
 
-.colError {
-  background-color: rgb(145, 98, 106);
-}
-
-.errShow {
+.errShow, .colError {
   background-color: #977bdd;
   border-radius: 5px;
   width: 100%;
