@@ -17,6 +17,7 @@ body {
   place-items: center;
   min-width: 50vw;
   min-height: 100vh;
+  height: fit-content;
 }
 
 h1 {
@@ -38,12 +39,19 @@ button {
   transition: border-color 0.25s;
 }
 
+button:active {
+  background-color: #977bdd;
+  transition-duration: 0.3s;
+}
+
 #root {
-  max-width: 1280px;
+  width: 100vw;
+  max-width: 600px;
   margin: 0 auto;
   padding: 1rem;
   text-align: center;
-  height: 95vh;
+  height: fit-content;
+  min-height: 100vh;
   background-color: #5c5470;
 }
 
@@ -168,8 +176,8 @@ background-color: #292828;
   background-color: #977bdd;
   display: flex;
   justify-content: space-between;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  padding-top: 6px;
+  padding-bottom: 6px;
   width: 100%;
   border-radius: 5px;
 }
