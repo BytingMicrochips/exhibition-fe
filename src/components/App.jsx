@@ -463,7 +463,7 @@ function App() {
                         </div>
                         <div className="searchButton">
                           <button onClick={handleSearch}>
-                            Search collections!
+                            Search collections
                           </button>
                         </div>
                       </div>

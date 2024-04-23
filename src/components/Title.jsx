@@ -4,7 +4,7 @@ const Title = ({viewCol}) => {
   return (
     <Fragment key={"titleCard"}>
       <div className="titleCard">
-        <h1>Artwork & artifacts explorer</h1>
+        <h1>Artwork & Artifacts Explorer</h1>
       </div>
       <div className="subheadingCard">
         {!viewCol ? (
@@ -12,7 +12,7 @@ const Title = ({viewCol}) => {
           <h3>
             Enjoy discovering countless treasures! 
             </h3>
-            <h4>Curate and exhibition of your favourite finds</h4>
+            <h4>Curate an exhibition of your favourite finds</h4>
           <p>Results are sourced from the Art Institute of Chicago and
               Metropolitan Museum NYC</p>
             </div>
