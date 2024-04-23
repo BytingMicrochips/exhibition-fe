@@ -36,7 +36,7 @@ const MetArtworkCard = ({ artwork }) => {
 
 
     return (
-      <Fragment key={artwork.objectID}>
+      <Fragment key={artwork.objectID+'m'}>
         <div key={artwork.objectID + "artworkCard"} className="artworkCard">
           <button
             className="artworkButton"
@@ -69,7 +69,6 @@ const MetArtworkCard = ({ artwork }) => {
                 width="200"
               />
             </div>
-
             <button
               className="expandImg"
               onClick={() => {
@@ -88,40 +87,40 @@ const MetArtworkCard = ({ artwork }) => {
           </div>
         </div>
         {isSelected === artwork.objectID && (
-          <>
+          <Fragment key={"fullDetails" + artwork.objectID}>
             <div className="fullDetails">
               <button onClick={() => handleExpanded(artwork.objectID)}>
                 {artwork.artistDisplayName ? (
-                  <>
+                  <Fragment key={"artistDetailsM" + artwork.objectID}>
                     <div className="artistDetails">
-                  <div className="detailHeadings">
-                      <p>
-                        <em>
-                          {artwork.artistDisplayName}
-                          {artwork.artistRole && `, ${artwork.artistRole}, `}
-                        </em>
+                      <div className="detailHeadings">
+                        <p>
+                          <em>
+                            {artwork.artistDisplayName}
+                            {artwork.artistRole && `, ${artwork.artistRole}, `}
+                          </em>
                         </p>
-                        </div>
+                      </div>
                       <em>
                         {artwork.culture ||
                           artwork.country ||
                           ` department of ${artwork.department}`}
                       </em>
                     </div>
-                  </>
+                  </Fragment>
                 ) : (
-                    <>
-                  <div className="detailHeadings">
-                    <p className="artistDetails">
-                      <em>
-                        Unidentified artist,{" "}
-                        {artwork.culture ||
-                          artwork.country ||
-                          ` department of ${artwork.department}`}
-                      </em>
-                        </p>
-                        </div>
-                  </>
+                  <Fragment key={"unidentifiedArtM" + artwork.objectID}>
+                    <div className="detailHeadings">
+                      <p className="artistDetails">
+                        <em>
+                          Unidentified artist,{" "}
+                          {artwork.culture ||
+                            artwork.country ||
+                            ` department of ${artwork.department}`}
+                        </em>
+                      </p>
+                    </div>
+                  </Fragment>
                 )}
                 <div className="mediumDate">
                   {artwork.medium && <p>{artwork.medium}</p>}
@@ -137,9 +136,8 @@ const MetArtworkCard = ({ artwork }) => {
                 {artwork.creditLine && (
                   <p className="creditLine">{artwork.creditLine}</p>
                 )}
-
                 {artwork.repository && (
-                  <>
+                  <Fragment key={"viewAtM" + artwork.objectID}>
                     <div className="viewAt">
                       <p>
                         {artwork.GalleryNumber != ""
@@ -148,7 +146,7 @@ const MetArtworkCard = ({ artwork }) => {
                                     view`}
                       </p>
                     </div>
-                  </>
+                  </Fragment>
                 )}
                 {artwork.objectURL != "" ? (
                   <a
@@ -184,7 +182,7 @@ const MetArtworkCard = ({ artwork }) => {
                 />
               </button>
             </div>
-          </>
+          </Fragment>
         )}
       </Fragment>
     );

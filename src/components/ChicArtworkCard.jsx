@@ -90,12 +90,12 @@ return (
     </div>
 
     {isSelected === id && (
-      <>
+      <Fragment key={"selected"+id}>
         {fullDetails.length != 0 && isSelected === id && (
           <div className="fullDetails">
             <button onClick={() => handleExpanded(id)}>
               {isSelected === id && (
-                <>
+      <Fragment key={"details"+id}>
                   <div className="detailHeadings">
                     <p className="artistDetails">
                       <em>
@@ -116,21 +116,19 @@ return (
                     </p>
                   </div>
                   {fullDetails.data.place_of_origin != null && (
-                    <>
                       <p>Produced in {fullDetails.data.place_of_origin}</p>
-                    </>
                   )}
 
                   {fullDetails.data.credit_line && (
-                    <>
+                    <Fragment key={"creditLine"+id}>
                       <div className="creditLine">
                         <p>{fullDetails.data.credit_line}</p>
                       </div>
-                    </>
+                    </Fragment>
                   )}
 
                   {fullDetails.data.description !== null && (
-                    <>
+      <Fragment key={"desc"+id}>
                       <div
                         className="detailDescr"
                         dangerouslySetInnerHTML={{
@@ -142,9 +140,9 @@ return (
                           ),
                         }}
                       />
-                    </>
+                    </Fragment>
                   )}
-                </>
+                </Fragment>
               )}
               <div className="viewAt">
                 {fullDetails.data.is_on_view ? (
@@ -168,7 +166,7 @@ return (
             </button>
           </div>
         )}
-      </>
+      </Fragment>
     )}
   </Fragment>
 );
