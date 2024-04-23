@@ -14,7 +14,7 @@ const ResultsCounter = ({ lastSearch, total, errMsg, errCounter}) => {
         <div className="resultsFoundErr">
           <div className="resultsFound">
             <p>
-              <em>Showing {total} results!</em>
+              <em>Showing {total} results</em>
             </p>
           </div>
           {errCounter !== 0 && (
