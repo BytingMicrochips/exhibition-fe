@@ -115,7 +115,6 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     width="200"
                   />
                 </div>
-
                 <button
                   className="expandImg"
                   onClick={() => {
@@ -147,7 +146,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             </div>
 
             {detailsLoading === true && isSelected === artwork.objectID && (
-              <>
+              <Fragment key={`fullDetails${artwork.objectID}Loading`}>
                 <div className="fullDetails">
                   <button onClick={() => handleExpanded(artwork.objectID)}>
                     <img
@@ -157,14 +156,14 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     />
                   </button>
                 </div>
-              </>
+              </Fragment>
             )}
             {detailsLoading === false && isSelected === artwork.objectID && (
-              <>
+              <Fragment key={`fullDetails${artwork.objectID}`}>
                 <div className="fullDetails">
                   <button onClick={() => handleExpanded(artwork.objectID)}>
                     {artwork.artistDisplayName ? (
-                      <>
+                      <Fragment key={"detailHeadings"+artwork.objectID}>
                         <div className="detailHeadings">
                           <div className="artistDetails">
                             <p>
@@ -181,9 +180,9 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                             </em>
                           </div>
                         </div>
-                      </>
+                      </Fragment>
                     ) : (
-                      <>
+                      <Fragment key={"unidentified"+artwork.objectID}>
                         <div className="detailHeadings">
                           <p className="artistDetails">Unidentified artist</p>
                           <p>
@@ -195,7 +194,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                             </em>
                           </p>
                         </div>
-                      </>
+                      </Fragment>
                     )}
                     <div className="mediumDate">
                       {fullDetails.medium && <p>{fullDetails.medium}</p>}
@@ -212,7 +211,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                       <p className="creditLine">{fullDetails.creditLine}</p>
                     )}
                     {fullDetails.repository && (
-                      <>
+                      <Fragment key={"viewAt"+artwork.objectID}>
                         <div className="viewAt">
                           <p>
                             {fullDetails.GalleryNumber != ""
@@ -221,7 +220,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                                 view`}
                           </p>
                         </div>
-                      </>
+                      </Fragment>
                     )}
                     {fullDetails.objectURL != "" ? (
                       <a
@@ -257,7 +256,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     />
                   </button>
                 </div>
-              </>
+              </Fragment>
             )}
           </Fragment>
         );
