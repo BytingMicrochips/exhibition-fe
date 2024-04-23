@@ -147,7 +147,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
             </div>
 
             {detailsLoading === true && isSelected === artwork.objectID && (
-              <>
+              <Fragment key={`fullDetails${artwork.objectID}Loading`}>
                 <div className="fullDetails">
                   <button onClick={() => handleExpanded(artwork.objectID)}>
                     <img
@@ -157,10 +157,10 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     />
                   </button>
                 </div>
-              </>
+              </Fragment>
             )}
             {detailsLoading === false && isSelected === artwork.objectID && (
-              <>
+              <Fragment key={`fullDetails${artwork.objectID}`}>
                 <div className="fullDetails">
                   <button onClick={() => handleExpanded(artwork.objectID)}>
                     {artwork.artistDisplayName ? (
@@ -257,7 +257,7 @@ const ResultsMapMet = ({ results, detailsLoading, fullDetails }) => {
                     />
                   </button>
                 </div>
-              </>
+              </Fragment>
             )}
           </Fragment>
         );
