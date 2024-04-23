@@ -68,7 +68,7 @@ const ResultsMapChic = (props) => {
   };
 
   return (
-    <>
+    <Fragment key={"ResultsMapChicWrapper"}>
       {errorMsg !== "" &&
         <Fragment key={"colError"}>
       <div className="colError">
@@ -148,7 +148,7 @@ const ResultsMapChic = (props) => {
 
               {props.detailsLoading === true &&
               props.isSelected === artwork.id ? (
-                <>
+                <Fragment key={"detailsLoadRC" + artwork.id}>
                   <div className="fullDetails">
                     <button onClick={() => handleExpanded(artwork.id)}>
                       <img
@@ -158,15 +158,15 @@ const ResultsMapChic = (props) => {
                       />
                     </button>
                   </div>
-                </>
+                </Fragment>
               ) : (
-                <>
+                <Fragment key={"fullDetailsRC" + artwork.id}>
                   {props.fullDetails.length != 0 &&
                     props.isSelected === artwork.id && (
                       <div className="fullDetails">
                         <button onClick={() => handleExpanded(artwork.id)}>
                           {props.isSelected === artwork.id && (
-                            <>
+                            <Fragment key={"detailsRC" + artwork.id}>
                               <div className="detailHeadings">
                                 <p className="artistDetails">
                                   <em>
@@ -175,12 +175,11 @@ const ResultsMapChic = (props) => {
                                   </em>
                                 </p>
                               </div>
-
                               <div className="mediumDate">
                                 <p>
                                   {props.fullDetails.data.date_display ||
                                     props.fullDetails.data.date_end ||
-                                    props.fullDetails.data.date_start}{' '}
+                                    props.fullDetails.data.date_start}{" "}
                                 </p>
                                 <p>
                                   {props.fullDetails.data.medium_display ||
@@ -190,24 +189,21 @@ const ResultsMapChic = (props) => {
                               </div>
                               {props.fullDetails.data.place_of_origin !=
                                 null && (
-                                <>
-                                  <p>
-                                    Produced in{" "}
-                                    {props.fullDetails.data.place_of_origin}
-                                  </p>
-                                </>
+                                <p>
+                                  Produced in{" "}
+                                  {props.fullDetails.data.place_of_origin}
+                                </p>
                               )}
-
                               {props.fullDetails.data.credit_line && (
-                                <>
+                                <Fragment key={"creditRC" + artwork.id}>
                                   <div className="creditLine">
                                     <p>{props.fullDetails.data.credit_line}</p>
                                   </div>
-                                </>
+                                </Fragment>
                               )}
 
                               {props.description !== "" && (
-                                <>
+                                <Fragment key={"descRC"+artwork.id}>
                                   <div
                                     className="detailDescr"
                                     dangerouslySetInnerHTML={{
@@ -219,9 +215,9 @@ const ResultsMapChic = (props) => {
                                       ),
                                     }}
                                   />
-                                </>
+                                </Fragment>
                               )}
-                            </>
+                            </Fragment>
                           )}
                           <div className="viewAt">
                             {props.fullDetails.data.is_on_view ? (
@@ -247,13 +243,13 @@ const ResultsMapChic = (props) => {
                         </button>
                       </div>
                     )}
-                </>
+                </Fragment>
               )}
             </Fragment>
           );
         }
       })}
-    </>
+    </Fragment>
   );
 };
 
