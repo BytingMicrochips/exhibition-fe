@@ -6,6 +6,10 @@ Results will then be displayed, with expandable details explaining pertinent inf
 #### Imagined use case:
 *A user is intending to visit the museum or gallery and wanting to plan a list of what to see in person. Considering this, all results display both where they are stored and if they are currently on view to the public. When available, the exacty gallery number of an item's exhibition is also displayed .*
 
+### Viewing the finished project: 
+
+-The project is hosted using netlify, and is available [here](https://artifactexplorer.netlify.app/)
+
 ### Running the project locally: 
 
 - Dowload your own copy of the project from GitHub
